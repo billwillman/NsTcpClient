@@ -40,6 +40,8 @@ namespace NsTcpClient
 					var status = m_Client.GetState();
 					if (status == eClientState.eClient_STATE_CONNECTED || status == eClientState.eClient_STATE_CONNECTING)
 						return true;
+					else
+						m_Client.DisConnect();
 				}
 			} else
 			{
