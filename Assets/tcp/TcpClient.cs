@@ -211,9 +211,12 @@ namespace NsTcpClient
 				return;
 			}
 
-		//	mSocketList[0] = mSocket;
+            // 使用非延迟发送
+            mSocket.NoDelay = true;
 
-			mSocket.SendTimeout = 0;
+        //	mSocketList[0] = mSocket;
+
+            mSocket.SendTimeout = 0;
 			mSocket.ReceiveTimeout = 0;
 			//mSocket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 0);
 			//mSocket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 0);
