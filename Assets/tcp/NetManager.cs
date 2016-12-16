@@ -23,6 +23,11 @@ namespace NsTcpClient
 			}
 		}
 
+		public bool ConnectLastServer()
+		{
+			return ConnectServer(m_Ip, m_Port);
+		}
+
 		public bool ConnectServer(string ip, int port)
 		{
 			if (string.IsNullOrEmpty(ip) || port <= 0)
