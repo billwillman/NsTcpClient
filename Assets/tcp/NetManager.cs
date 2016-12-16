@@ -7,6 +7,14 @@ namespace NsTcpClient
 	public class NetManager: Singleton<NetManager>
 	{
 
+		public NetManager()
+		{
+			m_Client = new ClientSocket();
+			m_Client.AddStateEvent(OnSocketStateEvent);
+			m_Timer = TimerMgr.Instance.CreateTimer(false, 0, true);
+			m_Timer.AddListener(OnTimerEvent);
+		}
+
 		public string Ip
 		{
 			get
@@ -30,19 +38,16 @@ namespace NsTcpClient
 
 		public bool ConnectServer(string ip, int port)
 		{
-			if (string.IsNullOrEmpty(ip) || port <= 0)
+			if (m_Client == null || string.IsNullOrEmpty(ip) || port <= 0)
 				return false;
 
 			if (string.Compare(m_Ip, ip) == 0 && m_Port == port)
 			{
-				if (m_Client != null)
-				{
-					var status = m_Client.GetState();
-					if (status == eClientState.eClient_STATE_CONNECTED || status == eClientState.eClient_STATE_CONNECTING)
-						return true;
-					else
-						m_Client.DisConnect();
-				}
+				var status = m_Client.GetState();
+				if (status == eClientState.eClient_STATE_CONNECTED || status == eClientState.eClient_STATE_CONNECTING)
+					return true;
+				else
+					m_Client.DisConnect();
 			} else
 			{
 				if (m_Client != null)
@@ -50,12 +55,6 @@ namespace NsTcpClient
 			}
 
 			ClearTempList();
-
-			if (m_Client == null)
-			{
-				m_Client = new ClientSocket(true);
-				m_Client.AddStateEvent(OnSocketStateEvent);
-			}
 
 			bool ret = m_Client.Connect(ip, port);
 
@@ -73,6 +72,14 @@ namespace NsTcpClient
 			if (m_Client != null)
 				m_Client.DisConnect();
 			ClearTempList();
+		}
+
+		void OnTimerEvent(Timer obj, float timer)
+		{
+			if (m_Client != null)
+			{
+				m_Client.Execute();
+			}
 		}
 
 		void OnSocketStateEvent(eClientState status)
@@ -109,6 +116,13 @@ namespace NsTcpClient
 		{
 			get;
 			set;
+		}
+
+		public void AddPacketListener(int header, OnPacketRead callBack)
+		{
+			if (m_Client == null)
+				return;
+			m_Client.AddPacketListener(header, callBack);
 		}
 
 		public void Send (byte[] buf, int packetHandle)
@@ -184,5 +198,6 @@ namespace NsTcpClient
 		private string m_Ip = string.Empty;
 		private int m_Port = 0;
 		private ClientSocket m_Client = null;
+		private Timer m_Timer = null;
 	}
 }
