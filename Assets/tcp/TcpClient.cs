@@ -278,7 +278,7 @@ namespace NsTcpClient
 			try {
 				Socket socket = (Socket)result.AsyncState;
 				if (socket != null) {
-					if (socket.Connected && mSocket.Poll(0, SelectMode.SelectWrite))
+					if (socket.Connected && socket.Poll(0, SelectMode.SelectWrite))
 						socket.EndConnect(result);
 				}
 
