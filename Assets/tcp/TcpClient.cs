@@ -2,6 +2,9 @@
 // NsTcpClient tcp Client Library
 //      by zengyi
 // ------------------------------------------------------------------------------
+
+#define _USE_ABORT
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,7 +23,10 @@ namespace NsTcpClient {
             m_Thread = new Thread(ThreadProc);
             // Thread start run
             m_Thread.Start();
-            m_ThreadStatus = m_Thread.ThreadState;
+            #if !_USE_ABORT
+            LocalThreadState = m_Thread.ThreadState;
+            #endif
+            //UnityEngine.Debug.LogFormat ("Thread Status: {0:D}", (int)m_ThreadStatus);
         }
 
         ~TcpClient() {
@@ -39,17 +45,21 @@ namespace NsTcpClient {
         protected void Dispose(bool Diposing) {
             if (!m_IsDispose) {
                 // 优先Abort
-                /*
+                #if _USE_ABORT
                 if (m_Thread != null) {
                     m_Thread.Abort();
                     m_Thread.Join();
-                }*/
-
+                }
+                #else
                 // 模拟abort操作
+
                 LocalThreadState = ThreadState.AbortRequested;
                 //  m_Thread.Join();
-                while (LocalThreadState != ThreadState.Aborted)
-                    ;
+                while (LocalThreadState != ThreadState.Aborted) {
+                    Thread.Sleep (1);
+              //      UnityEngine.Debug.LogFormat ("Thread Status: {0:D}", (int)m_ThreadStatus);
+                }
+                #endif
 
                 if (m_Waiting != null) {
                     m_Waiting.Set();
@@ -359,6 +369,7 @@ namespace NsTcpClient {
             }
         }
 
+        #if !_USE_ABORT
         // 用于模拟abort
         private ThreadState LocalThreadState {
             get {
@@ -373,11 +384,16 @@ namespace NsTcpClient {
                 }
             }
         }
+        #endif
 
         // 线程是否在运行状态
         private bool IsThreadRuning {
             get {
-                return LocalThreadState == ThreadState.Running && m_Thread != null && m_Thread.ThreadState == ThreadState.Running;
+                return m_Thread != null && m_Thread.ThreadState == ThreadState.Running 
+                    #if !_USE_ABORT
+                    && LocalThreadState == ThreadState.Running 
+                    #endif
+                    ;
             }
         }
 
@@ -387,7 +403,9 @@ namespace NsTcpClient {
                 Execute();
             }
 
+            #if !_USE_ABORT
             LocalThreadState = ThreadState.Aborted;
+            #endif
         }
 
         private void Execute() {
