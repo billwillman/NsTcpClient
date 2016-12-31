@@ -20,6 +20,7 @@ namespace NsTcpClient {
             m_Thread = new Thread(ThreadProc);
             // Thread start run
             m_Thread.Start();
+            m_ThreadStatus = m_Thread.ThreadState;
         }
 
         ~TcpClient() {
@@ -38,10 +39,15 @@ namespace NsTcpClient {
         protected void Dispose(bool Diposing) {
             if (!m_IsDispose) {
                 // 优先Abort
+                /*
                 if (m_Thread != null) {
                     m_Thread.Abort();
                     m_Thread.Join();
-                }
+                }*/
+
+                // 模拟abort操作
+                LocalThreadState = ThreadState.AbortRequested;
+                m_Thread.Join();
 
                 if (m_Waiting != null) {
                     m_Waiting.Set();
@@ -351,11 +357,35 @@ namespace NsTcpClient {
             }
         }
 
+        // 用于模拟abort
+        private ThreadState LocalThreadState {
+            get {
+                lock (m_Mutex) {
+                    return m_ThreadStatus;
+                }
+            }
+
+            set {
+                lock (m_Mutex) {
+                    m_ThreadStatus = value;
+                }
+            }
+        }
+
+        // 线程是否在运行状态
+        private bool IsThreadRuning {
+            get {
+                return LocalThreadState == ThreadState.Running && m_Thread != null && m_Thread.ThreadState == ThreadState.Running;
+            }
+        }
+
         // Thread Runing
         private void ThreadProc() {
-            while (m_Thread.ThreadState == ThreadState.Running) {
+            while (IsThreadRuning) {
                 Execute();
             }
+
+            LocalThreadState = ThreadState.Aborted;
         }
 
         private void Execute() {
@@ -405,6 +435,8 @@ namespace NsTcpClient {
         private int m_HasReadSize = 0;
         private ManualResetEvent m_Waiting = new ManualResetEvent(false);
         private Thread m_Thread = null;
+        // 线程状态
+        private ThreadState m_ThreadStatus = ThreadState.Unstarted;
 
         private byte[] m_SendBuffer = new byte[MAX_TCP_CLIENT_BUFF_SIZE];
         private byte[] m_ReadBuffer = new byte[MAX_TCP_CLIENT_BUFF_SIZE];
