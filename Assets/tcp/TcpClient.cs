@@ -45,13 +45,13 @@ namespace NsTcpClient
 		{
 			if (!mIsDispose) {
 
-				if (mWaiting != null) {
-					mWaiting.Set ();
-				}
-
 				if (mThread != null) {
                     mThread.Abort();
 					mThread.Join ();
+				}
+				
+				if (mWaiting != null) {
+					mWaiting.Set ();
 				}
 
 				FreeSendQueue ();
