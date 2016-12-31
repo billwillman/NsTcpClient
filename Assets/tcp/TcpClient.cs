@@ -47,7 +47,9 @@ namespace NsTcpClient {
 
                 // 模拟abort操作
                 LocalThreadState = ThreadState.AbortRequested;
-                m_Thread.Join();
+                //  m_Thread.Join();
+                while (LocalThreadState != ThreadState.Aborted)
+                    ;
 
                 if (m_Waiting != null) {
                     m_Waiting.Set();
