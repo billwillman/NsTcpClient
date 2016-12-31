@@ -54,11 +54,8 @@ namespace NsTcpClient {
                 // 模拟abort操作
 
                 LocalThreadState = ThreadState.AbortRequested;
-                //  m_Thread.Join();
-                while (LocalThreadState != ThreadState.Aborted) {
-                    Thread.Sleep (1);
-              //      UnityEngine.Debug.LogFormat ("Thread Status: {0:D}", (int)m_ThreadStatus);
-                }
+                m_Thread.Join();
+
                 #endif
 
                 if (m_Waiting != null) {
