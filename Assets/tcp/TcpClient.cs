@@ -3,7 +3,7 @@
 //      by zengyi
 // ------------------------------------------------------------------------------
 
-#define _USE_ABORT
+//#define _USE_ABORT
 
 using System;
 using System.Collections;
