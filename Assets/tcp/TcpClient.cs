@@ -3,6 +3,7 @@
 //      by zengyi
 // ------------------------------------------------------------------------------
 
+// IOS not use Thread.abort
 //#define _USE_ABORT
 
 using System;
