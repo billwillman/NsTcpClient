@@ -46,16 +46,17 @@ namespace NsTcpClient {
         protected void Dispose(bool Diposing) {
             if (!m_IsDispose) {
                 // 优先Abort
-                #if _USE_ABORT
+#if _USE_ABORT
                 if (m_Thread != null) {
                     m_Thread.Abort();
                     m_Thread.Join();
                 }
-                #else
+#else
                 // 模拟abort操作
-
-                LocalThreadState = ThreadState.AbortRequested;
-                m_Thread.Join();
+                if (m_Thread != null) {
+                    LocalThreadState = ThreadState.AbortRequested;
+                    m_Thread.Join();
+                }
 
                 #endif
 
