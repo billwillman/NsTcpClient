@@ -127,6 +127,8 @@ namespace NsTcpClient
 		{
 			if (mTcpClient == null)
 				return eClientState.eCLIENT_STATE_NONE;
+			if (mConnecting)
+				return eClientState.eClient_STATE_CONNECTING;
 			return mTcpClient.GetState ();
 		}
 
