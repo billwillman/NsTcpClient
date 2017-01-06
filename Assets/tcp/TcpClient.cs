@@ -23,10 +23,10 @@ namespace NsTcpClient {
         public TcpClient() {
             m_Thread = new Thread(ThreadProc);
             // Thread start run
+			#if !_USE_ABORT
+			LocalThreadState = ThreadState.Running;
+			#endif
             m_Thread.Start();
-            #if !_USE_ABORT
-            LocalThreadState = m_Thread.ThreadState;
-            #endif
             //UnityEngine.Debug.LogFormat ("Thread Status: {0:D}", (int)m_ThreadStatus);
         }
 

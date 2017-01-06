@@ -1,37 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
 using NsTcpClient;
-using Utils;
 
 public class Test : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-        NetManager.Instance.OnConnectResult = OnSocketConnected;
-        NetManager.Instance.OnSocketAbort = OnSocketAbort;
+	void OnSocketConnect(bool isConnect)
+	{
+		Debug.LogFormat("连接状态：{0}", isConnect.ToString());
 	}
 
-    void OnSocketConnected(bool isOk)
-    {
-        Debug.LogFormat ("Socket Connect result: {0}", isOk.ToString ());
-    }
+	void OnGUI()
+	{
+		if (GUI.Button(new Rect(100, 100, 100, 50), "测试网路"))
+		{
+			Debug.Log("Button Click!!!");
 
-    void OnSocketAbort()
-    {
-        Debug.Log ("Socket abort");
-    }
-	
-	// Update is called once per frame
-	void Update () {
-        TimerMgr.Instance.ScaleTick (Time.deltaTime);
-        TimerMgr.Instance.UnScaleTick (Time.unscaledDeltaTime);
+			NetManager.Instance.OnConnectResult = OnSocketConnect;
+			NetManager.Instance.Disconnect();
+			NetManager.Instance.ConnectServer("www.baidu.com", 80);
+			NetManager.Instance.SendStr("你好，百度", 1);
+		}
 	}
 
-    void OnGUI()
-    {
-        if (GUI.Button (new Rect(100, 100, 100, 50), "Connect")) {
-            NetManager.Instance.Disconnect ();
-            NetManager.Instance.ConnectServer ("www.baidu.com", 80);
-        }
-    }
+	void Update()
+	{
+		TimerMgr.Instance.UnScaleTick(Time.unscaledDeltaTime);
+		TimerMgr.Instance.ScaleTick(Time.deltaTime);
+	}
+
+	void OnApplicationQuit()
+	{
+		NetManager.Instance.Disconnect();
+	}
+
 }
