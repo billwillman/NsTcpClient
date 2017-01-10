@@ -440,8 +440,13 @@ namespace NsTcpClient {
         private void CloseSocket() {
             if (m_Socket == null)
                 return;
-            if (m_Socket.Connected)
-                m_Socket.Shutdown(SocketShutdown.Both);
+			try 
+			{
+				if (m_Socket.Connected)
+					m_Socket.Shutdown(SocketShutdown.Both);
+			} catch
+			{
+			}
             m_Socket.Close();
             m_Socket = null;
         }
