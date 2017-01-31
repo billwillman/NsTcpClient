@@ -220,7 +220,12 @@ namespace NsTcpClient {
                 m_Waiting.Reset();
 
                 AsyncCallback callBack = new AsyncCallback(OnConnectCallBack);
-                m_Socket.BeginConnect(pConnect.szRemoteIp, pConnect.uRemotePort, callBack, m_Socket);
+                try {
+                    m_Socket.BeginConnect(pConnect.szRemoteIp, pConnect.uRemotePort, callBack, m_Socket);
+                } catch (Exception e) {
+                    ProcessException(e, eClientState.eClient_STATE_CONNECT_FAIL);
+                    return;
+                }
 
 
                 if (m_Waiting.WaitOne(pConnect.timeOut)) {
