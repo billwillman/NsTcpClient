@@ -422,11 +422,7 @@ namespace NsTcpClient
 
 				if (packet != null)
 				{
-					try
-					{
-						ProcessPacket(packet);
-					} catch
-					{}
+					ProcessPacket(packet);
 			//	if (packet.data != null)
 			//		packet.data = null;
 				}
