@@ -249,16 +249,19 @@ namespace NsTcpClient
 		public void DisConnect()
 		{
 			Stop ();
-			ClearAllProcessPackets ();
+			OnClearData();
 			if (mTcpClient != null) {
 				mTcpClient.Release ();
 				mTcpClient = null;
 			}
-
-			mRecvSize = 0;
 			mConnecting = false;
 			mAbort = false;
 		}
+		
+		private void OnClearData() {
+            ClearAllProcessPackets();
+            m_RecvSize = 0;
+        }
 
 		private void Start()
 		{
@@ -278,7 +281,7 @@ namespace NsTcpClient
 		}
 
 		// 声明为同步函数
-		[MethodImplAttribute(MethodImplOptions.Synchronized)]
+		//[MethodImplAttribute(MethodImplOptions.Synchronized)]
 		public bool Execute()
 		{
 		//	string threadId = Thread.CurrentThread.ManagedThreadId.ToString ();
@@ -301,6 +304,7 @@ namespace NsTcpClient
 					mAbort = false;
 					mTcpClient.Release ();
 					mTcpClient = null;
+					OnClearData();
 
 					// Call Event Error
                     if (mStateEvents != null)
@@ -380,7 +384,7 @@ namespace NsTcpClient
 					eClientState state = mTcpClient.GetState ();
 					if (state == eClientState.eClient_STATE_ABORT) {
 						mAbort = true;
-
+						OnClearData();
 						// Call Event Abort
                         if (mStateEvents != null)
                         {
