@@ -417,22 +417,21 @@ namespace NsTcpClient
 
 		private void ProcessPackets()
 		{
-			LinkedListNode<GamePacket> node = mPacketList.First;
-			while (node != null) {
+			 LinkedListNode<GamePacket> node = m_PacketList.First;
+            while (node != null) {
 
-				GamePacket packet = node.Value;
-				LinkedListNode<GamePacket> next = node.Next;
-				mPacketList.Remove(node);
+                GamePacket packet = node.Value;
+             //   LinkedListNode<GamePacket> next = node.Next;
+             //   m_PacketList.Remove(node);
 
-				if (packet != null)
-				{
-					ProcessPacket(packet);
-			//	if (packet.data != null)
-			//		packet.data = null;
-				}
+                if (packet != null) {
+                    ProcessPacket(packet);
+                }
 
-				node = next;
-			}
+                node = node.Next;
+            }
+
+            m_PacketList.Clear();
 		}
 
 		public void AddPacketListener(int header, OnPacketRead callBack)
