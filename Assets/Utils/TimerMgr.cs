@@ -7,7 +7,52 @@ using System.Collections;
 using System.Collections.Generic;
 using Utils;
 
-public class Timer : DisposeObject
+public interface ITimerOnce
+{
+	bool IngoreScaleTime
+	{
+		get;
+	}
+
+	bool IsPlaying
+	{
+		get;
+	}
+
+	bool IsPlayOnce
+	{
+		get;
+	}
+
+	System.Object UserData
+	{
+		get; set;
+	}
+
+	float PerTime
+	{
+		get; set;
+	}
+
+	void AddListener(Timer.OnTimerEvent listener);
+
+	void ClearAllListener();
+
+	bool ContainsEvent(Timer.OnTimerEvent evt);
+
+	void RemoveListener(Timer.OnTimerEvent listener);
+
+	void Dispose();
+
+	void Start();
+}
+
+public interface ITimer: ITimerOnce
+{
+	//void Stop();
+}
+
+public class Timer : DisposeObject, ITimer
 {
     public delegate void OnTimerEvent(Timer obj, float timer);
 
@@ -69,6 +114,7 @@ public class Timer : DisposeObject
 		m_IsPlayOnce = isOnce;
 		m_PerTime = delayTime;
 		m_IngoreScaleTime = ingoreScaleTime;
+		m_IsDispose = false;
 		m_IsRuned = false;
 	}
 
@@ -76,7 +122,7 @@ public class Timer : DisposeObject
 	{
 		ClearAllListener();
 		m_UserData = null;
-		m_IsDispose = false;
+	//	m_IsDispose = false;
 		m_IsRuned = false;
 		Stop();
 	}
@@ -128,11 +174,22 @@ public class Timer : DisposeObject
 			base.Dispose();
 	}
 
+	public bool IsDispose
+	{
+		get {
+			return m_IsDispose;
+		}
+	}
+
     protected override void OnFree(bool isManual)
     {
 		if (isManual && IsUsePool)
 		{
-			TimerMgr.Instance._TimerToPool(this);
+			//TimerMgr.Instance._TimerToPool(this);
+			if (m_IsPlaying)
+				m_IsRuned = false;
+			else
+				TimerMgr.Instance._TimerToPool(this);
 			return;
 		}
 
@@ -164,7 +221,7 @@ public class Timer : DisposeObject
         OnStart();
     }
 
-    public void Stop()
+	private void Stop()
     {
         if (m_IsPlaying)
         {
@@ -211,6 +268,7 @@ public class Timer : DisposeObject
             if (m_IsPlayOnce)
             {
                 Stop();
+                Dispose();
             }
             else
             {
@@ -273,11 +331,11 @@ public class TimerMgr : Singleton<TimerMgr>
         }
         if (node.Value.IngoreScaleTime)
         {
-            m_UnScaledPlayerList.AddLast(node);
+            m_UnScaledPlayerList.AddFirst(node);
         }
         else
         {
-            m_PlayerList.AddLast(node);
+            m_PlayerList.AddFirst(node);
         }
     }
 
@@ -294,17 +352,24 @@ public class TimerMgr : Singleton<TimerMgr>
         {
             return;
         }
-        if (node.Value.IngoreScaleTime)
-        {
-            m_UnScaledPlayerList.Remove(node);
-        }
-        else
-        {
-            m_PlayerList.Remove(node);
-        }
-    }
 
-    public Timer CreateTimer(bool isOnce, float delayTime, bool isRuning, bool ingoreScaleTime = false)
+		var list = node.List;
+		if (list != null)
+			list.Remove(node);
+    }
+/*
+	public ITimerOnce CreateOnceTimer(float delayTime, bool isRuning, bool ingoreScaleTime = false)
+	{
+		return CreateTimer(true, delayTime, isRuning, ingoreScaleTime);
+	}
+*/
+
+	public ITimer CreateTimer(float delayTime, bool isRuning, bool ingoreScaleTime = false)
+	{
+		return CreateTimer(false, delayTime, isRuning, ingoreScaleTime);
+	}
+
+    private Timer CreateTimer(bool isOnce, float delayTime, bool isRuning, bool ingoreScaleTime = false)
     {
        // Timer timer = new Timer(isOnce, delayTime, ingoreScaleTime);
 
@@ -344,12 +409,29 @@ public class TimerMgr : Singleton<TimerMgr>
             LinkedListNode<Timer> playerNode = list.First;
             while (playerNode != null)
             {
+				/*
 				var node = playerNode.Next;
                 if (playerNode.Value != null)
                 {
                     playerNode.Value.Tick(delta);
                 }
-				playerNode = node;
+				playerNode = node;*/
+
+				LinkedListNode<Timer> next = playerNode.Next;
+				var time = playerNode.Value;
+				if (time != null)
+				{
+					if (!time.IsDispose)
+					{
+						time.Tick(delta);
+						if (time.IsDispose)
+							TimerMgr.Instance._TimerToPool(time);
+					} else
+					{
+						TimerMgr.Instance._TimerToPool(time);
+					}
+				}
+				playerNode = next;
             }
         }
     }

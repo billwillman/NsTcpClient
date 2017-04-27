@@ -11,7 +11,7 @@ namespace NsTcpClient
 		{
 			m_Client = new ClientSocket();
 			m_Client.AddStateEvent(OnSocketStateEvent);
-			m_Timer = TimerMgr.Instance.CreateTimer(false, 0, true);
+			m_Timer = TimerMgr.Instance.CreateTimer(0, true);
 			m_Timer.AddListener(OnTimerEvent);
 		}
 
@@ -198,6 +198,6 @@ namespace NsTcpClient
 		private string m_Ip = string.Empty;
 		private int m_Port = 0;
 		private ClientSocket m_Client = null;
-		private Timer m_Timer = null;
+		private ITimer m_Timer = null;
 	}
 }

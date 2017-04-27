@@ -5,6 +5,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using Utils;
 
 public class Singleton<T> where T : class, new()
 {
