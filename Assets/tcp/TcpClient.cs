@@ -357,7 +357,7 @@ namespace NsTcpClient {
                     int readSize = m_ReadBuffer.Length - m_HasReadSize;
                     if (readSize > 0)
                     {
-                            int nRet = m_Socket.Receive(m_ReadBuffer, m_HasReadSize, m_ReadBuffer.Length - m_HasReadSize, SocketFlags.None);
+                            int nRet = m_Socket.Receive(m_ReadBuffer, m_HasReadSize, readSize, SocketFlags.None);
                             if (nRet <= 0) {
                                 CloseSocket();
                                 //m_State = eClientState.eClient_STATE_ABORT;
