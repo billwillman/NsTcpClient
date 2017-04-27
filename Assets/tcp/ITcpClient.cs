@@ -12,13 +12,5 @@ namespace NsTcpClient
 		eClient_STATE_ABORT,		
 		eClient_STATE_DISCONNECT,
 	};
-
-	public interface ITcpClient {
-		void Release();
-		bool Connect(string remoteIp, int remotePort, int timeOut = -1);
-		eClientState GetState();
-		bool Send(byte[] pData);
-		bool HasReadData();
-		int GetReadData(byte[] pBuffer, int offset);
-	}
+      
 }

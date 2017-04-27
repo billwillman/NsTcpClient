@@ -16,7 +16,7 @@ using System.Threading;
 
 namespace NsTcpClient {
 
-    public class TcpClient : ITcpClient, IDisposable {
+    public class TcpClient : IDisposable {
         static public readonly int MAX_TCP_CLIENT_BUFF_SIZE = (64 * 1024);
 
         // public function
@@ -115,13 +115,20 @@ namespace NsTcpClient {
             return true;
         }
 
+        // buffer, recvSize, result int
+        public Action<TcpClient> OnThreadBufferProcess {
+            get;
+            set;
+        }
+
         public bool HasReadData() {
             lock (m_Mutex) {
                 return (m_HasReadSize > 0);
             }
         }
 
-        public int GetReadData(byte[] pBuffer, int offset) {
+        // 无锁函数（注意线程安全）
+        internal int GetReadDataNoLock(byte[] pBuffer, int offset) {
             if (pBuffer == null)
                 return 0;
 
@@ -129,26 +136,24 @@ namespace NsTcpClient {
             if (bufSize <= 0)
                 return 0;
 
-            lock (m_Mutex) {
-                int ret = bufSize - offset;
+            int ret = bufSize - offset;
 
-                if (ret <= 0) {
-                    // mei you chu li wan
-                    ret = 0;
-                    return ret;
-                }
-
-                if (ret > m_HasReadSize)
-                    ret = m_HasReadSize;
-
-                Buffer.BlockCopy(m_ReadBuffer, 0, pBuffer, offset, ret);
-                int uLast = m_HasReadSize - ret;
-
-                Buffer.BlockCopy(m_ReadBuffer, ret, m_ReadBuffer, 0, uLast);
-                m_HasReadSize = uLast;
-
+            if (ret <= 0) {
+                // mei you chu li wan
+                ret = 0;
                 return ret;
             }
+
+            if (ret > m_HasReadSize)
+                ret = m_HasReadSize;
+
+            Buffer.BlockCopy (m_ReadBuffer, 0, pBuffer, offset, ret);
+            int uLast = m_HasReadSize - ret;
+
+            Buffer.BlockCopy (m_ReadBuffer, ret, m_ReadBuffer, 0, uLast);
+            m_HasReadSize = uLast;
+
+            return ret;
         }
 
         // private function
@@ -349,16 +354,25 @@ namespace NsTcpClient {
             try {
                 // 读取数据
                 if (m_Socket.Poll(0, SelectMode.SelectRead)) {
-                    lock (m_Mutex) {
-                        int nRet = m_Socket.Receive(m_ReadBuffer, m_HasReadSize, m_ReadBuffer.Length - m_HasReadSize, SocketFlags.None);
-                        if (nRet <= 0) {
-                            CloseSocket();
-                            m_State = eClientState.eClient_STATE_ABORT;
-                        }
-                        else {
-                            m_HasReadSize += nRet;
-                        }
+                    int readSize = m_ReadBuffer.Length - m_HasReadSize;
+                    if (readSize > 0)
+                    {
+                            int nRet = m_Socket.Receive(m_ReadBuffer, m_HasReadSize, m_ReadBuffer.Length - m_HasReadSize, SocketFlags.None);
+                            if (nRet <= 0) {
+                                CloseSocket();
+                                //m_State = eClientState.eClient_STATE_ABORT;
+                                SetClientState(eClientState.eClient_STATE_ABORT);
+                            }
+                            else {
+                                m_HasReadSize += nRet;
+                                // BUFFER的线程方法
+                                if (OnThreadBufferProcess != null)
+                                    OnThreadBufferProcess(this);
+                                else
+                                    m_HasReadSize = 0;
+                            }
                     }
+
                 }
             }
             catch (Exception e) {

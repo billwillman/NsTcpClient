@@ -234,6 +234,7 @@ namespace NsTcpClient
 		{
 			DisConnect ();
 			mTcpClient = new TcpClient ();
+            mTcpClient.OnThreadBufferProcess = OnThreadBufferProcess;
             bool ret = mTcpClient.Connect(ip, port, cSocketConnWaitTime);
 			if (ret) {
 				mConnecting = true;
@@ -249,18 +250,18 @@ namespace NsTcpClient
 		public void DisConnect()
 		{
 			Stop ();
-			OnClearData();
 			if (mTcpClient != null) {
 				mTcpClient.Release ();
 				mTcpClient = null;
 			}
+            OnClearData();
 			mConnecting = false;
 			mAbort = false;
 		}
 		
 		private void OnClearData() {
             ClearAllProcessPackets();
-            m_RecvSize = 0;
+            mRecvSize = 0;
         }
 
 		private void Start()
@@ -329,80 +330,92 @@ namespace NsTcpClient
 				mConnecting = false;
 			}
 
-			if (mTcpClient.HasReadData ()) {
-				int recvsize = mTcpClient.GetReadData(mRecvBuffer, mRecvSize);
-				if (recvsize > 0) {
-					mRecvSize += recvsize;
-					int recvBufSz = mRecvSize;
-					int i = 0;
-					GamePackHeader header = new GamePackHeader();
+            ProcessPackets ();
 
-					int headerSize = Marshal.SizeOf(header);
-					IntPtr headerBuffer = Marshal.AllocHGlobal(headerSize);
-					try {
-						while (recvBufSz - i >= headerSize) {
-							Marshal.Copy(mRecvBuffer, i, headerBuffer, headerSize);
-							header = (GamePackHeader)Marshal.PtrToStructure(headerBuffer, typeof(GamePackHeader));
-#if USE_NETORDER
-							// used Net
-							header.headerCrc32 = (uint)IPAddress.NetworkToHostOrder(header.headerCrc32);
-							header.dataCrc32 = (uint)IPAddress.NetworkToHostOrder(header.dataCrc32);
-							header.header = IPAddress.NetworkToHostOrder(header.header);
-							header.dataSize = IPAddress.NetworkToHostOrder(header.dataSize);
-#endif
-							if ((recvBufSz - i) < (header.dataSize + headerSize))
-								break;
-							GamePacket packet = new GamePacket();
-							packet.header = header;
-							if (packet.header.dataSize <= 0) {
-								packet.header.dataSize = 0;
-								packet.data = null;
-							} else {
-								packet.data = new byte[packet.header.dataSize];
-								Buffer.BlockCopy(mRecvBuffer, i + headerSize, packet.data, 0, packet.header.dataSize);
-							}
-
-							LinkedListNode<GamePacket> node = new LinkedListNode<GamePacket>(packet);
-							mPacketList.AddLast(node);
-
-							i += headerSize + header.dataSize;
-						}
-					} finally {
-						Marshal.FreeHGlobal(headerBuffer);
-					}
-
-					recvBufSz -= i;
-					mRecvSize = recvBufSz;
-					if (recvBufSz > 0)
-						Buffer.BlockCopy(mRecvBuffer, i, mRecvBuffer, 0, recvBufSz);
-
-					ProcessPackets ();
-					return true;
-				}
-			} else {
-				if (!mAbort) {
-					eClientState state = mTcpClient.GetState ();
-					if (state == eClientState.eClient_STATE_ABORT) {
-						mAbort = true;
-						OnClearData();
-						// Call Event Abort
+            if (!mTcpClient.HasReadData ()) {
+                if (!mAbort) {
+                    eClientState state = mTcpClient.GetState ();
+                    if (state == eClientState.eClient_STATE_ABORT) {
+                        mAbort = true;
+                        OnClearData();
+                        // Call Event Abort
                         if (mStateEvents != null)
                         {
                             mStateEvents(state);
                         }
 
-						return false;
-					}
-				}
-			}
-
-			return true;
+                        return false;
+                    }
+                }
+            }
+            return true;
+                   
 		}
+
+        // 子线程调用
+        private void OnThreadBufferProcess(TcpClient tcp)
+        {
+            if (tcp == null)
+                return;
+
+            int recvsize = mTcpClient.GetReadDataNoLock(mRecvBuffer, mRecvSize);
+            if (recvsize > 0) {
+                mRecvSize += recvsize;
+                int recvBufSz = mRecvSize;
+                int i = 0;
+                GamePackHeader header = new GamePackHeader();
+
+                int headerSize = Marshal.SizeOf(header);
+                IntPtr headerBuffer = Marshal.AllocHGlobal(headerSize);
+                try {
+                    while (recvBufSz - i >= headerSize) {
+                        Marshal.Copy(mRecvBuffer, i, headerBuffer, headerSize);
+                        header = (GamePackHeader)Marshal.PtrToStructure(headerBuffer, typeof(GamePackHeader));
+                        #if USE_NETORDER
+                        // used Net
+                        header.headerCrc32 = (uint)IPAddress.NetworkToHostOrder(header.headerCrc32);
+                        header.dataCrc32 = (uint)IPAddress.NetworkToHostOrder(header.dataCrc32);
+                        header.header = IPAddress.NetworkToHostOrder(header.header);
+                        header.dataSize = IPAddress.NetworkToHostOrder(header.dataSize);
+                        #endif
+                        if ((recvBufSz - i) < (header.dataSize + headerSize))
+                            break;
+                        GamePacket packet = new GamePacket();
+                        packet.header = header;
+                        if (packet.header.dataSize <= 0) {
+                            packet.header.dataSize = 0;
+                            packet.data = null;
+                        } else {
+                            packet.data = new byte[packet.header.dataSize];
+                            Buffer.BlockCopy(mRecvBuffer, i + headerSize, packet.data, 0, packet.header.dataSize);
+                        }
+
+                        LinkedListNode<GamePacket> node = new LinkedListNode<GamePacket>(packet);
+                        lock (this)
+                        {
+                            mPacketList.AddLast(node);
+                        }
+
+                        i += headerSize + header.dataSize;
+                    }
+                } finally {
+                    Marshal.FreeHGlobal(headerBuffer);
+                }
+
+                recvBufSz -= i;
+                mRecvSize = recvBufSz;
+                if (recvBufSz > 0)
+                    Buffer.BlockCopy(mRecvBuffer, i, mRecvBuffer, 0, recvBufSz);
+            }
+        }
 
 		private void ClearAllProcessPackets()
 		{
-			if (mPacketList != null)
-				mPacketList.Clear ();
+            if (mPacketList != null) {
+                lock (this) {
+                    mPacketList.Clear();
+                }
+            }
 		}
 
 		private void ProcessPacket(GamePacket packet)
@@ -417,21 +430,19 @@ namespace NsTcpClient
 
 		private void ProcessPackets()
 		{
-			 LinkedListNode<GamePacket> node = m_PacketList.First;
-            while (node != null) {
-
-                GamePacket packet = node.Value;
-             //   LinkedListNode<GamePacket> next = node.Next;
-             //   m_PacketList.Remove(node);
-
-                if (packet != null) {
-                    ProcessPacket(packet);
+            while (true) {
+                LinkedListNode<GamePacket> node;
+                lock (this) {
+                    node = mPacketList.First;
+                    mPacketList.RemoveFirst();
                 }
 
-                node = node.Next;
+                if (node == null)
+                    break;
+                GamePacket packet = node.Value;
+                if (packet != null)
+                    ProcessPacket(packet);
             }
-
-            m_PacketList.Clear();
 		}
 
 		public void AddPacketListener(int header, OnPacketRead callBack)
@@ -450,7 +461,7 @@ namespace NsTcpClient
 			}
 		}
 
-		private ITcpClient mTcpClient = null;
+        private TcpClient mTcpClient = null;
 		private LinkedList<GamePacket> mPacketList = new LinkedList<GamePacket>();
 		private Dictionary<int, OnPacketRead> mPacketListenerMap = new Dictionary<int, OnPacketRead>();
 		private byte[] mRecvBuffer = new byte[TcpClient.MAX_TCP_CLIENT_BUFF_SIZE];
