@@ -332,7 +332,7 @@ namespace NsTcpClient
 
             ProcessPackets ();
 
-            if (!mTcpClient.HasReadData ()) {
+            if (mTcpClient != null && !mTcpClient.HasReadData ()) {
                 if (!mAbort) {
                     eClientState state = mTcpClient.GetState ();
                     if (state == eClientState.eClient_STATE_ABORT) {
