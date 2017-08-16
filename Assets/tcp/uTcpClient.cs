@@ -423,7 +423,12 @@ namespace NsTcpClient
 			OnPacketRead onRead;
 			if (mPacketListenerMap.TryGetValue (packet.header.header, out onRead)) {
 				if (onRead != null) {
-					onRead(packet);
+					try
+					{
+						onRead(packet);
+					} catch
+					{
+					}
 				}
 			}
 		}
