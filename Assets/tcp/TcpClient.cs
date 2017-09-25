@@ -21,12 +21,14 @@ namespace NsTcpClient {
 
         // public function
         public TcpClient() {
-            m_Thread = new Thread(ThreadProc);
+            m_SendThread = new Thread(SendThreadProc);
+            m_RecvThread = new Thread(RecvThreadProc);
             // Thread start run
-			#if !_USE_ABORT
-			LocalThreadState = ThreadState.Running;
-			#endif
-            m_Thread.Start();
+#if !_USE_ABORT
+            LocalThreadState = ThreadState.Running;
+#endif
+            m_SendThread.Start();
+            m_RecvThread.Start();
             //UnityEngine.Debug.LogFormat ("Thread Status: {0:D}", (int)m_ThreadStatus);
         }
 
@@ -47,18 +49,26 @@ namespace NsTcpClient {
             if (!m_IsDispose) {
                 // 优先Abort
 #if _USE_ABORT
-                if (m_Thread != null) {
+                if (m_SendThread != null) {
                     m_Thread.Abort();
-                    m_Thread.Join();
+                    m_SendThread.Join();
+                }
+
+				if (m_RecvThread != null) {
+					m_RecvThread.Abort();
+					m_RecvThread.Join();
                 }
 #else
                 // 模拟abort操作
-                if (m_Thread != null) {
-                    LocalThreadState = ThreadState.AbortRequested;
-                    m_Thread.Join();
+                LocalThreadState = ThreadState.AbortRequested;
+                if (m_SendThread != null) {
+                    m_SendThread.Join();
+                }
+                if (m_RecvThread != null) {
+                    m_RecvThread.Join();
                 }
 
-                #endif
+#endif
 
                 if (m_Waiting != null) {
                     m_Waiting.Set();
@@ -75,7 +85,8 @@ namespace NsTcpClient {
                     m_WaitSendSize = 0;
                     m_HasReadSize = 0;
                     m_Waiting = null;
-                    m_Thread = null;
+                    m_SendThread = null;
+                    m_RecvThread = null;
                     m_Mutex = null;
                     m_SendBuffer = null;
                     m_ReadBuffer = null;
@@ -227,11 +238,11 @@ namespace NsTcpClient {
                 AsyncCallback callBack = new AsyncCallback(OnConnectCallBack);
                 try {
                     m_Socket.BeginConnect(pConnect.szRemoteIp, pConnect.uRemotePort, callBack, m_Socket);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     ProcessException(e, eClientState.eClient_STATE_CONNECT_FAIL);
                     return;
                 }
-
 
                 if (m_Waiting.WaitOne(pConnect.timeOut)) {
                     if (m_Socket.Connected && m_Socket.Poll(0, SelectMode.SelectWrite)) {
@@ -320,8 +331,8 @@ namespace NsTcpClient {
             return false;
         }
 
-        private void DoSend() {
-            if (m_State != eClientState.eClient_STATE_CONNECTED)
+        private void DoSend(eClientState state) {
+            if (state != eClientState.eClient_STATE_CONNECTED)
                 return;
 
             if (m_WaitSendSize > 0) {
@@ -346,8 +357,8 @@ namespace NsTcpClient {
             }
         }
 
-        private void DoRead() {
-            if (m_State != eClientState.eClient_STATE_CONNECTED) {
+        private void DoRead(eClientState state) {
+            if (state != eClientState.eClient_STATE_CONNECTED) {
                 return;
             }
 
@@ -387,7 +398,7 @@ namespace NsTcpClient {
             }
         }
 
-        #if !_USE_ABORT
+#if !_USE_ABORT
         // 用于模拟abort
         private ThreadState LocalThreadState {
             get {
@@ -402,70 +413,122 @@ namespace NsTcpClient {
                 }
             }
         }
-        #endif
+#endif
 
         // 线程是否在运行状态
-        private bool IsThreadRuning {
+        private bool IsSendThreadRuning {
             get {
-                return m_Thread != null && m_Thread.ThreadState == ThreadState.Running 
-                    #if !_USE_ABORT
-                    && LocalThreadState == ThreadState.Running 
-                    #endif
+                return m_SendThread != null && m_SendThread.ThreadState == ThreadState.Running
+#if !_USE_ABORT
+                    && LocalThreadState == ThreadState.Running
+#endif
                     ;
             }
         }
 
-        // Thread Runing
-        private void ThreadProc() {
-            while (IsThreadRuning) {
-                Execute();
+        private bool IsRecvThreadRuning {
+            get {
+                return m_RecvThread != null && m_RecvThread.ThreadState == ThreadState.Running
+#if !_USE_ABORT
+                    && LocalThreadState == ThreadState.Running
+#endif
+                    ;
             }
-
-            #if !_USE_ABORT
-            LocalThreadState = ThreadState.Aborted;
-            #endif
         }
 
-        private void Execute() {
-            // 没有在连接状态
+        private void RecvThreadProc() {
+            while (IsSendThreadRuning) {
+                RecvExecute();
+            }
+        }
+
+        // Thread Runing
+        private void SendThreadProc() {
+            while (IsSendThreadRuning) {
+                SendExecute();
+            }
+        }
+
+        // 接收线程
+        private void RecvExecute() {
             try {
-                if ((m_State != eClientState.eClient_STATE_CONNECTED) && (m_State != eClientState.eClient_STATE_CONNECTING)) {
+                // 可以考虑用ManualResetEvent而不Update
+                // 接收必须是Connected
+                eClientState state = GetState();
+                if ((state != eClientState.eClient_STATE_CONNECTED)) {
                     Thread.Sleep(1);
                     return;
                 }
 
+                DoRead(state);
+
+                Thread.Sleep(1);
+            } catch (ThreadAbortException ex) {
+#if DEBUG
+                // 不做处理
+                Logger.Log(ex.ToString());
+#endif
+            }
+        }
+
+        // 发送线程
+        private void SendExecute() {
+            // 没有在连接状态
+            try {
+                // 可以考虑用ManualResetEvent而不Update
+                eClientState state = GetState();
+                if ((state != eClientState.eClient_STATE_CONNECTED) && (state != eClientState.eClient_STATE_CONNECTING)) {
+                    Thread.Sleep(1);
+                    return;
+                }
+
+                /* 
+                 * 后面可以考虑发送线程和主线程两个队列，直接交换指针
+                 * 性能可以更优化 
+                 */
                 tReqHead pHead = GetFirstReq();
                 if (pHead != null) {
                     if (pHead.uReqType == eReqType.eREQ_TYPE_CONNECT) {
                         HandleConnect(pHead);
                         RemoteFirstReq();
-                    }
-                    else
-                    if (pHead.uReqType == eReqType.eREQ_TYPE_SEND) {
-                        if (HandleSendReq(pHead))
-                            RemoteFirstReq();
+                    } else {
+                        if (pHead.uReqType == eReqType.eREQ_TYPE_SEND) {
+                            while (true) {
+                                // 如果后面还是发送，则一直填充, 填充到不能填充为止
+                                if (HandleSendReq(pHead)) {
+                                    RemoteFirstReq();
+                                    pHead = GetFirstReq();
+                                    if (pHead == null || pHead.uReqType != eReqType.eREQ_TYPE_SEND)
+                                        break;
+                                } else
+                                    break;
+                            }
+                        }
                     }
                 }
 
-                DoSend();
-                DoRead();
+                DoSend(state);
+               // DoRead(state);
 
                 Thread.Sleep(1);
-            } catch (ThreadAbortException ex) {
+            }
+            catch (ThreadAbortException ex) {
+#if DEBUG
                 // 不做处理
+                Logger.Log(ex.ToString());
+#endif
             }
         }
 
         private void CloseSocket() {
             if (m_Socket == null)
                 return;
-			try 
-			{
-				if (m_Socket.Connected)
-					m_Socket.Shutdown(SocketShutdown.Both);
-			} catch
-			{
-			}
+            try {
+                if (m_Socket.Connected)
+                    m_Socket.Shutdown(SocketShutdown.Both);
+            }
+            catch {
+            }
             m_Socket.Close();
             m_Socket = null;
         }
@@ -477,7 +540,8 @@ namespace NsTcpClient {
         private int m_WaitSendSize = 0;
         private int m_HasReadSize = 0;
         private ManualResetEvent m_Waiting = new ManualResetEvent(false);
-        private Thread m_Thread = null;
+        private Thread m_SendThread = null;
+        private Thread m_RecvThread = null;
         // 线程状态
         private ThreadState m_ThreadStatus = ThreadState.Unstarted;
 
