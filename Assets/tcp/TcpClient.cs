@@ -466,7 +466,7 @@ namespace NsTcpClient {
             } catch (ThreadAbortException ex) {
 #if DEBUG
                 // 不做处理
-                Logger.Log(ex.ToString());
+                UnityEngine.Debug.LogError(ex.ToString());
 #endif
             }
         }
@@ -515,7 +515,7 @@ namespace NsTcpClient {
             catch (ThreadAbortException ex) {
 #if DEBUG
                 // 不做处理
-                Logger.Log(ex.ToString());
+                UnityEngine.Debug.LogError(ex.ToString());
 #endif
             }
         }
