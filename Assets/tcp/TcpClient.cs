@@ -493,15 +493,8 @@ namespace NsTcpClient {
                         RemoteFirstReq();
                     } else {
                         if (pHead.uReqType == eReqType.eREQ_TYPE_SEND) {
-                            while (true) {
-                                // 如果后面还是发送，则一直填充, 填充到不能填充为止
-                                if (HandleSendReq(pHead)) {
-                                    RemoteFirstReq();
-                                    pHead = GetFirstReq();
-                                    if (pHead == null || pHead.uReqType != eReqType.eREQ_TYPE_SEND)
-                                        break;
-                                } else
-                                    break;
+                            if (HandleSendReq(pHead)) {
+                                RemoteFirstReq();
                             }
                         }
                     }

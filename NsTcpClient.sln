@@ -1,7 +1,7 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2008
-
-Project("{3217C2E4-C4D6-2F9E-F36A-3E6EF3E95E93}") = "NsTcpClient", "Assembly-CSharp.csproj", "{4531FF75-39BD-70EF-6ADB-1FA61C61A0AA}"
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NsTcpClient", "Assembly-CSharp.csproj", "{4531FF75-39BD-70EF-6ADB-1FA61C61A0AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
