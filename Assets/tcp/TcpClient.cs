@@ -437,7 +437,7 @@ namespace NsTcpClient {
         }
 
         private void RecvThreadProc() {
-            while (IsSendThreadRuning) {
+            while (IsRecvThreadRuning) {
                 RecvExecute();
             }
         }
