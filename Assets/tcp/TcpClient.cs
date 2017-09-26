@@ -21,14 +21,12 @@ namespace NsTcpClient {
 
         // public function
         public TcpClient() {
-            m_SendThread = new Thread(SendThreadProc);
-            m_RecvThread = new Thread(RecvThreadProc);
+            m_Thread = new Thread(ThreadProc);
             // Thread start run
 #if !_USE_ABORT
             LocalThreadState = ThreadState.Running;
 #endif
-            m_SendThread.Start();
-            m_RecvThread.Start();
+            m_Thread.Start();
             //UnityEngine.Debug.LogFormat ("Thread Status: {0:D}", (int)m_ThreadStatus);
         }
 
@@ -49,23 +47,15 @@ namespace NsTcpClient {
             if (!m_IsDispose) {
                 // 优先Abort
 #if _USE_ABORT
-                if (m_SendThread != null) {
+                if (m_Thread != null) {
                     m_Thread.Abort();
-                    m_SendThread.Join();
-                }
-
-				if (m_RecvThread != null) {
-					m_RecvThread.Abort();
-					m_RecvThread.Join();
+                    m_Thread.Join();
                 }
 #else
                 // 模拟abort操作
                 LocalThreadState = ThreadState.AbortRequested;
-                if (m_SendThread != null) {
-                    m_SendThread.Join();
-                }
-                if (m_RecvThread != null) {
-                    m_RecvThread.Join();
+                if (m_Thread != null) {
+                    m_Thread.Join();
                 }
 
 #endif
@@ -85,8 +75,7 @@ namespace NsTcpClient {
                     m_WaitSendSize = 0;
                     m_HasReadSize = 0;
                     m_Waiting = null;
-                    m_SendThread = null;
-                    m_RecvThread = null;
+                    m_Thread = null;
                     m_Mutex = null;
                     m_SendBuffer = null;
                     m_ReadBuffer = null;
@@ -416,63 +405,27 @@ namespace NsTcpClient {
 #endif
 
         // 线程是否在运行状态
-        private bool IsSendThreadRuning {
+        private bool IsThreadRuning {
             get {
-                return m_SendThread != null && m_SendThread.ThreadState == ThreadState.Running
+                return m_Thread != null && m_Thread.ThreadState == ThreadState.Running
 #if !_USE_ABORT
                     && LocalThreadState == ThreadState.Running
 #endif
                     ;
-            }
-        }
-
-        private bool IsRecvThreadRuning {
-            get {
-                return m_RecvThread != null && m_RecvThread.ThreadState == ThreadState.Running
-#if !_USE_ABORT
-                    && LocalThreadState == ThreadState.Running
-#endif
-                    ;
-            }
-        }
-
-        private void RecvThreadProc() {
-            while (IsRecvThreadRuning) {
-                RecvExecute();
             }
         }
 
         // Thread Runing
-        private void SendThreadProc() {
-            while (IsSendThreadRuning) {
-                SendExecute();
+        private void ThreadProc() {
+            while (IsThreadRuning) {
+                Execute();
             }
-        }
-
-        // 接收线程
-        private void RecvExecute() {
-            try {
-                // 可以考虑用ManualResetEvent而不Update
-                // 接收必须是Connected
-                eClientState state = GetState();
-                if ((state != eClientState.eClient_STATE_CONNECTED)) {
-                    Thread.Sleep(1);
-                    return;
-                }
-
-                DoRead(state);
-
-                Thread.Sleep(1);
-            } catch (ThreadAbortException ex) {
-#if DEBUG
-                // 不做处理
-                UnityEngine.Debug.LogError(ex.ToString());
+#if !_USE_ABORT
+            LocalThreadState = ThreadState.Aborted;
 #endif
-            }
         }
 
-        // 发送线程
-        private void SendExecute() {
+        private void Execute() {
             // 没有在连接状态
             try {
                 // 可以考虑用ManualResetEvent而不Update
@@ -501,7 +454,7 @@ namespace NsTcpClient {
                 }
 
                 DoSend(state);
-               // DoRead(state);
+                DoRead(state);
 
                 Thread.Sleep(1);
             }
@@ -533,8 +486,7 @@ namespace NsTcpClient {
         private int m_WaitSendSize = 0;
         private int m_HasReadSize = 0;
         private ManualResetEvent m_Waiting = new ManualResetEvent(false);
-        private Thread m_SendThread = null;
-        private Thread m_RecvThread = null;
+        private Thread m_Thread = null;
         // 线程状态
         private ThreadState m_ThreadStatus = ThreadState.Unstarted;
 
