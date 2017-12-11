@@ -21,6 +21,12 @@ namespace NsTcpClient
 		public uint dataCrc32;
 		public int header;
 	}
+	
+	public enum GamePacketStatus {
+        GPNone = 0,
+        GPProcessing,
+        GPDone
+    }
 
 	// 1. data is ProtoBuf
 	// 2. data is json
@@ -42,6 +48,20 @@ namespace NsTcpClient
 				return "";
 			return data.ToString ();
 		}
+		
+		 // 是否正在处理
+        public GamePacketStatus status {
+            get;
+            private set;
+        }
+
+        public void DoDone() {
+            status = GamePacketStatus.GPDone;
+        }
+
+        public void DoProcessing() {
+            status = GamePacketStatus.GPProcessing;
+        }
 
 #if USE_PROTOBUF_NET
 		// Data为ProtoBuf，转成对象
@@ -420,6 +440,7 @@ namespace NsTcpClient
 
 		private void ProcessPacket(GamePacket packet)
 		{
+			packet.DoDone();
 			OnPacketRead onRead;
 			if (mPacketListenerMap.TryGetValue (packet.header.header, out onRead)) {
 				if (onRead != null) {
@@ -445,8 +466,22 @@ namespace NsTcpClient
                 if (node == null)
                     break;
                 GamePacket packet = node.Value;
-                if (packet != null)
-                    ProcessPacket(packet);
+                if (packet != null) {
+                    if (packet.status == GamePacketStatus.GPNone) {
+                        ProcessPacket(packet);
+                        // 如果为标记为正在处理
+                        if (packet.status == GamePacketStatus.GPProcessing) {
+                            lock (this) {
+                                mPacketList.AddFirst(node);
+                            }
+                        }
+                    } else if (packet.status == GamePacketStatus.GPProcessing) {
+                        lock (this) {
+                            mPacketList.AddFirst(node);
+                        }
+                        break;
+                    }
+                }
             }
 		}
 
