@@ -131,14 +131,14 @@ public class GamePacketMonitor {
                 case WATCHER_ACTION_KICK:
                     ret = true;
 #if DEBUG
-                    UnityEngine.Debug.LogErrorFormat("【Discard】Protocal check hits the policy, opcode = {0}", rule.ToString());
+                    UnityEngine.Debug.LogErrorFormat("【Discard】Protocal check hits the policy, opcode = {0}", op.ToString());
                     DebugStackTrackInfo();
 #endif
                     break;
                 case WATCHER_ACTION_DISCARD:
                     ret = true;
 #if DEBUG
-                    UnityEngine.Debug.LogErrorFormat("【Kick】Protocal check hits the policy, opcode = {0}", rule.ToString());
+                    UnityEngine.Debug.LogErrorFormat("【Kick】Protocal check hits the policy, opcode = {0}", op.ToString());
                     DebugStackTrackInfo();
 #endif
                     break;
