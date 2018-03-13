@@ -49,7 +49,7 @@ public class GamePacketMonitor {
             get;
             set;
         }
-        public long endStamp {
+        public ulong endStamp {
             get;
             set;
         }
@@ -69,7 +69,7 @@ public class GamePacketMonitor {
     public class PacketMonitor {
         private Dictionary<uint, PacketCounter> m_CounterMap = new Dictionary<uint, PacketCounter>();
 
-        private long CheckAction(uint op, long now) {
+        private long CheckAction(uint op, ulong now) {
 #if _GAMEPACKET_MONITOR
             var watcher = WatcherBaseManager.GetInstance().GetWatcherBase(op);
             if (watcher == null)
@@ -86,7 +86,7 @@ public class GamePacketMonitor {
                 m_CounterMap[op] = counter;
             }
             if (now >= counter.endStamp) {
-                counter.endStamp = now + (long)watcher.itvl;
+                counter.endStamp = now + (ulong)watcher.itvl;
                 counter.times = 0;
             }
 
@@ -125,7 +125,7 @@ public class GamePacketMonitor {
             bool ret = false;
 #if _GAMEPACKET_MONITOR
             //System.DateTime.Now.Ticks;
-            long now = System.Environment.TickCount;
+            ulong now = (ulong)System.Environment.TickCount;
             long rule = CheckAction(op, now);
             switch (rule) {
                 case WATCHER_ACTION_KICK:
