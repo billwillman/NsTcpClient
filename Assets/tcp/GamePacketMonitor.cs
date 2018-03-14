@@ -68,6 +68,11 @@ public class GamePacketMonitor {
 
     public class PacketMonitor {
         private Dictionary<uint, PacketCounter> m_CounterMap = new Dictionary<uint, PacketCounter>();
+        private ulong m_StartTickCount;
+
+        public PacketMonitor() {
+            m_StartTickCount = (ulong)System.Environment.TickCount;
+        }
 
         private long CheckAction(uint op, ulong now) {
 #if _GAMEPACKET_MONITOR
@@ -86,6 +91,14 @@ public class GamePacketMonitor {
                 m_CounterMap[op] = counter;
             }
             if (now >= counter.endStamp) {
+                counter.endStamp = now + (ulong)watcher.itvl;
+                counter.times = 0;
+            }
+
+            // 产生轮寻了
+            if (m_StartTickCount > now) {
+                m_StartTickCount = now;
+                // 产生轮寻的时候，就重新置一下
                 counter.endStamp = now + (ulong)watcher.itvl;
                 counter.times = 0;
             }
