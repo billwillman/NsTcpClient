@@ -474,6 +474,7 @@ namespace NsTcpClient
                             lock (this) {
                                 mPacketList.AddFirst(node);
                             }
+							break;
                         }
                     } else if (packet.status == GamePacketStatus.GPProcessing) {
                         lock (this) {
