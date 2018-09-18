@@ -31,12 +31,12 @@ namespace NsTcpClient
 	internal class tReqSend: tReqHead
 	{
 		public byte[] pSendData;
-		public tReqSend(byte[] pData)
+		public tReqSend(byte[] pData, int bufSize)
 		{
 			uReqType = eReqType.eREQ_TYPE_SEND;
-			if ((pData != null) && (pData.Length > 0)) {
-				pSendData = new byte[pData.Length];
-				Buffer.BlockCopy(pData, 0, pSendData, 0, pData.Length);
+			if ((pData != null) && (bufSize > 0)) {
+				pSendData = new byte[bufSize];
+				Buffer.BlockCopy(pData, 0, pSendData, 0, bufSize);
 			} else {
 				pSendData = null;
 			}

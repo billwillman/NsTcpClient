@@ -103,7 +103,7 @@ namespace NsTcpClient {
             }
         }
 
-        public bool Send(byte[] pData) {
+        public bool Send(byte[] pData, int bufSize = -1) {
             if ((pData == null) || (pData.Length <= 0))
                 return false;
 
@@ -111,7 +111,9 @@ namespace NsTcpClient {
             if (state != eClientState.eClient_STATE_CONNECTED)
                 return false;
 
-            AddSendReq(pData);
+            if (bufSize < 0)
+                bufSize = pData.Length;
+            AddSendReq(pData, bufSize);
             return true;
         }
 
@@ -172,8 +174,8 @@ namespace NsTcpClient {
             }
         }
 
-        private void AddSendReq(byte[] pData) {
-            tReqSend pReq = new tReqSend(pData);
+        private void AddSendReq(byte[] pData, int bufSize) {
+            tReqSend pReq = new tReqSend(pData, bufSize);
             lock (m_Mutex) {
                 LinkedListNode<tReqHead> node = new LinkedListNode<tReqHead>(pReq);
                 m_QueueReq.AddLast(node);

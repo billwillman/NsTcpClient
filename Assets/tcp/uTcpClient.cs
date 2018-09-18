@@ -284,7 +284,7 @@ namespace NsTcpClient
 #endif
                 if (hasBufData)
                     Buffer.BlockCopy(buf, 0, dstBuffer, headerSize, bufSize);
-                mTcpClient.Send(dstBuffer);
+                mTcpClient.Send(dstBuffer, dstSize);
             } finally {
                 if (dstStream != null) {
                     dstStream.Dispose();
