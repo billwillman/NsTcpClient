@@ -65,10 +65,14 @@ namespace NsTcpClient
 
 #if USE_PROTOBUF_NET
 		// Data为ProtoBuf，转成对象
-		public T ProtoBufToObject<T> () where T: class
+        public T ProtoBufToObject<T>() where T : class, Google.Protobuf.IMessage<T>
 		{
+            
+            
 			if (data == null)
 				return null;
+            // 老版本ProtoBuf 2.0
+            /*
 			System.IO.MemoryStream stream = new System.IO.MemoryStream ();
 			stream.Write (data, 0, data.Length);
 			stream.Seek (0, System.IO.SeekOrigin.Begin);
@@ -78,6 +82,12 @@ namespace NsTcpClient
 			stream.Dispose ();
 
 			return ret;
+            */
+            // 更新为3.0 ProtoBuf
+
+            // 统一接口
+            T ret = ProtoMessageMgr.GetInstance().Parser<T>(data) as T;
+            return ret;
 		}
 #endif
 	}
@@ -163,17 +173,25 @@ namespace NsTcpClient
 
 #if USE_PROTOBUF_NET
 		// 发送ProtoBuf T来自ProtoBuf类申明
-		public void SendProtoBuf<T>(T data, int packetHandle) where T: class
+		public void SendProtoBuf<T>(T data, int packetHandle) where T: class, Google.Protobuf.IMessage<T>
 		{
 			if (data == null) {
 				return;
 			}
+
+            // ProtoBuf 2.0接口
+            /*
 			System.IO.MemoryStream stream = new System.IO.MemoryStream ();
 			ProtoBuf.Serializer.Serialize<T> (stream, data);
 			byte[] buf = stream.ToArray ();
 			stream.Close ();
 			stream.Dispose ();
 			Send (buf, packetHandle);
+            */
+
+            // protobuf 3.0接口
+            byte[] buf = ProtoMessageMgr.GetInstance().ToBuffer<T>(data);
+            Send(buf, packetHandle);
 		}
 #endif
 
