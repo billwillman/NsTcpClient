@@ -63,6 +63,7 @@
     <Compile Include="Assets\tcp\Crc.cs" />
     <Compile Include="Assets\tcp\GamePacketMonitor.cs" />
     <Compile Include="Assets\tcp\ITcpClient.cs" />
+    <Compile Include="Assets\tcp\NetByteArrayPool.cs" />
     <Compile Include="Assets\tcp\NetManager.cs" />
     <Compile Include="Assets\tcp\Req.cs" />
     <Compile Include="Assets\tcp\TcpClient.cs" />
@@ -71,6 +72,9 @@
     <Compile Include="Assets\Test.cs" />
     <Compile Include="Assets\Utils\DisposeObject.cs" />
     <Compile Include="Assets\Utils\ObjectPool.cs" />
+    <Compile Include="Assets\Utils\RecyclableMemory\Events.cs" />
+    <Compile Include="Assets\Utils\RecyclableMemory\RecyclableMemoryStream.cs" />
+    <Compile Include="Assets\Utils\RecyclableMemory\RecyclableMemoryStreamManager.cs" />
     <Compile Include="Assets\Utils\Singleton.cs" />
     <Compile Include="Assets\Utils\TimerMgr.cs" />
     <Reference Include="UnityEditor.StandardEvents">

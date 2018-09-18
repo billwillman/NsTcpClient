@@ -1,4 +1,4 @@
-﻿#define USE_NETORDER
+﻿//#define USE_NETORDER
 #define USE_PROTOBUF_NET
 
 using System;
@@ -190,13 +190,33 @@ namespace NsTcpClient
             */
 
             // protobuf 3.0接口
-            byte[] buf = ProtoMessageMgr.GetInstance().ToBuffer<T>(data);
-            Send(buf, packetHandle);
+            //  byte[] buf = ProtoMessageMgr.GetInstance().ToBuffer<T>(data);
+
+            // 优化后版本使用byte[]池
+            int outSize;
+            var stream = ProtoMessageMgr.GetInstance().ToStream<T>(data, out outSize);
+            if (stream == null)
+                return;
+            if (outSize <= 0) {
+                stream.Dispose();
+                stream = null;
+                return;
+            }
+
+            try {
+                var buf = stream.GetBuffer();
+                Send(buf, packetHandle, outSize);
+            }finally {
+                if (stream != null) {
+                    stream.Dispose();
+                    stream = null;
+                }
+            }
 		}
 #endif
 
 		// 支持发送buf为null
-		public void Send (byte[] buf, int packetHandle)
+		public void Send (byte[] buf, int packetHandle, int bufSize = -1)
 		{
 			if (mConnecting || (mTcpClient == null))
 				return;
@@ -204,12 +224,16 @@ namespace NsTcpClient
 			if (mTcpClient.GetState () != eClientState.eClient_STATE_CONNECTED)
 				return;
 
-			bool hasBufData = (buf != null) && (buf.Length > 0);
+            if (bufSize < 0)
+                bufSize = buf.Length;
+
+
+            bool hasBufData = (buf != null) && (bufSize > 0);
 
 			GamePackHeader header = new GamePackHeader ();
 
 			if (hasBufData)
-				header.dataSize = buf.Length;
+				header.dataSize = bufSize;
 			else
 				header.dataSize = 0;
 			
@@ -225,14 +249,20 @@ namespace NsTcpClient
 			int headerSize = Marshal.SizeOf (header);
 			int dstSize = headerSize;
 			if (hasBufData)
-				dstSize += buf.Length;
-			byte[] dstBuffer = new byte[dstSize];
+				dstSize += bufSize;
 
-            // 此处可优化，可以考虑后续使用RINGBUF优化，RINGBUF用完可以自动关闭掉连接
-			IntPtr pStruct = Marshal.AllocHGlobal (headerSize);
-			try {
-				Marshal.StructureToPtr(header, pStruct, false);
-				Marshal.Copy(pStruct, dstBuffer, 0, headerSize);
+            // 下面注释是未优化代码
+            //byte[] dstBuffer = new byte[dstSize];
+            // 此处已优化
+            var dstStream = NetByteArrayPool.GetBuffer(dstSize);
+            try {
+                byte[] dstBuffer = dstStream.GetBuffer();
+
+                // 此处可优化，可以考虑后续使用RINGBUF优化，RINGBUF用完可以自动关闭掉连接
+                IntPtr pStruct = Marshal.AllocHGlobal(headerSize);
+                try {
+                    Marshal.StructureToPtr(header, pStruct, false);
+                    Marshal.Copy(pStruct, dstBuffer, 0, headerSize);
 
 #if USE_NETORDER
 				// Calc header Crc
@@ -247,18 +277,24 @@ namespace NsTcpClient
 				Marshal.StructureToPtr(header, pStruct, false);
 				Marshal.Copy(pStruct, dstBuffer, 0, headerSize);
 #endif
-			} finally {
-				Marshal.FreeHGlobal (pStruct);
-			}
+                } finally {
+                    Marshal.FreeHGlobal(pStruct);
+                }
 
 #if USE_NETORDER
 #else
-			// Calc header Crc
-			CalcHeaderCrc (ref header, dstBuffer);
+                // Calc header Crc
+                CalcHeaderCrc(ref header, dstBuffer);
 #endif
-			if (hasBufData)
-				Buffer.BlockCopy (buf, 0, dstBuffer, headerSize, buf.Length);
-			mTcpClient.Send (dstBuffer);
+                if (hasBufData)
+                    Buffer.BlockCopy(buf, 0, dstBuffer, headerSize, bufSize);
+                mTcpClient.Send(dstBuffer);
+            } finally {
+                if (dstStream != null) {
+                    dstStream.Dispose();
+                    dstStream = null;
+                }
+            }
 		}
 
 		public void SendString(string str, int packetHandle)
