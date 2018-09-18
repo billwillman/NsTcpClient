@@ -237,7 +237,7 @@ namespace NsTcpClient
 
 			if (hasBufData)
 			{
-				mCrc.Crc (buf);
+				mCrc.Crc (buf, bufSize);
 				header.dataCrc32 = (uint)mCrc.Value;
 			} else
 				header.dataCrc32 = 0;

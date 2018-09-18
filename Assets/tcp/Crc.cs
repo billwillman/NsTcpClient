@@ -14,7 +14,7 @@ namespace NsTcpClient {
 		
 		void Crc(int bval); 
 		
-		void Crc(byte[] buffer); 
+		void Crc(byte[] buffer, int bufSize); 
 		
 		void Crc(byte[] buf, int off, int len); 
 		
@@ -100,10 +100,9 @@ namespace NsTcpClient {
 		/// 8 位 CRC 校验 产生校验码 只要被校验的字节数组 
 		/// </summary> 
 		/// <param name="buffer"></param> 
-		public void Crc(byte[] buffer) 
+		public void Crc(byte[] buffer, int bufSize) 
 		{ 
-			
-			Crc(buffer,0,buffer.Length); 
+			Crc(buffer,0, bufSize); 
 		} 
 		
 		/// <summary> 
@@ -183,10 +182,10 @@ namespace NsTcpClient {
 		/// </summary> 
 		/// <param name="ucrc"></param> 
 		/// <param name="buf"></param> 
-		public void Crc(ushort ucrc,byte[] buf) 
+		public void Crc(ushort ucrc,byte[] buf, int bufSize) 
 		{ 
 			crc = ucrc; 
-			Crc(buf); 
+			Crc(buf, bufSize); 
 		} 
 		
 		/// <summary> 
@@ -208,9 +207,9 @@ namespace NsTcpClient {
 		/// Crc16 
 		/// </summary> 
 		/// <param name="buffer"></param> 
-		public void Crc(byte[] buffer) 
+		public void Crc(byte[] buffer, int bufSize) 
 		{ 
-			Crc(buffer,0,buffer.Length); 
+			Crc(buffer,0,bufSize); 
 		} 
 		
 		/// <summary> 
@@ -328,9 +327,9 @@ namespace NsTcpClient {
 			crc ^= CrcSeed; 
 		} 
 		
-		public void Crc(byte[] buffer) 
+		public void Crc(byte[] buffer, int bufSize) 
 		{ 
-			Crc(buffer, 0, buffer.Length); 
+			Crc(buffer, 0, bufSize); 
 		} 
 		
 		public void Crc(byte[] buf, int off, int len) 
