@@ -228,6 +228,7 @@ namespace NsTcpClient
 				dstSize += buf.Length;
 			byte[] dstBuffer = new byte[dstSize];
 
+            // 此处可优化，可以考虑后续使用RINGBUF优化，RINGBUF用完可以自动关闭掉连接
 			IntPtr pStruct = Marshal.AllocHGlobal (headerSize);
 			try {
 				Marshal.StructureToPtr(header, pStruct, false);
