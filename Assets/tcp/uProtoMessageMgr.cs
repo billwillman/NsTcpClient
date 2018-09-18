@@ -1,4 +1,4 @@
-﻿//#define USE_PROTOBUF_NET
+﻿#define USE_PROTOBUF_NET
 
 using System;
 using System.Collections.Generic;
