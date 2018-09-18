@@ -197,13 +197,9 @@ namespace NsTcpClient
             var stream = ProtoMessageMgr.GetInstance().ToStream<T>(data, out outSize);
             if (stream == null)
                 return;
-            if (outSize <= 0) {
-                stream.Dispose();
-                stream = null;
-                return;
-            }
-
             try {
+                if (outSize <= 0)
+                    return;
                 var buf = stream.GetBuffer();
                 Send(buf, packetHandle, outSize);
             }finally {
