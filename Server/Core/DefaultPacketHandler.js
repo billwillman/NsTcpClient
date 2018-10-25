@@ -1,5 +1,6 @@
 
 var AbstractPacketHandler = require("./AbstractPacketHandler")
+//var GamePacketHander = require("./GamePacketHander");
 var GamePacketHander = require("./GamePacketHander");
 
 function DefaultPacketHandler()
@@ -25,7 +26,7 @@ DefaultPacketHandler.prototype.OnPacketRead =
             var recvBufSz = this.m_RecvSize;
             var i = 0;
             var header = new GamePacketHander(data);
-            var headerSize = GamePacketHander.GetSize();
+            var headerSize = GamePacketHander.Size;
             while (recvBufSz - i >= headerSize)
             {
                 if (recvBufSz - i < header.dataSize + headerSize)

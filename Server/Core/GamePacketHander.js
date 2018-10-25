@@ -3,7 +3,7 @@ function GamePacketHander(buf)
 {
     if (buf == null || !Buffer.isBuffer(buf))
         return;
-    var mustSize = GamePacketHander.GetSize();
+    var mustSize = GamePacketHander.Size;
     var len = buf.length - buf.byteOffset;
     if (len < mustSize)
         return;
@@ -13,13 +13,9 @@ function GamePacketHander(buf)
     this.header = buf.readInt32LE(3);
 }
 
-GamePacketHeader.GetSize =
-    function ()
-    {
-        return 16;
-    }
-
 GamePacketHander.prototype.constructor = GamePacketHander;
+
+GamePacketHander.Size = 16;
 
 
 module.exports = GamePacketHander
