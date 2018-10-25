@@ -17,8 +17,7 @@ public class Test : MonoBehaviour {
 
 			NetManager.Instance.OnConnectResult = OnSocketConnect;
 			NetManager.Instance.Disconnect();
-			NetManager.Instance.ConnectServer("www.baidu.com", 80);
-			NetManager.Instance.SendStr("你好，百度", 1);
+			NetManager.Instance.ConnectServer("127.0.0.1", 1024);
 		}
 	}
 

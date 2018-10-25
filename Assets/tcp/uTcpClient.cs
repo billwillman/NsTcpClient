@@ -511,7 +511,8 @@ namespace NsTcpClient
                 LinkedListNode<GamePacket> node;
                 lock (this) {
                     node = mPacketList.First;
-                    mPacketList.RemoveFirst();
+                    if (node != null)
+                        mPacketList.RemoveFirst();
                 }
 
                 if (node == null)
