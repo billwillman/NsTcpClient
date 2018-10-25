@@ -1,12 +1,11 @@
-var TcpServer = require("./Core/TcpServer");
+var NetManager = require("./Core/NetManager");
 
 function Main() {
-    var server = new TcpServer(1024);
-    if (server != null)
-    {
-        // 开始侦听
-        server.Accept();
-    }
+
+    var inst =  NetManager.GetInstance();
+    if (inst == null)
+        return;
+    inst.Listen(1024);
 }
 
 // 主循环
