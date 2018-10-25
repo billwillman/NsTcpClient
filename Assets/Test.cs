@@ -9,6 +9,11 @@ public class Test : MonoBehaviour {
 		Debug.LogFormat("连接状态：{0}", isConnect.ToString());
 	}
 
+    void OnSocketAbort()
+    {
+        Debug.Log("服务器断开连接");
+    }
+
 	void OnGUI()
 	{
 		if (GUI.Button(new Rect(100, 100, 100, 50), "测试网路"))
@@ -16,6 +21,7 @@ public class Test : MonoBehaviour {
 			Debug.Log("Button Click!!!");
 
 			NetManager.Instance.OnConnectResult = OnSocketConnect;
+            NetManager.Instance.OnSocketAbort = OnSocketAbort;
 			NetManager.Instance.Disconnect();
 			NetManager.Instance.ConnectServer("127.0.0.1", 1024);
 		}
