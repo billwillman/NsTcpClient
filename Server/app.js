@@ -1,5 +1,5 @@
 var NetManager = require("./Core/NetManager");
-var DefaultPacketHandler = require("./DefaultPacketHandler");
+var DefaultPacketHandler = require("./Core/DefaultPacketHandler");
 
 function Main() {
 
