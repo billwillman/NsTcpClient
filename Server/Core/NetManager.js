@@ -1,9 +1,11 @@
 var TcpServer = require ("./TcpServer");
 var UserSession = require("./UserSession");
+var AbstractPacketHandler = require ("./AbstractPacketHandler");
 
 function NetManager() {
     this.m_TcpServer = null;
     this.m_SessionMap = null;
+    this.m_PacketHandler = null;
 }
 
 NetManager.prototype.constructor = NetManager;
@@ -45,6 +47,11 @@ NetManager.prototype.Close =
         this.m_SessionMap = null;
     }
 
+NetManager.prototype.SetPacketHandler =
+    function (handle) {
+        this.m_PacketHandler = handle;
+    }
+
 NetManager.prototype._RemoveSession =
     function(clientSocket)
     {
@@ -60,6 +67,27 @@ NetManager.prototype._RemoveSession =
             }
         }
     }
+
+NetManager.prototype._GetPacketHandler =
+    function ()
+    {
+        if (this.m_PacketHandler == null)
+            this.m_PacketHandler = new AbstractPacketHandler();
+        return this.m_PacketHandler;
+    }
+
+NetManager.prototype.SendStr =
+    function (str)
+    {
+        if (str == null)
+            return false;
+        var handle = this._GetPacketHandler();
+        var buffer = Buffer.from(str, "utf8");
+        handle.SendBuffer(buffer);
+
+        return true;
+    }
+
 
 NetManager.prototype.OnClientConnected =
     function (clientSocket)

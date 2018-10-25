@@ -102,7 +102,6 @@ TcpServer.prototype._OnPacketRead = function (data)
 {
     if (this.m_OnPacketRead != null)
         this.m_OnPacketRead(data);
-    console.log("_OnPacketRead");
 }
 
 TcpServer.prototype._OnClose = function ()
