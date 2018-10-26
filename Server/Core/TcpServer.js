@@ -74,7 +74,7 @@ TcpServer.prototype._OnConnected = function (socket)
 {
     if (socket != null)
     {
-        socket.setNoDelay(true);
+        //socket.setNoDelay(true);
         if (this.m_OnConnectedEvent != null)
             this.m_OnConnectedEvent(socket);
     }
