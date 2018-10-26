@@ -6,6 +6,7 @@ function NetManager() {
     this.m_TcpServer = null;
     this.m_SessionMap = null;
     this.m_PacketHandler = null;
+    this.m_OnPacketRead = null;
 }
 
 NetManager.prototype.constructor = NetManager;
@@ -19,6 +20,22 @@ NetManager.GetInstance =
             NetManager.m_Instance = new NetManager();
         }
         return NetManager.m_Instance;
+    }
+
+NetManager.prototype.SendPacketRead =
+    function (packet)
+    {
+        if (packet == null)
+            return;
+        if (this.m_OnPacketRead == null)
+            return;
+        this.m_OnPacketRead(packet);
+    }
+
+NetManager.prototype.SetPacketReadEvent =
+    function (evt)
+    {
+        this.m_OnPacketRead = evt;
     }
 
 NetManager.prototype.Listen =

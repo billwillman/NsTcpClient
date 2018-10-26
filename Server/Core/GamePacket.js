@@ -1,11 +1,9 @@
 var GamePacketHeader = require("./GamePacketHander")
 
-function GamePacket(buf)
+function GamePacket(header, data)
 {
-    if (buf == null || !Buffer.isBuffer(buf))
-        return;
-    this.header = new GamePacketHeader(buf);
-    this.data = Buffer.from(buf, GamePacketHeader.GetSize());
+    this.header = header;
+    this.data = data;
 }
 
 GamePacket.prototype.constructor = GamePacket;
