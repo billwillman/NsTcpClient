@@ -10,7 +10,6 @@ function NetManager() {
 }
 
 NetManager.prototype.constructor = NetManager;
-NetManager.prototype.m_Instance = null;
 
 NetManager.GetInstance =
     function()
