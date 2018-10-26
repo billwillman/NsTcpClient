@@ -47,6 +47,7 @@ NetManager.prototype.Listen =
         this.m_TcpServer = new TcpServer(bindPort);
 
         this.m_TcpServer.SetConnectEvent(this.OnClientConnected);
+        this.m_TcpServer.SetPacketReadEvent(this._OnPacketRead);
 
         return this.m_TcpServer.Accept();
     }
@@ -82,6 +83,15 @@ NetManager.prototype._RemoveSession =
                 this.m_SessionMap[clientSocket] = null;
             }
         }
+    }
+
+NetManager.prototype._OnPacketRead =
+    function (data)
+    {
+        if (data == null)
+            return;
+        if (this.m_PacketHandler != null)
+            this.m_PacketHandler.OnPacketRead(data);
     }
 
 NetManager.prototype._GetPacketHandler =
