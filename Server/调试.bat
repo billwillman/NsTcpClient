@@ -1,0 +1,1 @@
+npm install -g node-inspector
