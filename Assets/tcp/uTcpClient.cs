@@ -162,14 +162,15 @@ namespace NsTcpClient
 			return mTcpClient.GetState ();
 		}
 
+        /*
 		private void CalcHeaderCrc(ref GamePackHeader header, byte[] dst) {
 			int headerCrcSize = Marshal.SizeOf (header.headerCrc32);
 			int sz = Marshal.SizeOf (header) - headerCrcSize;
 			mCrc.Crc (dst, headerCrcSize, sz);
 			header.headerCrc32 = (uint)mCrc.Value;
 			byte[] crc = BitConverter.GetBytes (header.headerCrc32);
-			Buffer.BlockCopy (crc, 0, dst, 0, crc.Length);
-		}
+			Buffer.BlockCopy (crc, 0, dst, 4, crc.Length);
+		}*/
 
 #if USE_PROTOBUF_NET
 		// 发送ProtoBuf T来自ProtoBuf类申明
@@ -280,7 +281,7 @@ namespace NsTcpClient
 #if USE_NETORDER
 #else
                 // Calc header Crc
-                CalcHeaderCrc(ref header, dstBuffer);
+              //  CalcHeaderCrc(ref header, dstBuffer);
 #endif
                 if (hasBufData)
                     Buffer.BlockCopy(buf, 0, dstBuffer, headerSize, bufSize);
