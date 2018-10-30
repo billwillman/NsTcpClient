@@ -7,7 +7,7 @@ function NetManager() {
     this.m_TcpServer = null;
     this.m_SessionMap = null;
     this.m_PacketHandler = null;
-    this.m_OnPacketRead = null;
+    this.m_ServerListener = null;
 }
 
 // 继承
@@ -24,20 +24,30 @@ NetManager.GetInstance =
         return NetManager.m_Instance;
     }
 
-NetManager.prototype.SendPacketRead =
+NetManager.prototype._SendPacketRead =
     function (packet)
     {
         if (packet == null)
             return;
-        if (this.m_OnPacketRead == null)
-            return;
-        this.m_OnPacketRead(packet);
+
+        // 根据协议号分发
+        if (this.m_ServerListener != null && packet.header != null)
+        {
+            var headerId = packet.header.header;
+            var serverMsgListener = this.m_ServerListener[headerId];
+            if (serverMsgListener != null && serverMsgListener.OnMessage != null)
+                serverMsgListener.OnMessage.call(serverMsgListener, packet)
+        }
     }
 
-NetManager.prototype.SetPacketReadEvent =
-    function (evt)
+NetManager.prototype.RegisterServerMessage = 
+    function (headerId, serverMsgListener)
     {
-        this.m_OnPacketRead = evt;
+        if (serverMsgListener == null)
+            return;
+        if (this.m_ServerListener == null)
+            this.m_ServerListener = {};
+        this.m_ServerListener[headerId] = serverMsgListener;
     }
 
 NetManager.prototype.Listen =

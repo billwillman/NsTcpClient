@@ -43,7 +43,7 @@ DefaultPacketHandler.prototype.OnPacketRead =
                 }
 
                 //--------------- 進入隊列
-                NetManager.GetInstance().SendPacketRead(packet);
+                NetManager.GetInstance()._SendPacketRead(packet);
                 //-----------------------
                 i += headerSize + header.dataSize;
             }
