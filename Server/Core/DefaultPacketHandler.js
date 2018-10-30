@@ -51,7 +51,7 @@ DefaultPacketHandler.prototype.OnPacketRead =
             recvBufSz -= i;
             this.m_RecvSize = recvBufSz;
             if (this.m_RecvSize > 0)
-                this.MoveMySelf(recvBufSz);
+                this.MoveMySelf(recvBufSz, i);
         }
     }
 

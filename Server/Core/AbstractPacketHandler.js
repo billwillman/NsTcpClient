@@ -58,7 +58,7 @@ AbstractPacketHandler.prototype.SendBuffer =
     }
 
 AbstractPacketHandler.prototype.MoveMySelf =
-    function (recvBufSz)
+    function (recvBufSz, i)
     {
         if (recvBufSz == null || recvBufSz <= 0)
             return;
