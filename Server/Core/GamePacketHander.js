@@ -1,5 +1,5 @@
 
-function GamePacketHander(buf, offset)
+function GamePacketHander(buf, readSize, offset)
 {
 
     if (buf == null || !Buffer.isBuffer(buf)) {
@@ -9,7 +9,7 @@ function GamePacketHander(buf, offset)
     if (offset == null)
         offset = 0;
     var mustSize = GamePacketHander.Size;
-    var len = buf.length - buf.byteOffset;
+    var len = readSize - buf.byteOffset;
     if (len < mustSize) {
         this.Reset();
         return;

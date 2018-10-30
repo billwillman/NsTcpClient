@@ -8,32 +8,17 @@ var net = require("net");
 function TcpServer(bindPort)
 {
     this.m_BindPort = bindPort;
-    this.m_OnConnectedEvent = null;
-    this.m_OnStartListening = null;
-    this.m_OnError = null;
-    this.m_OnPacketRead = null;
+    this.m_Listener = null;
 }
-
-TcpServer.prototype.SetConnectEvent =
-    function (evt)
-    {
-        this.m_OnConnectedEvent = evt;
-    }
-
-TcpServer.prototype.SetStartListeningEvent =
-    function (evt)
-    {
-        this.m_OnStartListening = evt;
-    }
-
-TcpServer.prototype.SetErrorEvent =
-    function (evt)
-    {
-        this.m_OnError = evt;
-    }
 
 // 构造函数
 TcpServer.prototype.constructor = TcpServer;
+
+TcpServer.prototype.SetListener = function (listener)
+{
+    this.m_Listener = listener;
+}
+
 
 // 获得绑定端口
 TcpServer.prototype.GetBindPort =
@@ -63,20 +48,14 @@ TcpServer.prototype.Close =
         }
     }
 
-TcpServer.prototype.SetPacketReadEvent =
-    function (evt)
-    {
-        this.m_OnPacketRead = evt;
-    }
-
 // 产生链接时调用
 TcpServer.prototype._OnConnected = function (socket)
 {
     if (socket != null)
     {
         //socket.setNoDelay(true);
-        if (this.m_OnConnectedEvent != null)
-            this.m_OnConnectedEvent(socket);
+        if (this.m_Listener != null)
+            this.m_Listener.OnConnectedEvent.call(this.m_Listener, socket);
     }
 
     console.log("_OnConnected");
@@ -85,28 +64,38 @@ TcpServer.prototype._OnConnected = function (socket)
 // 侦听时候
 TcpServer.prototype._OnListening = function ()
 {
-    if (this.m_OnStartListening != null)
-        this.m_OnStartListening();
+    if (this.m_Listener != null)
+        this.m_Listener.OnStartListeningEvent.call(this.m_Listener);
     console.log("_OnListening");
 }
 
 // 出错
 TcpServer.prototype._OnError = function (error)
 {
-    if (this.m_OnError != null)
-        this.m_OnError(error);
+    if (this.m_Listener != null)
+        this.m_Listener.OnErrorEvent.call(this.m_Listener, error);
     console.log("_OnError");
 }
 
 TcpServer.prototype._OnPacketRead = function (data)
 {
-    if (this.m_OnPacketRead != null)
-        this.m_OnPacketRead(data);
+    if (this.m_Listener != null)
+        this.m_Listener.OnPacketRead.call(this.m_Listener, data);
 }
 
 TcpServer.prototype._OnClose = function ()
 {
+    if (this.m_Listener != null)
+        this.m_Listener.OnCloseEvent.call(this.m_Listener);
     console.log("_OnClose");
+}
+
+// 客户端断开连接
+TcpServer.prototype._OnEnd = function ()
+{
+    if (this.m_Listener != null)
+        this.m_Listener.OnEndEvent.call(this.m_Listener, this);
+    console.log("_OnEnd");
 }
 
 // 开始接受网络连接，返回值：是否成功监听
@@ -117,13 +106,58 @@ TcpServer.prototype.Accept =
         if (this.m_BindPort == null)
             return false;
 
-        var server = net.createServer();
+        var server = net.createServer(
+            (socket)=>
+            {
+                if (socket != null)
+                {
+                    socket.on("data", 
+                    (data) =>
+                    {
+                        this._OnPacketRead(data);
+                    }
+                    );
+
+
+                    socket.on("end", 
+                    ()=>
+                    {
+                        this._OnEnd();
+                    }
+                    );       
+                }
+            }
+
+        );
         this.m_Server = server;
-        server.on("connection", this._OnConnected);
-        server.on("listening", this._OnListening);
-        server.on("error", this._OnError);
-        server.on("data", this._OnPacketRead);
-        server.on("close", this._OnClose);
+        server.on("connection", 
+        ()=>
+        {
+            this._OnConnected();
+        }
+        );
+
+        server.on("listening", 
+        ()=>
+        {
+            this._OnListening();
+        }
+        );
+
+        server.on("error", 
+        ()=>
+        {
+            this._OnError();
+        }
+        );
+
+        server.on("close", 
+        ()=>
+        {
+            this._OnClose();
+        }
+        );
+
         // 侦听事件
         server.listen(this.m_BindPort);
         return true;

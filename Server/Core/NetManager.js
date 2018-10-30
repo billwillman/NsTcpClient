@@ -1,6 +1,7 @@
 var TcpServer = require ("./TcpServer");
 var UserSession = require("./UserSession");
 var AbstractPacketHandler = require ("./AbstractPacketHandler");
+var ITcpServerListener = require("./ITcpServerListener");
 
 function NetManager() {
     this.m_TcpServer = null;
@@ -9,6 +10,8 @@ function NetManager() {
     this.m_OnPacketRead = null;
 }
 
+// 继承
+NetManager.prototype = ITcpServerListener.prototype;
 NetManager.prototype.constructor = NetManager;
 
 NetManager.GetInstance =
@@ -46,8 +49,7 @@ NetManager.prototype.Listen =
         this.Close();
         this.m_TcpServer = new TcpServer(bindPort);
 
-        this.m_TcpServer.SetConnectEvent(this.OnClientConnected);
-        this.m_TcpServer.SetPacketReadEvent(this._OnPacketRead);
+        this.m_TcpServer.SetListener.call(this.m_TcpServer, this);
 
         return this.m_TcpServer.Accept();
     }
@@ -85,13 +87,13 @@ NetManager.prototype._RemoveSession =
         }
     }
 
-NetManager.prototype._OnPacketRead =
+NetManager.prototype.OnPacketRead =
     function (data)
     {
         if (data == null)
             return;
         if (this.m_PacketHandler != null)
-            this.m_PacketHandler.OnPacketRead(data);
+            this.m_PacketHandler.OnPacketRead.call(this.m_PacketHandler, data);
     }
 
 NetManager.prototype._GetPacketHandler =
@@ -114,8 +116,16 @@ NetManager.prototype.SendStr =
         return true;
     }
 
+    NetManager.prototype.OnSocketEndEvent =
+        function (clientSocket)
+        {
+            if (clientSocket == null)
+                return;
+            this._RemoveSession(clientSocket);
+        }
 
-NetManager.prototype.OnClientConnected =
+
+NetManager.prototype.OnConnectedEvent =
     function (clientSocket)
     {
         if (clientSocket == null)

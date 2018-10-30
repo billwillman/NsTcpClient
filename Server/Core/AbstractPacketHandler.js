@@ -29,6 +29,10 @@ AbstractPacketHandler.prototype.GetReadData =
             return ret;
         }
 
+        var hasReadSize = data.length;
+        if (ret > hasReadSize)
+            ret = hasReadSize;
+
         data.copy(this.m_RecvBuffer, this.m_RecvSize, 0, ret);
         return ret;
     }
