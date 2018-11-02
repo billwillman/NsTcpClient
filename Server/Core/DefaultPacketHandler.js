@@ -40,7 +40,7 @@ DefaultPacketHandler.prototype.OnPacketRead =
                 } else
                 {
                     packet.data = Buffer.allocUnsafe(packet.header.dataSize);
-                    this.m_RecvBuffer.copy(packet.data, 0, i + headerSize, packet.header.dataSize);
+                    this.m_RecvBuffer.copy(packet.data, 0, i + headerSize);
                 }
 
                 //--------------- 進入隊列
