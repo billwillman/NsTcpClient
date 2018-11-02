@@ -38,9 +38,10 @@ DefaultPacketHandler.prototype.OnPacketRead =
                 {
                     packet.header.dataSize = 0;
                 } else
-                {
+                { 
                     packet.data = Buffer.allocUnsafe(packet.header.dataSize);
-                    this.m_RecvBuffer.copy(packet.data, 0, i + headerSize);
+                    var sourceStart = i + headerSize;
+                    this.m_RecvBuffer.copy(packet.data, 0, sourceStart, sourceStart + packet.header.dataSize);
                 }
 
                 //--------------- 進入隊列

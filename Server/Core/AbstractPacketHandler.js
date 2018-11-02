@@ -63,7 +63,7 @@ AbstractPacketHandler.prototype.MoveMySelf =
     {
         if (recvBufSz == null || recvBufSz <= 0)
             return;
-        this.m_RecvBuffer.copy(this.m_RecvBuffer, 0, i, recvBufSz);
+        this.m_RecvBuffer.copy(this.m_RecvBuffer, 0, i, i + recvBufSz);
     }
 
 module.exports = AbstractPacketHandler
