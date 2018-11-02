@@ -66,7 +66,37 @@ DefaultPacketHandler.prototype.OnPacketRead =
 DefaultPacketHandler.prototype.SendBuf =
     function (clientSocket, packetHandle, buf)
     {
+        if (clientSocket == null || packetHandle == null)
+            return false;
 
+        if (buf != null && !Buffer.isBuffer(buf))
+            return false;
+        
+        var hasData = buf != null && buf.length > 0;
+        var packetHead = new GamePacketHander(null, 0, 0);
+        packetHead.header = packetHandle;
+        if (hasData)
+            packetHead.dataSize = buf.length;
+
+        var sendBufSize = GamePacketHander.Size + packetHead.dataSize;
+        var sendBuf = Buffer.allocUnsafe(sendBufSize);
+        if (!packetHead.ToBuf(sendBuf))
+            return false;
+
+        if (hasData)
+        {
+            var dataOffset = GamePacketHander.Size;
+            buf.copy(sendBuf, dataOffset);
+        }
+
+        // 发送过去
+        if (!clientSocket.write(sendBuf))
+        {
+            var netMgr = NetManager.GetInstance();
+            netMgr.CloseClientSocket(clientSocket);
+            return false;
+        }
+        
         return true;
     }
 

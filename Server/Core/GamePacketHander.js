@@ -36,5 +36,17 @@ GamePacketHander.prototype.constructor = GamePacketHander;
 
 GamePacketHander.Size = 16;
 
+GamePacketHander.prototype.ToBuf = 
+function (buf)
+{
+    if (buf == null || !Buffer.isBuffer(buf))
+        return false;
+    buf.writeInt32LE(this.dataSize, 0);
+    buf.writeInt32LE(this.headerCrc32, 4);
+    buf.writeInt32LE(this.dataCrc32, 8);
+    buf.writeInt32LE(this.header, 12);
+    return true;
+}
+
 
 module.exports = GamePacketHander
