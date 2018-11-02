@@ -17,8 +17,9 @@ TestMessage.prototype.OnMessage =
             var str = packet.data.toString("utf8");
             if (str != null)
                 console.log (str);
-           // var netMgr = NetManager.GetInstance();
+            var netMgr = NetManager.GetInstance();
            // netMgr.CloseClientSocket(clientSocket);
+           netMgr.SendBuf(clientSocket, 1);
         }
     }
 
