@@ -6,7 +6,7 @@ var ITcpServerListener = require("./ITcpServerListener");
 function NetManager() {
     this.m_TcpServer = null;
     this.m_SessionMap = null;
-    this.m_PacketHandler = null;
+    this.m_PacketHandlerClass = null;
     this.m_ServerListener = null;
 }
 
@@ -76,9 +76,9 @@ NetManager.prototype.Close =
         this.m_SessionMap = null;
     }
 
-NetManager.prototype.SetPacketHandler =
-    function (handle) {
-        this.m_PacketHandler = handle;
+NetManager.prototype.SetPacketHandlerClass =
+    function (handleClass) {
+        this.m_PacketHandlerClass = handleClass;
     }
 
 NetManager.prototype._RemoveSession =
@@ -98,32 +98,24 @@ NetManager.prototype._RemoveSession =
     }
 
 NetManager.prototype.OnPacketRead =
-    function (data)
+    function (data, socket)
     {
-        if (data == null)
+        if (data == null || socket == null)
             return;
-        if (this.m_PacketHandler != null)
-            this.m_PacketHandler.OnPacketRead.call(this.m_PacketHandler, data);
+        if (this.m_SessionMap == null)
+            return;
+        var userSession = this.m_SessionMap[socket];
+        if (userSession == null)
+            return;
+        userSession.HandleMessage.call(userSession, data);
     }
 
-NetManager.prototype._GetPacketHandler =
+NetManager.prototype._GetPacketHandlerClass =
     function ()
     {
-        if (this.m_PacketHandler == null)
-            this.m_PacketHandler = new AbstractPacketHandler();
-        return this.m_PacketHandler;
-    }
-
-NetManager.prototype.SendStr =
-    function (str)
-    {
-        if (str == null)
-            return false;
-        var handle = this._GetPacketHandler();
-        var buffer = Buffer.from(str, "utf8");
-        handle.SendBuffer(buffer);
-
-        return true;
+        if (this.m_PacketHandlerClass == null)
+            this.m_PacketHandlerClass = AbstractPacketHandler;
+        return this.m_PacketHandlerClass;
     }
 
     NetManager.prototype.OnEndEvent =
@@ -143,7 +135,9 @@ NetManager.prototype.OnConnectedEvent =
         this._RemoveSession(clientSocket);
         if (this.m_SessionMap == null)
             this.m_SessionMap = {};
-        this.m_SessionMap[clientSocket] = new UserSession(clientSocket);
+        var handlerClass = this._GetPacketHandlerClass();
+        var newHandler = new handlerClass();
+        this.m_SessionMap[clientSocket] = new UserSession(clientSocket, newHandler);
     }
 
 module.exports = NetManager;

@@ -12,8 +12,7 @@ function Main() {
     var inst =  NetManager.GetInstance();
     if (inst == null)
         return;
-    var handle = new DefaultPacketHandler();
-    inst.SetPacketHandler(handle);
+    inst.SetPacketHandlerClass(DefaultPacketHandler);
     RegisterServerMessage();
     inst.Listen(1024);
 }

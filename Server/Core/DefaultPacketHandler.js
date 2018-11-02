@@ -27,8 +27,9 @@ DefaultPacketHandler.prototype.OnPacketRead =
             var recvBufSz = this.m_RecvSize;
             var i = 0;
             var headerSize = GamePacketHander.Size;
+            var orgOffset = this.m_RecvBuffer.byteOffset;
             while (recvBufSz - i >= headerSize) {
-                this.m_RecvBuffer.byteOffset = i;
+                this.m_RecvBuffer.byteOffset = orgOffset + i;
                 var header = new GamePacketHander(this.m_RecvBuffer, recvsize);
                 if (recvBufSz - i < header.dataSize + headerSize)
                     break;

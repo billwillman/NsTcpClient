@@ -2,9 +2,10 @@
 
 
 // 用户Session数据
-function UserSession(socket)
+function UserSession(socket, packetHandler)
 {
     this.m_Socket = socket;
+    this.m_packetHandler = packetHandler;
 }
 
 UserSession.prototype.constructor = UserSession;
@@ -18,6 +19,14 @@ UserSession.prototype.Close = function ()
         this.m_Socket = null;
     }
 }
+
+UserSession.prototype.HandleMessage =
+    function (data)
+    {
+        if (this.m_packetHandler == null)
+            return;
+        this.m_packetHandler.OnPacketRead.call(this.m_packetHandler, data);
+    }
 
 
 module.exports = UserSession;

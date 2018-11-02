@@ -77,10 +77,10 @@ TcpServer.prototype._OnError = function (error)
     console.log("_OnError");
 }
 
-TcpServer.prototype._OnPacketRead = function (data)
+TcpServer.prototype._OnPacketRead = function (data, socket)
 {
-    if (this.m_Listener != null)
-        this.m_Listener.OnPacketRead.call(this.m_Listener, data);
+    if (this.m_Listener != null && socket != null)
+        this.m_Listener.OnPacketRead.call(this.m_Listener, data, socket);
 }
 
 TcpServer.prototype._OnClose = function ()
