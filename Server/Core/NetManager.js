@@ -147,4 +147,13 @@ NetManager.prototype.OnConnectedEvent =
         this.m_SessionMap[clientSocket] = new UserSession(clientSocket, newHandler);
     }
 
+// 发送给客户端
+NetManager.prototype.SendBuf = 
+    function (clientSocket, packetHandle, buf)
+    {
+        if (clientSocket == null || packetHandle == null)
+            return;
+        
+    }
+
 module.exports = NetManager;
