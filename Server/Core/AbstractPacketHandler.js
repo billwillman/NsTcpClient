@@ -39,14 +39,6 @@ AbstractPacketHandler.prototype.GetReadData =
         return ret;
     }
 
-AbstractPacketHandler.prototype.GetSendBuffer =
-    function ()
-    {
-        if (this.m_SendBuffer == null)
-            this.m_SendBuffer = Buffer.allocUnsafe(64 * 1024);
-        return this.m_SendBuffer;
-    }
-
 AbstractPacketHandler.prototype.OnPacketRead =
     function (data, clientSocket)
     {
