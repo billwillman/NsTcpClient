@@ -11,6 +11,7 @@ AbstractPacketHandler.prototype.constructor = AbstractPacketHandler;
 AbstractPacketHandler.prototype.m_RecvSize = 0;
 
 AbstractPacketHandler.prototype.m_RecvBuffer = Buffer.allocUnsafe(20 * 1024); // 20K, 一个用户20K数据
+AbstractPacketHandler.prototype.m_SendBuffer = Buffer.allocUnsafe(20 * 1024); // 20K, 一个用户20K数据
 
 AbstractPacketHandler.prototype.GetReadData =
     function (data)
