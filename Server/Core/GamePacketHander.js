@@ -9,11 +9,14 @@ function GamePacketHander(buf, readSize, offset)
     if (offset == null)
         offset = 0;
     var mustSize = GamePacketHander.Size;
-    var len = readSize - buf.byteOffset;
+    var offset = buf.byteOffset;
+    var len = readSize - offset;
     if (len < mustSize) {
         this.Reset();
         return;
     }
+
+    
     this.dataSize = buf.readInt32LE(0);
     this.headerCrc32 = buf.readUInt32LE(1);
     this.dataCrc32 = buf.readUInt32LE(2);
