@@ -53,7 +53,7 @@ AbstractPacketHandler.prototype.OnPacketRead =
     }
 
 AbstractPacketHandler.prototype.SendBuffer =
-    function (buf)
+    function (clientSocket, packetHandle, buf)
     {
         console.log("SendBuffer");
     }

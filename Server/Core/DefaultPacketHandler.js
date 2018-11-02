@@ -64,7 +64,7 @@ DefaultPacketHandler.prototype.OnPacketRead =
     }
 
 DefaultPacketHandler.prototype.SendBuffer =
-    function (buf)
+    function (clientSocket, packetHandle, buf)
     {
 
         return true;

@@ -153,7 +153,12 @@ NetManager.prototype.SendBuf =
     {
         if (clientSocket == null || packetHandle == null)
             return;
-        
+        if (this.m_SessionMap == null)
+            return;
+        var session = this.m_SessionMap[clientSocket];
+        if (session == null)
+            return;
+        session.SendBuf.call(session, packetHandle, buf);
     }
 
 module.exports = NetManager;
