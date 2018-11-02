@@ -126,7 +126,7 @@ NetManager.prototype.SendStr =
         return true;
     }
 
-    NetManager.prototype.OnSocketEndEvent =
+    NetManager.prototype.OnEndEvent =
         function (clientSocket)
         {
             if (clientSocket == null)
@@ -141,6 +141,8 @@ NetManager.prototype.OnConnectedEvent =
         if (clientSocket == null)
             return;
         this._RemoveSession(clientSocket);
+        if (this.m_SessionMap == null)
+            this.m_SessionMap = {};
         this.m_SessionMap[clientSocket] = new UserSession(clientSocket);
     }
 

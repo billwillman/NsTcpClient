@@ -91,10 +91,10 @@ TcpServer.prototype._OnClose = function ()
 }
 
 // 客户端断开连接
-TcpServer.prototype._OnEnd = function ()
+TcpServer.prototype._OnEnd = function (socket)
 {
     if (this.m_Listener != null)
-        this.m_Listener.OnEndEvent.call(this.m_Listener, this);
+        this.m_Listener.OnEndEvent.call(this.m_Listener, socket);
     console.log("_OnEnd");
 }
 
@@ -114,7 +114,8 @@ TcpServer.prototype.Accept =
                     socket.on("data", 
                     (data) =>
                     {
-                        this._OnPacketRead(data);
+                        // 获得网络数据
+                        this._OnPacketRead(data, socket);
                     }
                     );
 
@@ -122,18 +123,18 @@ TcpServer.prototype.Accept =
                     socket.on("end", 
                     ()=>
                     {
-                        this._OnEnd();
-                    }
-                    );       
+                        this._OnEnd(socket)
+                    })
+                    ;       
                 }
             }
 
         );
         this.m_Server = server;
         server.on("connection", 
-        ()=>
+        (socket)=>
         {
-            this._OnConnected();
+            this._OnConnected(socket);
         }
         );
 
