@@ -10,13 +10,15 @@ function TestMessage()
 
 TestMessage.prototype = IServerMessageListener.prototype;
 TestMessage.prototype.OnMessage =
-    function (packet)
+    function (packet, clientSocket)
     {
         if (packet.data != null)
         {
             var str = packet.data.toString("utf8");
             if (str != null)
                 console.log (str);
+           // var netMgr = NetManager.GetInstance();
+           // netMgr.CloseClientSocket(clientSocket);
         }
     }
 

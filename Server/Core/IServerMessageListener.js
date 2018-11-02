@@ -7,7 +7,7 @@ function IServerMessagListener()
 
 IServerMessagListener.prototype.constructor = IServerMessagListener;
 
-IServerMessagListener.prototype.OnMessage = function (packet)
+IServerMessagListener.prototype.OnMessage = function (packet, clientSocket)
 {}
 
 module.exports = IServerMessagListener;

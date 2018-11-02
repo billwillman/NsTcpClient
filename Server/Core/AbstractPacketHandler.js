@@ -25,7 +25,8 @@ AbstractPacketHandler.prototype.GetReadData =
         var ret = bufSize - this.m_RecvSize;
         if (ret <= 0)
         {
-            ret = 0;
+            // 表明没有接收空间了
+            ret = -2;
             return ret;
         }
 
@@ -46,7 +47,7 @@ AbstractPacketHandler.prototype.GetSendBuffer =
     }
 
 AbstractPacketHandler.prototype.OnPacketRead =
-    function (data)
+    function (data, clientSocket)
     {
         console.log("OnPakcetRead");
     }

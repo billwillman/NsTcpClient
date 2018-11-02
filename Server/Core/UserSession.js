@@ -25,7 +25,7 @@ UserSession.prototype.HandleMessage =
     {
         if (this.m_packetHandler == null)
             return;
-        this.m_packetHandler.OnPacketRead.call(this.m_packetHandler, data);
+        this.m_packetHandler.OnPacketRead.call(this.m_packetHandler, data, this.m_Socket);
     }
 
 

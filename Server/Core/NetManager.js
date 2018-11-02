@@ -25,7 +25,7 @@ NetManager.GetInstance =
     }
 
 NetManager.prototype._SendPacketRead =
-    function (packet)
+    function (packet, clientSocket)
     {
         if (packet == null)
             return;
@@ -36,7 +36,7 @@ NetManager.prototype._SendPacketRead =
             var headerId = packet.header.header;
             var serverMsgListener = this.m_ServerListener[headerId];
             if (serverMsgListener != null && serverMsgListener.OnMessage != null)
-                serverMsgListener.OnMessage.call(serverMsgListener, packet)
+                serverMsgListener.OnMessage.call(serverMsgListener, packet, clientSocket)
         }
     }
 
@@ -74,6 +74,13 @@ NetManager.prototype.Close =
         }
 
         this.m_SessionMap = null;
+    }
+
+    // 主动断开客户端连接
+NetManager.prototype.CloseClientSocket = 
+    function (clientSocket)
+    {
+        this._RemoveSession(clientSocket);
     }
 
 NetManager.prototype.SetPacketHandlerClass =
