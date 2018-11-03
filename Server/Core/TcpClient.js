@@ -31,7 +31,7 @@ TcpClient.prototype.constructor = TcpClient;
 TcpClient.prototype.IsConnected = 
     function ()
     {
-        return this.GetStatus() == TcpClientStatus.Connected;
+        return (this.m_Socket != null) && (this.GetStatus() == TcpClientStatus.Connected);
     }
 
 TcpClient.prototype.GetStatus = 
