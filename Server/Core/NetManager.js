@@ -76,7 +76,14 @@ NetManager.prototype.Close =
 NetManager.prototype.CloseAllClientSocket =
     function ()
     {
-
+        if (this.m_SessionMap != null)
+        {
+            for (clientSocket in this.m_SessionMap)
+            {
+                this.CloseClientSocket(clientSocket);
+            }
+        }
+        this.m_SessionMap = null;
     }
 
     // 主动断开客户端连接

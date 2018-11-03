@@ -2,12 +2,12 @@
   DB服务器
 */
 
-var ITcpServerListener = require("./ITcpServerListener");
+var NetManager = require("./NetManager");
 
 function DBServer()
 {}
 
-DBServer.prototype = ITcpServerListener.prototype;
+DBServer.prototype = NetManager.prototype;
 DBServer.prototype.constructor = DBServer;
 
 module.exports = DBServer;
