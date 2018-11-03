@@ -169,8 +169,11 @@ TcpClient.prototype.SendBuf =
 TcpClient.prototype.CloseClientSocket =
     function (clientSocket, result)
     {
+        /*
         if (result != null && result != -2)
             this._OnError(null);
+            */
+        this._OnError(null);
     }
 
 TcpClient.prototype._SendPacketRead =
