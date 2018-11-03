@@ -6,7 +6,7 @@ var TcpClient = require("./TcpClient");
 
 function GateServer()
 {
-    
+    this.Init();
 }
 
 GateServer.prototype = NetManager.prototype;

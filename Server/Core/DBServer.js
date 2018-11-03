@@ -5,7 +5,9 @@
 var NetManager = require("./NetManager");
 
 function DBServer()
-{}
+{
+    this.Init();
+}
 
 DBServer.prototype = NetManager.prototype;
 DBServer.prototype.constructor = DBServer;
