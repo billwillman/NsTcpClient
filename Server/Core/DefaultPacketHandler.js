@@ -89,7 +89,7 @@ DefaultPacketHandler.prototype.SendBuf =
         if (hasData)
         {
             var dataOffset = GamePacketHander.Size;
-            buf.copy(sendBuf, dataOffset);
+            buf.copy(sendBuf, dataOffset);zf
         }
 
         // 发送过去

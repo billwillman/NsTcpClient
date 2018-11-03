@@ -103,6 +103,7 @@ NetManager.prototype._RemoveSession =
             {
                 userSession.Close();
                 this.m_SessionMap[clientSocket] = null;
+                delete this.m_SessionMap[clientSocket];
             }
         }
     }
