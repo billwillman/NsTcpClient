@@ -4,25 +4,21 @@ var AbstractPacketHandler = require ("./AbstractPacketHandler");
 var ITcpServerListener = require("./ITcpServerListener");
 
 function NetManager() {
-    this.m_TcpServer = null;
-    this.m_SessionMap = null;
-    this.m_PacketHandlerClass = null;
-    this.m_ServerListener = null;
+    this.Init();
 }
+
+NetManager.prototype.Init =
+    function ()
+    {
+        this.m_TcpServer = null;
+        this.m_SessionMap = null;
+        this.m_PacketHandlerClass = null;
+        this.m_ServerListener = null;
+    }
 
 // 继承
 NetManager.prototype = ITcpServerListener.prototype;
 NetManager.prototype.constructor = NetManager;
-
-NetManager.GetInstance =
-    function()
-    {
-        if (NetManager.m_Instance == null)
-        {
-            NetManager.m_Instance = new NetManager();
-        }
-        return NetManager.m_Instance;
-    }
 
 NetManager.prototype._SendPacketRead =
     function (packet, clientSocket)
@@ -36,7 +32,7 @@ NetManager.prototype._SendPacketRead =
             var headerId = packet.header.header;
             var serverMsgListener = this.m_ServerListener[headerId];
             if (serverMsgListener != null && serverMsgListener.OnMessage != null)
-                serverMsgListener.OnMessage.call(serverMsgListener, packet, clientSocket)
+                serverMsgListener.OnMessage.call(serverMsgListener, packet, clientSocket, this)
         }
     }
 
@@ -74,6 +70,13 @@ NetManager.prototype.Close =
         }
 
         this.m_SessionMap = null;
+    }
+
+// 关闭所有客户端， 但服务器不停
+NetManager.prototype.CloseAllClientSocket =
+    function ()
+    {
+
     }
 
     // 主动断开客户端连接
@@ -143,7 +146,7 @@ NetManager.prototype.OnConnectedEvent =
         if (this.m_SessionMap == null)
             this.m_SessionMap = {};
         var handlerClass = this._GetPacketHandlerClass();
-        var newHandler = new handlerClass();
+        var newHandler = new handlerClass(this);
         this.m_SessionMap[clientSocket] = new UserSession(clientSocket, newHandler);
     }
 

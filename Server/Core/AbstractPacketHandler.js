@@ -2,8 +2,9 @@
     协议处理
 * */
 
-function AbstractPacketHandler()
+function AbstractPacketHandler(netMgr)
 {
+    this.m_NetMgr = netMgr;
 }
 
 AbstractPacketHandler.prototype.constructor = AbstractPacketHandler;

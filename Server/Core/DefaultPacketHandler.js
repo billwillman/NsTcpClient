@@ -4,8 +4,9 @@ var GamePacketHander = require("./GamePacketHander");
 var GamePacket = require("./GamePacket");
 var NetManager = require("./NetManager")
 
-function DefaultPacketHandler()
+function DefaultPacketHandler(netMgr)
 {
+    this.m_NetMgr = netMgr;
 }
 
 // 继承
@@ -18,7 +19,6 @@ DefaultPacketHandler.prototype.OnPacketRead =
         if (data == null ||  !Buffer.isBuffer(data))
             return;
 
-        var netMgr = NetManager.GetInstance();
         // 粘包处理
         var recvsize = this.GetReadData(data);
         if (recvsize > 0)
@@ -45,8 +45,8 @@ DefaultPacketHandler.prototype.OnPacketRead =
                 }
 
                 //--------------- 進入隊列
-
-                netMgr._SendPacketRead.call(netMgr, packet, clientSocket);
+                if (m_NetMgr != null)
+                    m_NetMgr._SendPacketRead.call(m_NetMgr, packet, clientSocket);
                 //-----------------------
                 i += headerSize + header.dataSize;
             }
@@ -59,7 +59,10 @@ DefaultPacketHandler.prototype.OnPacketRead =
         {
             // 缓冲区满了, 关闭SOCKET
             if (clientSocket != null)
-                netMgr.CloseClientSocket.call(netMgr, clientSocket);
+            {
+                if (m_NetMgr != null)
+                    m_NetMgr.CloseClientSocket.call(m_NetMgr, clientSocket);
+            }
         }
     }
 
@@ -92,8 +95,8 @@ DefaultPacketHandler.prototype.SendBuf =
         // 发送过去
         if (!clientSocket.write(sendBuf))
         {
-            var netMgr = NetManager.GetInstance();
-            netMgr.CloseClientSocket(clientSocket);
+            if (m_NetMgr != null)
+                m_NetMgr.CloseClientSocket(clientSocket);
             return false;
         }
         

@@ -1,20 +1,24 @@
 var NetManager = require("./Core/NetManager");
 var DefaultPacketHandler = require("./Core/DefaultPacketHandler");
-var TestMessage = require("./Test/TestMessage")
+var TestMessage = require("./Test/TestMessage");
 
+
+var gateServer = null;
 function RegisterServerMessage()
 {
-    new TestMessage();
+    if (gateServer == null)
+        return;
+    gateServer.RegisterServerMessage(0, new TestMessage());
 }
+
+
 
 function Main() {
 
-    var inst =  NetManager.GetInstance();
-    if (inst == null)
-        return;
-    inst.SetPacketHandlerClass(DefaultPacketHandler);
+    gateServer = new NetManager();
+    gateServer.SetPacketHandlerClass(DefaultPacketHandler);
     RegisterServerMessage();
-    inst.Listen(1024);
+    gateServer.Listen(1024);
 }
 
 // 主循环
