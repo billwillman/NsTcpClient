@@ -45,8 +45,8 @@ DefaultPacketHandler.prototype.OnPacketRead =
                 }
 
                 //--------------- 進入隊列
-                if (m_NetMgr != null)
-                    m_NetMgr._SendPacketRead.call(m_NetMgr, packet, clientSocket);
+                if (this.m_NetMgr != null && this.m_NetMgr._SendPacketRead != null)
+                    this.m_NetMgr._SendPacketRead.call(this.m_NetMgr, packet, clientSocket);
                 //-----------------------
                 i += headerSize + header.dataSize;
             }
@@ -60,8 +60,8 @@ DefaultPacketHandler.prototype.OnPacketRead =
             // 缓冲区满了, 关闭SOCKET
             if (clientSocket != null)
             {
-                if (m_NetMgr != null)
-                    m_NetMgr.CloseClientSocket.call(m_NetMgr, clientSocket);
+                if (this.m_NetMgr != null && this.m_NetMgr.CloseClientSocket != null)
+                    this.m_NetMgr.CloseClientSocket.call(this.m_NetMgr, clientSocket, recvsize);
             }
         }
     }
@@ -95,8 +95,8 @@ DefaultPacketHandler.prototype.SendBuf =
         // 发送过去
         if (!clientSocket.write(sendBuf))
         {
-            if (m_NetMgr != null)
-                m_NetMgr.CloseClientSocket(clientSocket);
+            if (this.m_NetMgr != null && this.m_NetMgr.CloseClientSocket != null)
+                this.m_NetMgr.CloseClientSocket.call(this.m_NetMgr, clientSocket);
             return false;
         }
         

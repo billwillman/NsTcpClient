@@ -39,7 +39,7 @@ NetManager.prototype._SendPacketRead =
 NetManager.prototype.RegisterServerMessage = 
     function (headerId, serverMsgListener)
     {
-        if (serverMsgListener == null)
+        if (headerId == null || serverMsgListener == null)
             return;
         if (this.m_ServerListener == null)
             this.m_ServerListener = {};
