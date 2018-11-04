@@ -12,4 +12,10 @@ function GateServer()
 GateServer.prototype = NetManager.prototype;
 GateServer.prototype.constructor = GateServer;
 
+GateServer.Create =
+    function (ip, port)
+    {
+        
+    }
+
 module.exports = GateServer;
