@@ -7,6 +7,10 @@ function NetManager() {
     this.Init();
 }
 
+// 继承
+NetManager.prototype = ITcpServerListener.prototype;
+NetManager.prototype.constructor = NetManager;
+
 NetManager.prototype.Init =
     function ()
     {
@@ -15,10 +19,6 @@ NetManager.prototype.Init =
         this.m_PacketHandlerClass = null;
         this.m_ServerListener = null;
     }
-
-// 继承
-NetManager.prototype = ITcpServerListener.prototype;
-NetManager.prototype.constructor = NetManager;
 
 NetManager.prototype._SendPacketRead =
     function (packet, clientSocket)
