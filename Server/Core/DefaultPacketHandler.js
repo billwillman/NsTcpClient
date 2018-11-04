@@ -4,9 +4,10 @@ var GamePacketHander = require("./GamePacketHander");
 var GamePacket = require("./GamePacket");
 var NetManager = require("./NetManager")
 
-function DefaultPacketHandler(netMgr)
+function DefaultPacketHandler(netMgr, recvBufSize)
 {
     this.m_NetMgr = netMgr;
+    this.InitRecvBuffer(recvBufSize);
 }
 
 // 继承

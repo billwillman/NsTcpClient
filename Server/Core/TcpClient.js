@@ -11,7 +11,7 @@ TcpClientStatus = {
     ConnectAbort = 4
 }
 
-function TcpClient(packetHandleClass, listener)
+function TcpClient(packetHandleClass, listener, recvBufSize)
 {
     this.m_ServerIp = null;
     this.m_ServerPort = null;
@@ -19,7 +19,7 @@ function TcpClient(packetHandleClass, listener)
     this.m_ServerListener = null;
     if (packetHandleClass != null)
     {
-        this.m_PacketHandle = new packetHandleClass(this);
+        this.m_PacketHandle = new packetHandleClass(this, recvBufSize);
     }
     this.m_Status = TcpClientStatus.None;
     this.m_Socket = null;

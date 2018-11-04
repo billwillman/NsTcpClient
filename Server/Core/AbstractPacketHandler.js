@@ -2,17 +2,23 @@
     协议处理
 * */
 
-function AbstractPacketHandler(netMgr)
+function AbstractPacketHandler(netMgr, recvBufSize)
 {
     this.m_NetMgr = netMgr;
+    this.InitRecvBuffer(recvBufSize);
 }
 
+AbstractPacketHandler.prototype.InitRecvBuffer =
+    function (allocSize)
+    {
+        this.m_RecvSize = 0;
+        // 20K, 一个用户20K数据
+        if (allocSize == null)
+            allocSize = 20 * 1024;
+        this.m_RecvBuffer = Buffer.allocUnsafe(allocSize); 
+    }
+
 AbstractPacketHandler.prototype.constructor = AbstractPacketHandler;
-
-AbstractPacketHandler.prototype.m_RecvSize = 0;
-
-AbstractPacketHandler.prototype.m_RecvBuffer = Buffer.allocUnsafe(20 * 1024); // 20K, 一个用户20K数据
-//AbstractPacketHandler.prototype.m_SendBuffer = Buffer.allocUnsafe(20 * 1024); // 20K, 一个用户20K数据
 
 AbstractPacketHandler.prototype.GetReadData =
     function (data)
