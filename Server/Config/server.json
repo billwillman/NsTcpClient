@@ -2,7 +2,8 @@
 	"GateArray": [
 	{"id": 0, "port": 1024},
 	{"id": 1, "port": 1025},
-	{"id": 2, "port": 1026}
+	{"id": 2, "port": 1026},
+	{"id": 3, "port": 1027}
 	],
 	"GsArray": [
 	{"id": 0, "port": 2024}
