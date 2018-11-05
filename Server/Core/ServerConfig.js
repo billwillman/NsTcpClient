@@ -5,6 +5,12 @@
 var fs = require("fs");
 var child_process = require("child_process");
 
+ServerConfigType = {
+    Type_GateSever: 0,
+    Type_GameServer: 1,
+    Type_DBServer: 2,
+};
+
 function ServerConfig()
 {
     // GATE数组
@@ -34,16 +40,45 @@ ServerConfig.prototype.LoadConfig =
         return true;
     }
 
+//ServerConfig.GatePath = "${__dirname}/Core/RunGate.js";\
+ServerConfig.GatePath = "./Core/RunGate.js";
+
+ServerConfig.prototype.RunServer = 
+    function (serverType, id, port)
+    {
+        if (serverType == ServerConfigType.Type_GateSever)
+        {
+            // 运行Gate服务器
+            child_process.fork(ServerConfig.GatePath, [id, port]);
+        }
+    }
+
 ServerConfig.prototype.RunGates =
     function ()
     {
+        console.log("=>Start All Gates");
 
+        if (this.m_GateArray != null)
+        {
+            for (var i = 0; i < this.m_GateArray.length; ++i)
+            {
+                var gate = this.m_GateArray[i];
+                if (gate != null)
+                {
+                    // 运行服务器
+                    this.RunServer(ServerConfigType.Type_GateSever, gate.id, gate.port);
+                }
+            }
+        }
+
+        console.log("=>End All Gates");
     }
 
 ServerConfig.prototype.RunGss =
     function ()
     {
-
+        console.log("=>Start All Gss");
+        console.log("=>End All Gss");
     }
 
 // 根据配置启动服务器组

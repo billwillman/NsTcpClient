@@ -4,11 +4,11 @@ TCP客户端连接
 var net = require("net");
 
 TcpClientStatus = {
-    None = 0,
-    Connecting = 1,
-    Connected = 2,
-    ConnectFailed = 3,
-    ConnectAbort = 4
+    None: 0,
+    Connecting: 1,
+    Connected: 2,
+    ConnectFailed: 3,
+    ConnectAbort: 4
 }
 
 function TcpClient(packetHandleClass, listener, recvBufSize)
