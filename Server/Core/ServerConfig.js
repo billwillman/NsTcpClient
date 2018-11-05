@@ -16,7 +16,7 @@ function ServerConfig()
     // GATE数组
     this.m_GateArray = [];
     // GameServer数组
-    this.m_GsArray = [];
+    this.m_GS = null;
 }
 
 ServerConfig.prototype.constructor = ServerConfig;
@@ -35,7 +35,7 @@ ServerConfig.prototype.LoadConfig =
             return false;
 
         this.m_GateArray = jsonData.GateArray;
-        this.m_GsArray = jsonData.GsArray;
+        this.m_GS = jsonData.GS;
         
         return true;
     }
@@ -53,6 +53,9 @@ ServerConfig.prototype.RunServer =
             // 运行Gate服务器
             child_process.fork(ServerConfig.GatePath, [id, port]);
             //child_process.spawnSync(ServerConfig.GatePath, [id, port]);
+        } else if (serverType == ServerConfigType.Type_GameServer)
+        {
+            child_process.fork(ServerConfig.GsPath, [id, port]);
         }
     }
 
@@ -77,11 +80,13 @@ ServerConfig.prototype.RunGates =
        // console.log("=>End All Gates");
     }
 
-ServerConfig.prototype.RunGss =
+ServerConfig.prototype.RunGS =
     function ()
     {
-       // console.log("=>Start All Gss");
-     //   console.log("=>End All Gss");
+        if (this.m_GS != null)
+        {
+            this.RunServer(ServerConfigType.Type_GameServer, 0, this.m_GS.port);
+        }
     }
 
 // 根据配置启动服务器组
@@ -89,7 +94,7 @@ ServerConfig.prototype.RunConfig =
     function ()
     {
         this.RunGates();
-        this.RunGss();
+        this.RunGS();
     }
 
 module.exports = ServerConfig;
