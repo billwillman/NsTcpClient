@@ -3,6 +3,8 @@ GATE设计
 */
 var NetManager = require("./NetManager");
 var TcpClient = require("./TcpClient");
+var DefaultPacketHandler = require("./DefaultPacketHandler");
+var RegisterGateMessage = require("./RegisterGateMessage");
 
 function GateServer(id, port)
 {
@@ -25,6 +27,14 @@ GateServer.Create =
     {
         if (id == null || port == null)
             return null;
+        var server = new GateServer(id, port);
+        server.SetPacketHandlerClass(DefaultPacketHandler);
+
+        // 注冊消息
+        new RegisterGateMessage(this);
+
+        server.Listen(port);
+        return server;
     }
 
 module.exports = GateServer;

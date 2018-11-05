@@ -42,6 +42,8 @@ ServerConfig.prototype.LoadConfig =
 
 //ServerConfig.GatePath = "${__dirname}/Core/RunGate.js";\
 ServerConfig.GatePath = "./Core/RunGate.js";
+ServerConfig.GsPath = "./Core/RunGS.js";
+ServerConfig.RunGatePath = "node.exe " + ServerConfig.GatePath;
 
 ServerConfig.prototype.RunServer = 
     function (serverType, id, port)
@@ -50,13 +52,14 @@ ServerConfig.prototype.RunServer =
         {
             // 运行Gate服务器
             child_process.fork(ServerConfig.GatePath, [id, port]);
+            //child_process.spawnSync(ServerConfig.GatePath, [id, port]);
         }
     }
 
 ServerConfig.prototype.RunGates =
     function ()
     {
-        console.log("=>Start All Gates");
+     //   console.log("=>Start All Gates");
 
         if (this.m_GateArray != null)
         {
@@ -71,14 +74,14 @@ ServerConfig.prototype.RunGates =
             }
         }
 
-        console.log("=>End All Gates");
+       // console.log("=>End All Gates");
     }
 
 ServerConfig.prototype.RunGss =
     function ()
     {
-        console.log("=>Start All Gss");
-        console.log("=>End All Gss");
+       // console.log("=>Start All Gss");
+     //   console.log("=>End All Gss");
     }
 
 // 根据配置启动服务器组
