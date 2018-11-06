@@ -179,4 +179,15 @@ NetManager.prototype.SendBuf =
         return session.SendBuf.call(session, packetHandle, buf);
     }
 
+NetManager.prototype.SendMessage =
+    function (clientSocket, packetHandle, message)
+    {
+        if (clientSocket == null || packetHandle == null)
+            return false;
+        var buf = null;
+        if (message != null)
+            buf = message.m_Buf;
+        return this.SendBuf(clientSocket, packetHandle, buf);
+    }
+
 module.exports = NetManager;

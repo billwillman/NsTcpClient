@@ -168,6 +168,18 @@ TcpClient.prototype.SendBuf =
         return this.m_PacketHandle.SendBuf(this.m_Socket, packetHandle, data);
     }
 
+// 发送消息
+TcpClient.prototype.SendMessage =
+    function (packetHandle, message)
+    {
+        if (packetHandle == null)
+            return false;
+        var buf = null;
+        if (message != null)
+            buf = message.m_Buf;
+        return this.SendBuf(packetHandle, buf);
+    };
+
 TcpClient.prototype.CloseClientSocket =
     function (clientSocket, result)
     {
