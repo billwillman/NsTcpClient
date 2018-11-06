@@ -134,15 +134,16 @@ TcpServer.prototype.Accept =
                         this._OnEnd(socket)
                     })
                     ;
-                    
-                    socket.on("timeout",
-                    ()=>
-                    {
-                        this._OnTimeOut(socket);
-                    });
-                    
+
                     if (heartTimeout != null)
+                    {
+                        socket.on("timeout",
+                        ()=>
+                        {
+                            this._OnTimeOut(socket);
+                        });
                         socket.setTimeout(heartTimeout);
+                    }
 
                 }
             }

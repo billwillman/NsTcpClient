@@ -132,12 +132,6 @@ TcpClient.prototype.ConnectServer =
                 this._OnConnect();
             });
 
-        this.m_Socket.on("timeout",
-            ()=>
-            {
-                this._OnError(null);
-            });
-
         this.m_Socket.on("data",
             (data)=>
             {
@@ -147,7 +141,14 @@ TcpClient.prototype.ConnectServer =
         
         // 心跳包
         if (heartTimeout != null)
+        {
+            this.m_Socket.on("timeout",
+                ()=>
+                {
+                    this._OnError(null);
+                });
             this.m_Socket.setTimeout(heartTimeout);
+        }
 
         this.m_Status = TcpClientStatus.Connecting;
         this.m_Socket.connect(serverPort, serverIp);
