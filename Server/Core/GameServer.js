@@ -100,6 +100,7 @@ GameServer.prototype.ConnectDB =
                 } else
                 {
                     console.log("\n DB服务器连接失败");
+                    this.KickAllGates();
                 }
             }
         }
