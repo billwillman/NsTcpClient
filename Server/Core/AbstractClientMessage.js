@@ -2,9 +2,8 @@
  抽象客户端发送消息
 */
 
-function AbstractClientMessage(headerId)
+function AbstractClientMessage()
 {
-    this.m_headerId = headerId;
     this.m_Buf = null;
     this.m_BufOffset = 0;
 }
