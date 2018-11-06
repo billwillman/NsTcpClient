@@ -17,6 +17,7 @@ function ServerConfig()
     this.m_GateArray = [];
     // GameServer数组
     this.m_GS = null;
+    this.m_DB = null;
 }
 
 ServerConfig.prototype.constructor = ServerConfig;
@@ -36,6 +37,7 @@ ServerConfig.prototype.LoadConfig =
 
         this.m_GateArray = jsonData.GateArray;
         this.m_GS = jsonData.GS;
+        this.m_DB = jsonData.DB;
         
         return true;
     }
@@ -43,6 +45,7 @@ ServerConfig.prototype.LoadConfig =
 //ServerConfig.GatePath = "${__dirname}/Core/RunGate.js";\
 ServerConfig.GatePath = "./Core/RunGate.js";
 ServerConfig.GsPath = "./Core/RunGS.js";
+ServerConfig.DBPath = "./Core/RunDB.js";
 ServerConfig.RunGatePath = "node.exe " + ServerConfig.GatePath;
 
 ServerConfig.prototype.RunServer = 
@@ -56,6 +59,9 @@ ServerConfig.prototype.RunServer =
         } else if (serverType == ServerConfigType.Type_GameServer)
         {
             child_process.fork(ServerConfig.GsPath, [id, port]);
+        } else if (serverType == ServerConfigType.Type_DBServer)
+        {
+            child_process.fork(ServerConfig.DBPath, [port]);
         }
     }
 
@@ -89,12 +95,22 @@ ServerConfig.prototype.RunGS =
         }
     }
 
+    ServerConfig.prototype.RunDB =
+        function ()
+        {
+            if (this.m_DB != null)
+            {
+                this.RunServer(ServerConfigType.Type_DBServer, 0, this.m_DB.port);
+            }
+        }
+
 // 根据配置启动服务器组
 ServerConfig.prototype.RunConfig =
     function ()
     {
-        this.RunGates();
+        this.RunDB();
         this.RunGS();
+        this.RunGates();
     }
 
 module.exports = ServerConfig;

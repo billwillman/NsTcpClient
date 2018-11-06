@@ -7,6 +7,7 @@ var RegisterLoginMessage = require("./RegisterLoginMessage");
 
  function LoginServer(port)
  {
+     this.Init();
  }
 
  LoginServer.prototype = NetManager.prototype;
