@@ -96,10 +96,10 @@ GameServer.prototype.ConnectDB =
                 this.m_Enabled = sucess;
                 if (sucess)
                 {
-                    console.log("\n DB服务器连接成功");
+                    console.error("\n DB服务器连接成功");
                 } else
                 {
-                    console.log("\n DB服务器连接失败");
+                    console.error("\n DB服务器连接失败");
                     this.KickAllGates();
                 }
             }
@@ -125,7 +125,7 @@ GameServer.Create = function (id, port, dbIp, dbPort)
 
     if (!server.ConnectDB())
     {
-        console.log("\n DB服务器连接失败");
+        console.error("\n DB服务器连接失败");
     }
 
     server.Listen(port);
