@@ -78,14 +78,14 @@ TcpClient.prototype._OnError =
         if (isConnecting)
         {
             this.m_Status = TcpClientStatus.ConnectFailed;
-            if (this.m_Listener != null)
-                this.m_Listener.OnConnectEvent.call(this.m_Listener, false);
+            if (this.m_Listener != null && this.m_Listener.OnConnectEvent != null)
+                this.m_Listener.OnConnectEvent.call(this.m_Listener, false, this);
         }
         else
         {
             this.m_Status = TcpClientStatus.ConnectAbort;
-            if (this.m_Listener != null)
-                this.m_Listener.OnAbortEvent.call(this.m_Listener);
+            if (this.m_Listener != null && this.m_Listener.OnAbortEvent != null)
+                this.m_Listener.OnAbortEvent.call(this.m_Listener, this);
         }
     }
 
@@ -101,8 +101,8 @@ TcpClient.prototype._OnConnect =
     function ()
     {
         this.m_Status = TcpClientStatus.Connected;
-        if (this.m_Listener != null)
-            this.m_Listener.OnConnectEvent.call(this.m_Listener, true);
+        if (this.m_Listener != null && this.m_Listener.OnConnectEvent != null)
+            this.m_Listener.OnConnectEvent.call(this.m_Listener, true, this);
     }
 
 TcpClient.prototype.ConnectServer = 

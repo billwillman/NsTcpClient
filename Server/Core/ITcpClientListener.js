@@ -7,11 +7,11 @@ function ITcpClientListener()
 ITcpClientListener.prototype.constructor = ITcpClientListener;
 
 ITcpClientListener.prototype.OnAbortEvent = 
-    function ()
+    function (tcpClient)
     {}
 
 ITcpClientListener.prototype.OnConnectEvent =
-    function(sucess)
+    function(sucess, tcpClient)
     {
 
     }
