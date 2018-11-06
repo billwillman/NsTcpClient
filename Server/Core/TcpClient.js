@@ -176,7 +176,10 @@ TcpClient.prototype.SendMessage =
             return false;
         var buf = null;
         if (message != null)
+        {
+            message.DoSend();
             buf = message.m_Buf;
+        }
         return this.SendBuf(packetHandle, buf);
     };
 
