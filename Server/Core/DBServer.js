@@ -24,8 +24,8 @@ DBServer.Create =
         server.SetPacketHandlerClass(DefaultPacketHandler);
 
         new RegisterDBMessage();
-
-        server.Listen(port);
+         // 5秒钟必须要有数据接收, 心跳包
+        server.Listen(port, 5000);
         return server;
   }
 

@@ -46,8 +46,9 @@ NetManager.prototype.RegisterServerMessage =
         this.m_ServerListener[headerId] = serverMsgListener;
     }
 
+// heartTimeout心跳包
 NetManager.prototype.Listen =
-    function(bindPort)
+    function(bindPort, heartTimeout)
     {
         if (bindPort == null)
             return false;
@@ -57,7 +58,7 @@ NetManager.prototype.Listen =
 
         this.m_TcpServer.SetListener.call(this.m_TcpServer, this);
 
-        return this.m_TcpServer.Accept();
+        return this.m_TcpServer.Accept(heartTimeout);
     }
 
 NetManager.prototype.Close =
@@ -84,6 +85,12 @@ NetManager.prototype.CloseAllClientSocket =
             }
         }
         this.m_SessionMap = null;
+    }
+
+NetManager.prototype.OnTimeOut =
+    function (clientSocket)
+    {
+        this.CloseClientSocket(clientSocket);
     }
 
     // 主动断开客户端连接

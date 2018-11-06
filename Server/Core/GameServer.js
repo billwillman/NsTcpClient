@@ -69,8 +69,8 @@ GameServer.prototype.ConnectDB =
             return false;
         
         this.m_DBClient = new TcpClient(DefaultPacketHandler, this);
-        // 5秒超时
-        var ret = this.m_DBClient.ConnectServer(this.m_DBIp, this.m_DBPort, 5000);
+
+        var ret = this.m_DBClient.ConnectServer(this.m_DBIp, this.m_DBPort, 0);
         return ret;
     }
 

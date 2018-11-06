@@ -29,6 +29,12 @@ ITcpServerListener.prototype.OnPacketRead =
     function (data)
     {}
 
+ITcpServerListener.prototype.OnTimeOut =
+    function (socket)
+    {
+
+    }
+
 ITcpServerListener.prototype.OnEndEvent =
     function (socket)
     {}

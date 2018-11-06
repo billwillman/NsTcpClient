@@ -106,7 +106,7 @@ TcpClient.prototype._OnConnect =
     }
 
 TcpClient.prototype.ConnectServer = 
-    function(serverIp, serverPort, timeout)
+    function(serverIp, serverPort, heartTimeout)
     {
         if (serverIp == null || serverPort == null)
             return false;
@@ -145,8 +145,9 @@ TcpClient.prototype.ConnectServer =
             }
             );
         
-        if (timeout != null)
-            this.m_Socket.setTimeout(timeout);
+        // 心跳包
+        if (heartTimeout != null)
+            this.m_Socket.setTimeout(heartTimeout);
 
         this.m_Status = TcpClientStatus.Connecting;
         this.m_Socket.connect(serverPort, serverIp);

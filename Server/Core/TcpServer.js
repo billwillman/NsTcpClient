@@ -98,9 +98,17 @@ TcpServer.prototype._OnEnd = function (socket)
     console.log("_OnEnd");
 }
 
+TcpServer.prototype._OnTimeOut = function (socket)
+{
+    if (this.m_Listener != null)
+        this.m_Listener.OnTimeOut.call(this.m_Listener, socket);
+    console.log("_OnTimeOut");
+}
+
 // 开始接受网络连接，返回值：是否成功监听
+// timeout为心跳包
 TcpServer.prototype.Accept =
-    function ()
+    function (heartTimeout)
     {
         this.Close();
         if (this.m_BindPort == null)
@@ -125,12 +133,23 @@ TcpServer.prototype.Accept =
                     {
                         this._OnEnd(socket)
                     })
-                    ;       
+                    ;
+                    
+                    socket.on("timeout",
+                    ()=>
+                    {
+                        this._OnTimeOut(socket);
+                    });
+                    
+                    if (heartTimeout != null)
+                        socket.setTimeout(heartTimeout);
+
                 }
             }
 
         );
         this.m_Server = server;
+        
         server.on("connection", 
         (socket)=>
         {
