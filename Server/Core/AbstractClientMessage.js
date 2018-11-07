@@ -21,7 +21,7 @@ AbstractClientMessage.prototype._InitBuf =
     }
 
 AbstractClientMessage.prototype.DoSend =
-    function (buf)
+    function ()
     {}
 
 AbstractClientMessage.prototype.WriteByte =
@@ -48,7 +48,7 @@ AbstractClientMessage.prototype.WriteInt =
     }
 
 AbstractClientMessage.prototype.WriteUInt =
-    funciton (uint)
+    function (uint)
     {
         this._InitBuf();
         this.m_Buf.writeUInt32LE(uint, this.m_BufOffset);
