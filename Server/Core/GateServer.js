@@ -24,7 +24,7 @@ GateServer.prototype.GetId =
     }
 
 // 分发到上层服务器
-GateServer.prototype.DispatchoServer =
+GateServer.prototype.DispatchToServer =
     function (headerId, packet)
     {
         if (this.m_Client == null || packet == null)
