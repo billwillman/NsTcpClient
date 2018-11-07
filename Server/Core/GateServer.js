@@ -12,6 +12,7 @@ function GateServer(id, port)
     this.m_Id = id;
     // 连接GS或者LS
     this.m_Client = null;
+    this.m_ClientId = [0];
 }
 
 GateServer.prototype = NetManager.prototype;
@@ -22,6 +23,7 @@ GateServer.prototype.GetId =
     {
         return this.m_Id;
     }
+
 
 // 分发到上层服务器
 GateServer.prototype.DispatchToServer =
@@ -34,7 +36,8 @@ GateServer.prototype.DispatchToServer =
             headerId = packet.header.header;
 
         // 转发
-        return this.m_Client.SendBuf(headerId, packet.data, [clientId]);
+        this.m_ClientId[0] = clientId;
+        return this.m_Client.SendBuf(headerId, packet.data, this.m_ClientId);
     }
 
 /*-------------------------------------------业务逻辑--------------------------------------*/
