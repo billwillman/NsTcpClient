@@ -1,5 +1,6 @@
 
 var AbstractMessageMgr = require("./AbstractMessageMgr");
+var MessageConsts = require("./MessageConsts");
 
 function RegisterGateMessage(netMgr, isGSGate)
 {
@@ -12,6 +13,9 @@ function RegisterGateMessage(netMgr, isGSGate)
     } else
     {
         // LoginServer的Gate
+        
+        // 用户登录协议
+        this.RegisterCrossId(MessageConsts.ClientMessage.C_User_Login);
     }
 }
 
@@ -36,10 +40,15 @@ RegisterGateMessage.prototype.OnMessage =
                     {
                         // 可以转发
                         this.SendToServer(packet, clientSocket, netMgr);
+                        return true;
                     }
                 }
             }
-        }
+        } else
+            return true;
+        
+        // 发送非法协议, 断开客户端
+        netMgr.CloseClientSocket(clientSocket);
     }
 
 // 转发给GS或者LS

@@ -1,9 +1,9 @@
 
 
-// 客户端到Gate
-ClientToGateMessage =
+// 客户端发送协议编号
+ClientMessage =
 {
-    // 客户端到
+    // 客户端登录协议
     C_User_Login: 1
 }
 
