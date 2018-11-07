@@ -21,6 +21,12 @@ AbsractServerMessage.prototype.OnMessage =
         this.DoRecv();
     }
 
+AbsractServerMessage.prototype.NetManager =
+    function ()
+    {
+        return this.m_NetMgr;
+    }
+
 // 是否是读到头了
 AbsractServerMessage.prototype.IsBufEnd =
     function (readLen)

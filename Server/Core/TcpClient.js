@@ -2,6 +2,7 @@
 TCP客户端连接
 */
 var net = require("net");
+var AbstractMessageMgr = require("./AbstractMessageMgr");
 
 TcpClientStatus = {
     None: 0,
@@ -24,9 +25,29 @@ function TcpClient(packetHandleClass, listener, recvBufSize)
     this.m_Status = TcpClientStatus.None;
     this.m_Socket = null;
     this.m_Listener = listener;
+    // 默认的消息处理对象，只有一个
+    this.m_DefaultServerMsgListener = null;
 }
 
 TcpClient.prototype.constructor = TcpClient;
+
+TcpClient.prototype.RegisterDefaultServerMsgListener =
+    function (listener)
+    {
+        if (listener == null)
+            listener = new AbstractMessageMgr();
+        this.m_DefaultServerMsgListener = listener;
+    }
+
+TcpClient.prototype.RegisterDefaultSrvAbstractMsg =
+    function (headerId, abstractMsg)
+    {
+        if (headerId == null || abstractMsg == null)
+            return;
+        if (this.m_DefaultServerMsgListener == null)
+            this.m_DefaultServerMsgListener = new AbstractMessageMgr();
+        this.m_DefaultServerMsgListener.RegisterSrvMsg.call(this.m_DefaultServerMsgListener, headerId, abstractMsg);
+    }
 
 TcpClient.prototype.IsConnected = 
     function ()
@@ -193,6 +214,14 @@ TcpClient.prototype.CloseClientSocket =
         this._OnError(null);
     }
 
+TcpClient.prototype._OnDefaultMessageHandle =
+    function (packet, clientSocket)
+    {
+        if (this.m_DefaultServerMsgListener == null || this.m_DefaultServerMsgListener.OnMessage == null)
+            return;
+        this.m_DefaultServerMsgListener.OnMessage.call(this.m_DefaultServerMsgListener, packet, clientSocket, this);
+    }
+
 TcpClient.prototype._SendPacketRead =
     function (packet, clientSocket)
     {
@@ -204,8 +233,13 @@ TcpClient.prototype._SendPacketRead =
             var headerId = packet.header.header;
             var serverMsgListener = this.m_ServerListener[headerId];
             if (serverMsgListener != null && serverMsgListener.OnMessage != null)
-                serverMsgListener.OnMessage.call(serverMsgListener, packet, clientSocket, this)
+            {
+                serverMsgListener.OnMessage.call(serverMsgListener, packet, clientSocket, this);
+                return;
+            }
         }
+
+        this._OnDefaultMessageHandle(packet, clientSocket);
     }
 
 TcpClient.prototype.RegisterServerMessage =

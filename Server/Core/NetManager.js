@@ -2,6 +2,7 @@ var TcpServer = require ("./TcpServer");
 var UserSession = require("./UserSession");
 var AbstractPacketHandler = require ("./AbstractPacketHandler");
 var ITcpServerListener = require("./ITcpServerListener");
+var AbstractMessageMgr = require("./AbstractMessageMgr");
 
 function NetManager() {
     this.Init();
@@ -18,6 +19,33 @@ NetManager.prototype.Init =
         this.m_SessionMap = null;
         this.m_PacketHandlerClass = null;
         this.m_ServerListener = null;
+        this.m_DefaultServerMsgListener = null;
+    }
+
+NetManager.prototype.RegisterDefaultServerMsgListener =
+    function (listener)
+    {
+        if (listener == null)
+            listener = new AbstractMessageMgr();
+        this.m_DefaultServerMsgListener = listener;
+    }
+
+NetManager.prototype.RegisterDefaultSrvAbstractMsg =
+    function (headerId, abstractMsg)
+    {
+        if (headerId == null || abstractMsg == null)
+            return;
+        if (this.m_DefaultServerMsgListener == null)
+            this.m_DefaultServerMsgListener = new AbstractMessageMgr();
+        this.m_DefaultServerMsgListener.RegisterSrvMsg.call(this.m_DefaultServerMsgListener, headerId, abstractMsg);
+    }
+    
+NetManager.prototype._OnDefaultMessageHandle =
+    function (packet, clientSocket)
+    {
+        if (this.m_DefaultServerMsgListener == null || this.m_DefaultServerMsgListener.OnMessage == null)
+            return;
+        this.m_DefaultServerMsgListener.OnMessage.call(this.m_DefaultServerMsgListener, packet, clientSocket, this);
     }
 
 NetManager.prototype._SendPacketRead =
@@ -32,8 +60,13 @@ NetManager.prototype._SendPacketRead =
             var headerId = packet.header.header;
             var serverMsgListener = this.m_ServerListener[headerId];
             if (serverMsgListener != null && serverMsgListener.OnMessage != null)
-                serverMsgListener.OnMessage.call(serverMsgListener, packet, clientSocket, this)
+            {
+                serverMsgListener.OnMessage.call(serverMsgListener, packet, clientSocket, this);
+                return;
+            }
         }
+
+        this._OnDefaultMessageHandle(packet, clientSocket);
     }
 
 NetManager.prototype.RegisterServerMessage = 
