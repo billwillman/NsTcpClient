@@ -37,6 +37,12 @@ GateServer.prototype.DispatchToServer =
         return this.m_Client.SendBuf(headerId, packet.data);
     }
 
+/*-------------------------------------------业务逻辑--------------------------------------*/
+
+
+
+/*----------------------------------------------------------------------------------------*/
+
 // 创建GATE服务器
 GateServer.Create =
     function (id, port, isGS)
