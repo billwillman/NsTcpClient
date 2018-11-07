@@ -7,20 +7,27 @@ function RegisterGateMessage(netMgr, isGSGate)
     // 是否可以转发的ID
     this.m_CrossIdMap = {};
     netMgr.RegisterDefaultServerMsgListener.call(netMgr, this);
-    if (isGSGate)
-    {
-        // GameServer的Gate
-    } else
-    {
-        // LoginServer的Gate
-        
-        // 用户登录协议
-        this.RegisterCrossId(MessageConsts.ClientMessage.C_User_Login);
-    }
+    this._RegisterClientSendMessages();
 }
 
 RegisterGateMessage.prototype = AbstractMessageMgr.prototype;
 RegisterGateMessage.prototype.constructor = RegisterGateMessage;
+
+// 注册客户端发送过来的协议
+RegisterGateMessage.prototype._RegisterClientSendMessages =
+    function ()
+    {
+        if (isGSGate)
+        {
+            // GameServer的Gate
+        } else
+        {
+            // LoginServer的Gate
+            
+           // 用户登录协议
+           this.RegisterCrossId(MessageConsts.ClientMessage.C_User_Login);
+        }
+    }
 
 var superOnMessage = RegisterGateMessage.prototype.OnMessage;
 RegisterGateMessage.prototype.OnMessage = 
@@ -55,7 +62,7 @@ RegisterGateMessage.prototype.OnMessage =
 RegisterGateMessage.prototype.SendToServer =
     function (packet, clientSocket, netMgr)
     {
-        
+
     }
 
 // 注册可以转发的协议ID
