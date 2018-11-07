@@ -2,7 +2,7 @@
 虚消息管理器
 */
 
-var IServerMessagListener = require("./IServerMessagListener");
+var IServerMessagListener = require("./IServerMessageListener");
 
 function AbstractMessageMgr()
 {

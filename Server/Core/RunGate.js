@@ -8,6 +8,10 @@ function Main()
 {
     // 获得命令行参数 编号和port
     var arguments = process.argv.splice(2);
+    if (arguments[0] == null)
+        arguments[0] = 0;
+    if (arguments[1] == null)
+        arguments[1] = 1024;
 
     server = GateServer.Create(arguments[0], arguments[1]);
     console.log(" ");

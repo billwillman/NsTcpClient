@@ -35,7 +35,7 @@ GateServer.Create =
             isGS = false;
 
         // 注冊消息
-        new RegisterGateMessage(this, isGS);
+        new RegisterGateMessage(server, isGS);
 
         server.Listen(port);
         return server;

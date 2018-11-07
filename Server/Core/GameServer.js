@@ -121,7 +121,7 @@ GameServer.Create = function (id, port, dbIp, dbPort)
     server.SetPacketHandlerClass(DefaultPacketHandler);
 
     // 注冊消息
-    new RegisterGameMessage(this);
+    new RegisterGameMessage(server);
 
     if (!server.ConnectDB())
     {
