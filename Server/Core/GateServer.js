@@ -24,6 +24,16 @@ GateServer.prototype.GetId =
         return this.m_Id;
     }
 
+GateServer.GlobalClientId = 0;
+
+GateServer.prototype.OnAddSessionEvent = 
+    function (session)
+    {
+        // 增加新的Session
+        var globalId = ++GateServer.GlobalClientId;
+        session.clientId = globalId;
+    }
+
 
 // 分发到上层服务器
 GateServer.prototype.DispatchToServer =
