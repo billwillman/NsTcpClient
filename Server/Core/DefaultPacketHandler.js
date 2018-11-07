@@ -68,7 +68,7 @@ DefaultPacketHandler.prototype.OnPacketRead =
     }
 
 DefaultPacketHandler.prototype.SendBuf =
-    function (clientSocket, packetHandle, buf)
+    function (clientSocket, packetHandle, buf, args)
     {
         if (clientSocket == null || packetHandle == null)
             return false;
@@ -81,6 +81,10 @@ DefaultPacketHandler.prototype.SendBuf =
         packetHead.header = packetHandle;
         if (hasData)
             packetHead.dataSize = buf.length;
+        if (args != null && args instanceof Array && args[0] != null)
+        {
+            packetHead.headerCrc32 = args[0];
+        }
 
         var sendBufSize = GamePacketHander.Size + packetHead.dataSize;
         var sendBuf = Buffer.allocUnsafe(sendBufSize);

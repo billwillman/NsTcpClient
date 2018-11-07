@@ -177,7 +177,7 @@ TcpClient.prototype.ConnectServer =
     }
 
 TcpClient.prototype.SendBuf =
-    function (packetHandle, data)
+    function (packetHandle, data, args)
     {
         if (packetHandle == null || this.m_Socket == null || 
             this.m_Status == null || this.m_PacketHandle == null)
@@ -186,7 +186,7 @@ TcpClient.prototype.SendBuf =
         {
             return false;
         }
-        return this.m_PacketHandle.SendBuf(this.m_Socket, packetHandle, data);
+        return this.m_PacketHandle.SendBuf(this.m_Socket, packetHandle, data, args);
     }
 
 // 发送消息

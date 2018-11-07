@@ -7,7 +7,7 @@ function RegisterGateMessage(netMgr, isGSGate)
     // 是否可以转发的ID
     this.m_CrossIdMap = {};
     netMgr.RegisterDefaultServerMsgListener.call(netMgr, this);
-    this._RegisterClientSendMessages();
+    this._RegisterClientSendMessages(isGSGate);
 }
 
 RegisterGateMessage.prototype = AbstractMessageMgr.prototype;
@@ -15,7 +15,7 @@ RegisterGateMessage.prototype.constructor = RegisterGateMessage;
 
 // 注册客户端发送过来的协议
 RegisterGateMessage.prototype._RegisterClientSendMessages =
-    function ()
+    function (isGSGate)
     {
         if (isGSGate)
         {

@@ -25,7 +25,7 @@ GateServer.prototype.GetId =
 
 // 分发到上层服务器
 GateServer.prototype.DispatchToServer =
-    function (headerId, packet)
+    function (headerId, packet, clientId)
     {
         if (this.m_Client == null || packet == null)
             return false;
@@ -34,7 +34,7 @@ GateServer.prototype.DispatchToServer =
             headerId = packet.header.header;
 
         // 转发
-        return this.m_Client.SendBuf(headerId, packet.data);
+        return this.m_Client.SendBuf(headerId, packet.data, [clientId]);
     }
 
 /*-------------------------------------------业务逻辑--------------------------------------*/
