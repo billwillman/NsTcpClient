@@ -28,10 +28,12 @@ DefaultPacketHandler.prototype.OnPacketRead =
             var recvBufSz = this.m_RecvSize;
             var i = 0;
             var headerSize = GamePacketHander.Size;
-            var orgOffset = this.m_RecvBuffer.byteOffset;
+            //var orgOffset = this.m_RecvBuffer.byteOffset;
+            var orgOffset = 0;
             while (recvBufSz - i >= headerSize) {
-                this.m_RecvBuffer.byteOffset = orgOffset + i;
-                var header = new GamePacketHander(this.m_RecvBuffer, recvsize);
+              //  this.m_RecvBuffer.byteOffset = orgOffset + i;
+                var offset = orgOffset + i;
+                var header = new GamePacketHander(this.m_RecvBuffer, recvsize, offset);
                 if (recvBufSz - i < header.dataSize + headerSize)
                     break;
                 var packet = new GamePacket(header, null);

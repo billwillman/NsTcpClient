@@ -24,7 +24,7 @@ public class Test : MonoBehaviour {
             NetManager.Instance.OnSocketAbort = OnSocketAbort;
 			NetManager.Instance.Disconnect();
 			NetManager.Instance.ConnectServer("127.0.0.1", 1024);
-            NetManager.Instance.SendStr("123", 0);
+            NetManager.Instance.SendStr("123", 1);
 		}
 	}
 

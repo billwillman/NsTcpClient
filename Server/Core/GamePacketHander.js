@@ -6,10 +6,12 @@ function GamePacketHander(buf, readSize, offset)
         this.Reset();
         return;
     }
+    var mustSize = GamePacketHander.Size;
+
     if (offset == null)
         offset = 0;
-    var mustSize = GamePacketHander.Size;
-    var offset = buf.byteOffset;
+
+    //var offset = buf.byteOffset;
     var len = readSize - offset;
     if (len < mustSize) {
         this.Reset();
@@ -17,10 +19,10 @@ function GamePacketHander(buf, readSize, offset)
     }
 
     
-    this.dataSize = buf.readInt32LE(0);
-    this.headerCrc32 = buf.readUInt32LE(4);
-    this.dataCrc32 = buf.readUInt32LE(8);
-    this.header = buf.readInt32LE(12);
+    this.dataSize = buf.readInt32LE(0 + offset);
+    this.headerCrc32 = buf.readUInt32LE(4 + offset);
+    this.dataCrc32 = buf.readUInt32LE(8 + offset);
+    this.header = buf.readInt32LE(12 + offset);
 }
 
 GamePacketHander.prototype.Reset =
