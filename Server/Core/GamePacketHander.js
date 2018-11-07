@@ -18,9 +18,9 @@ function GamePacketHander(buf, readSize, offset)
 
     
     this.dataSize = buf.readInt32LE(0);
-    this.headerCrc32 = buf.readUInt32LE(1);
-    this.dataCrc32 = buf.readUInt32LE(2);
-    this.header = buf.readInt32LE(3);
+    this.headerCrc32 = buf.readUInt32LE(4);
+    this.dataCrc32 = buf.readUInt32LE(8);
+    this.header = buf.readInt32LE(12);
 }
 
 GamePacketHander.prototype.Reset =

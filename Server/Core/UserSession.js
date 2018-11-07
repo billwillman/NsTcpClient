@@ -15,7 +15,13 @@ UserSession.prototype.Close = function ()
 {
     if (this.m_Socket != null)
     {
-        this.m_Socket.destroy();
+        try
+        {
+            this.m_Socket.destroy();
+        } catch
+        {
+            
+        }
         this.m_Socket = null;
     }
 }

@@ -135,6 +135,11 @@ TcpServer.prototype.Accept =
                     })
                     ;
 
+                    socket.on("error", ()=>
+                    {
+                        this._OnEnd(socket);
+                    });
+
                     if (heartTimeout != null)
                     {
                         socket.on("timeout",
