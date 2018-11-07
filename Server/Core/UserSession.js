@@ -29,11 +29,11 @@ UserSession.prototype.HandleMessage =
     }
 
 UserSession.prototype.SendBuf = 
-    function (packetHandle, buf)
+    function (packetHandle, buf, args)
     {
         if (packetHandle == null || this.m_packetHandler == null || this.m_Socket == null) 
             return false;
-        return this.m_packetHandler.SendBuf.call(this.m_packetHandler, this.m_Socket, packetHandle, buf);
+        return this.m_packetHandler.SendBuf.call(this.m_packetHandler, this.m_Socket, packetHandle, buf, args);
     }
 
 

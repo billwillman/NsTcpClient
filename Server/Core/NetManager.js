@@ -211,7 +211,7 @@ NetManager.prototype.OnConnectedEvent =
 
 // 发送给客户端
 NetManager.prototype.SendBuf = 
-    function (clientSocket, packetHandle, buf)
+    function (clientSocket, packetHandle, buf, args)
     {
         if (clientSocket == null || packetHandle == null)
             return false;
@@ -220,11 +220,11 @@ NetManager.prototype.SendBuf =
         var session = this.m_SessionMap[clientSocket];
         if (session == null)
             return false;
-        return session.SendBuf.call(session, packetHandle, buf);
+        return session.SendBuf.call(session, packetHandle, buf, args);
     }
 
 NetManager.prototype.SendMessage =
-    function (clientSocket, packetHandle, message)
+    function (clientSocket, packetHandle, message, args)
     {
         if (clientSocket == null || packetHandle == null)
             return false;
@@ -234,7 +234,7 @@ NetManager.prototype.SendMessage =
             message.DoSend();
             buf = message.m_Buf;
         }
-        return this.SendBuf(clientSocket, packetHandle, buf);
+        return this.SendBuf(clientSocket, packetHandle, buf, args);
     }
 
 module.exports = NetManager;
