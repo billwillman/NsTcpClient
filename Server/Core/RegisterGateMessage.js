@@ -25,7 +25,8 @@ RegisterGateMessage.prototype._RegisterClientSendMessages =
             // LoginServer的Gate
             
            // 用户登录协议
-           this.RegisterCrossId(MessageConsts.ClientMessage.C_User_Login);
+           this.RegisterCrossId(MessageConsts.ClientMessage.C_User_Login, 
+                MessageConsts.GateToLSMessage.C_User_Login);
         }
     }
 
@@ -42,11 +43,11 @@ RegisterGateMessage.prototype.OnMessage =
                 var headerId = packet.header.header;
                 if (headerId != null)
                 {
-                    var isCanCross = this.m_CrossIdMap[headerId];
-                    if (isCanCross != null && isCanCross)
+                    var replaceId = this.m_CrossIdMap[headerId];
+                    if (replaceId != null)
                     {
                         // 可以转发
-                        this.SendToServer(packet, clientSocket, netMgr);
+                        this.SendToServer(replaceId, packet, clientSocket, netMgr);
                         return true;
                     }
                 }
@@ -60,20 +61,21 @@ RegisterGateMessage.prototype.OnMessage =
 
 // 转发给GS或者LS
 RegisterGateMessage.prototype.SendToServer =
-    function (packet, clientSocket, netMgr)
+    function (replaceId, packet, clientSocket, netMgr)
     {
-
+        // 分发
+        netMgr.DispatchToServer(replaceId, packet);
     }
 
 // 注册可以转发的协议ID
 RegisterGateMessage.prototype.RegisterCrossId =
-    function (headerId)
+    function (headerId, replaceId)
     {
-        if (headerId == null)
+        if (headerId == null || replaceId == null)
             return;
         if (this.m_CrossIdMap == null)
             this.m_CrossIdMap = {};
-        this.m_CrossIdMap[headerId] = true;
+        this.m_CrossIdMap[headerId] = replaceId;
     }
 
 

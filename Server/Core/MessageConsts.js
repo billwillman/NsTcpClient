@@ -29,8 +29,8 @@ var MessageConsts =
 
     GateToLSMessage:
     {
-
-
+        // 转发：客户端登录
+        C_User_Login = 1,
     }
 }
 
