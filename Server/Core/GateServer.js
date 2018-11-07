@@ -23,15 +23,19 @@ GateServer.prototype.GetId =
 
 // 创建GATE服务器
 GateServer.Create =
-    function (id, port)
+    function (id, port, isGS)
     {
         if (id == null || port == null)
             return null;
         var server = new GateServer(id, port);
         server.SetPacketHandlerClass(DefaultPacketHandler);
 
+        // 是否是GS的GATE
+        if (isGS == null)
+            isGS = false;
+
         // 注冊消息
-        new RegisterGateMessage(this);
+        new RegisterGateMessage(this, isGS);
 
         server.Listen(port);
         return server;

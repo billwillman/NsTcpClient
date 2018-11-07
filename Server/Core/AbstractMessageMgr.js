@@ -17,18 +17,20 @@ AbstractMessageMgr.prototype.OnMessage =
     {
         // 分发
         if (this.m_AbstractSrvMapClass == null)
-            return;
+            return false;
         var headerId = packet.header.header;
         if (headerId == null)
-            return;
+            return false;
         var msgClass = this.m_AbstractSrvMapClass[headerId];
         if (msgClass == null)
-            return;
+            return false;
         var msg = new msgClass();
         if (msg.OnMessage != null)
         {
             msg.OnMessage.call(msg, packet, clientSocket, netMgr);
+            return true;
         }
+        return false;
     }
 
 AbstractMessageMgr.prototype.RegisterSrvMsg =
