@@ -10,6 +10,8 @@ function GateServer(id, port)
 {
     this.Init();
     this.m_Id = id;
+    // 连接GS或者LS
+    this.m_Client = null;
 }
 
 GateServer.prototype = NetManager.prototype;

@@ -8,6 +8,13 @@ var MessageConsts =
         C_User_Login: 1
     },
 
+    // 服务器到客户端的协议编号
+    SrvToClientMessage:
+    {
+        // 登录返回结果
+        S_User_loginRet = 1
+    },
+
     // Gate到GS
     GateToGSMessage : 
     {
