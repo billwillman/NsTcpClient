@@ -148,12 +148,21 @@ NetManager.prototype._RemoveSession =
             var userSession = this.m_SessionMap[clientSocket];
             if (userSession != null)
             {
+                this.OnRemoveSessionEvent(userSession);
                 userSession.Close();
                 this.m_SessionMap[clientSocket] = null;
                 delete this.m_SessionMap[clientSocket];
             }
         }
     }
+
+NetManager.prototype.OnRemoveSessionEvent = 
+        function (session)
+        {}
+
+NetManager.prototype.OnAddSessionEvent =
+        function (session)
+        {}
 
 NetManager.prototype.OnPacketRead =
     function (data, socket)
@@ -195,7 +204,9 @@ NetManager.prototype.OnConnectedEvent =
             this.m_SessionMap = {};
         var handlerClass = this._GetPacketHandlerClass();
         var newHandler = new handlerClass(this);
-        this.m_SessionMap[clientSocket] = new UserSession(clientSocket, newHandler);
+        var session = new UserSession(clientSocket, newHandler);
+        this.m_SessionMap[clientSocket] = session;
+        this.OnAddSessionEvent(session);
     }
 
 // 发送给客户端
