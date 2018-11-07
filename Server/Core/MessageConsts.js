@@ -12,7 +12,7 @@ var MessageConsts =
     SrvToClientMessage:
     {
         // 登录返回结果
-        S_User_loginRet = 1
+        S_User_loginRet: 1
     },
 
     // Gate到GS

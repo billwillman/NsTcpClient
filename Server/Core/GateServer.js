@@ -23,6 +23,20 @@ GateServer.prototype.GetId =
         return this.m_Id;
     }
 
+// 分发到上层服务器
+GateServer.prototype.DispatchoServer =
+    function (headerId, packet)
+    {
+        if (this.m_Client == null || packet == null)
+            return false;
+        
+        if (headerId == null)
+            headerId = packet.header.header;
+
+        // 转发
+        return this.m_Client.SendBuf(headerId, packet.data);
+    }
+
 // 创建GATE服务器
 GateServer.Create =
     function (id, port, isGS)

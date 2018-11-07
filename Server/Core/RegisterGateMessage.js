@@ -55,7 +55,7 @@ RegisterGateMessage.prototype.OnMessage =
 RegisterGateMessage.prototype.SendToServer =
     function (packet, clientSocket, netMgr)
     {
-
+        
     }
 
 // 注册可以转发的协议ID
