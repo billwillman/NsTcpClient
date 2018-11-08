@@ -125,17 +125,17 @@ namespace NsTcpClient
 			m_Client.AddPacketListener(header, callBack);
 		}
 
-		public void Send (byte[] buf, int packetHandle)
+        public void Send(byte[] buf, int packetHandle, int bufSize = -1)
 		{
 			if (m_Client == null)
 				return;
 			var status = m_Client.GetState();
 			if (status == eClientState.eClient_STATE_CONNECTED)
 			{
-				m_Client.Send(buf, packetHandle);
+                m_Client.Send(buf, packetHandle, bufSize);
 			} else if (status == eClientState.eClient_STATE_CONNECTING)
 			{
-				TempPacket temp = new TempPacket(buf, packetHandle);
+                TempPacket temp = new TempPacket(buf, packetHandle, bufSize);
 				m_TempList.AddLast(temp);
 			}
 		}
@@ -159,6 +159,25 @@ namespace NsTcpClient
 			Send(src, packetHandle);
 		}
 
+        // 发送AbstractClientMessage
+        public void SendMessage(int packetHandle, AbstractClientMessage message)
+        {
+            if (m_Client == null || message == null)
+                return;
+            try
+            {
+                long bufSize;
+                byte[] buffer = message.GetBuffer(out bufSize);
+                if (bufSize > int.MaxValue)
+                    return;
+                Send(buffer, packetHandle, (int)bufSize);
+            } finally
+            {
+                // 协议Buffer回池
+                message.Dispose();
+            }
+        }
+
 		private void ClearTempList()
 		{
 			m_TempList.Clear();
@@ -181,15 +200,17 @@ namespace NsTcpClient
 			public byte[] data;
 			public int handle;
 
-			public TempPacket(byte[] srcData, int packetHandle)
+            public TempPacket(byte[] srcData, int packetHandle, int bufSize = -1)
 			{
 				handle = packetHandle;
-				if (srcData == null || srcData.Length <= 0)
+                if (srcData == null || srcData.Length <= 0 || bufSize == 0)
 					data = null;
 				else 
 				{
-					data = new byte[srcData.Length];
-					Buffer.BlockCopy(srcData, 0, data, 0, srcData.Length);
+                    if (bufSize < 0)
+                        bufSize = srcData.Length;
+                    data = new byte[bufSize];
+                    Buffer.BlockCopy(srcData, 0, data, 0, bufSize);
 				}
 			}
 		}
