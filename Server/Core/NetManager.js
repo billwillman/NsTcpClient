@@ -4,16 +4,15 @@ var AbstractPacketHandler = require ("./AbstractPacketHandler");
 var ITcpServerListener = require("./ITcpServerListener");
 var AbstractMessageMgr = require("./AbstractMessageMgr");
 
-function NetManager() {
-    this.Init();
-}
+class NetManager extends ITcpServerListener
+{
+    constructor()
+    {
+        super();
+        this.Init();
+    }
 
-// 继承
-NetManager.prototype = ITcpServerListener.prototype;
-NetManager.prototype.constructor = NetManager;
-
-NetManager.prototype.Init =
-    function ()
+    Init()
     {
         this.m_TcpServer = null;
         this.m_SessionMap = null;
@@ -22,16 +21,14 @@ NetManager.prototype.Init =
         this.m_DefaultServerMsgListener = null;
     }
 
-NetManager.prototype.RegisterDefaultServerMsgListener =
-    function (listener)
+    RegisterDefaultServerMsgListener(listener)
     {
         if (listener == null)
             listener = new AbstractMessageMgr();
         this.m_DefaultServerMsgListener = listener;
     }
 
-NetManager.prototype.RegisterDefaultSrvAbstractMsg =
-    function (headerId, abstractMsg)
+    RegisterDefaultSrvAbstractMsg(headerId, abstractMsg)
     {
         if (headerId == null || abstractMsg == null)
             return;
@@ -39,17 +36,15 @@ NetManager.prototype.RegisterDefaultSrvAbstractMsg =
             this.m_DefaultServerMsgListener = new AbstractMessageMgr();
         this.m_DefaultServerMsgListener.RegisterSrvMsg.call(this.m_DefaultServerMsgListener, headerId, abstractMsg);
     }
-    
-NetManager.prototype._OnDefaultMessageHandle =
-    function (packet, clientSocket)
+
+    _OnDefaultMessageHandle(packet, clientSocket)
     {
         if (this.m_DefaultServerMsgListener == null || this.m_DefaultServerMsgListener.OnMessage == null)
             return;
         this.m_DefaultServerMsgListener.OnMessage.call(this.m_DefaultServerMsgListener, packet, clientSocket, this);
     }
 
-NetManager.prototype._SendPacketRead =
-    function (packet, clientSocket)
+    _SendPacketRead(packet, clientSocket)
     {
         if (packet == null)
             return;
@@ -69,8 +64,7 @@ NetManager.prototype._SendPacketRead =
         this._OnDefaultMessageHandle(packet, clientSocket);
     }
 
-NetManager.prototype.RegisterServerMessage = 
-    function (headerId, serverMsgListener)
+    RegisterServerMessage(headerId, serverMsgListener)
     {
         if (headerId == null || serverMsgListener == null)
             return;
@@ -79,9 +73,8 @@ NetManager.prototype.RegisterServerMessage =
         this.m_ServerListener[headerId] = serverMsgListener;
     }
 
-// heartTimeout心跳包
-NetManager.prototype.Listen =
-    function(bindPort, heartTimeout)
+    // heartTimeout心跳包
+    Listen(bindPort, heartTimeout)
     {
         if (bindPort == null)
             return false;
@@ -94,9 +87,8 @@ NetManager.prototype.Listen =
         return this.m_TcpServer.Accept(heartTimeout);
     }
 
-NetManager.prototype.Close =
-    function ()
-    {
+    Close()
+    {   
         if (this.m_TcpServer != null)
         {
             this.m_TcpServer.Close();
@@ -106,9 +98,8 @@ NetManager.prototype.Close =
         this.m_SessionMap = null;
     }
 
-// 关闭所有客户端， 但服务器不停
-NetManager.prototype.CloseAllClientSocket =
-    function ()
+    // 关闭所有客户端， 但服务器不停
+    CloseAllClientSocket()
     {
         if (this.m_SessionMap != null)
         {
@@ -120,26 +111,23 @@ NetManager.prototype.CloseAllClientSocket =
         this.m_SessionMap = null;
     }
 
-NetManager.prototype.OnTimeOut =
-    function (clientSocket)
+    OnTimeOut(clientSocket)
     {
         this.CloseClientSocket(clientSocket);
     }
 
     // 主动断开客户端连接
-NetManager.prototype.CloseClientSocket = 
-    function (clientSocket)
+    CloseClientSocket(clientSocket)
     {
         this._RemoveSession(clientSocket);
     }
 
-NetManager.prototype.SetPacketHandlerClass =
-    function (handleClass) {
+    SetPacketHandlerClass(handleClass)
+    {
         this.m_PacketHandlerClass = handleClass;
     }
 
-NetManager.prototype._RemoveSession =
-    function(clientSocket)
+    _RemoveSession(clientSocket)
     {
         if (clientSocket == null)
             return;
@@ -156,16 +144,13 @@ NetManager.prototype._RemoveSession =
         }
     }
 
-NetManager.prototype.OnRemoveSessionEvent = 
-        function (session)
-        {}
+    OnRemoveSessionEvent(session)
+    {}
 
-NetManager.prototype.OnAddSessionEvent =
-        function (session)
-        {}
+    OnAddSessionEvent(session)
+    {}
 
-NetManager.prototype.OnPacketRead =
-    function (data, socket)
+    OnPacketRead(data, socket)
     {
         if (data == null || socket == null)
             return;
@@ -177,25 +162,21 @@ NetManager.prototype.OnPacketRead =
         userSession.HandleMessage.call(userSession, data);
     }
 
-NetManager.prototype._GetPacketHandlerClass =
-    function ()
+    _GetPacketHandlerClass()
     {
         if (this.m_PacketHandlerClass == null)
             this.m_PacketHandlerClass = AbstractPacketHandler;
         return this.m_PacketHandlerClass;
     }
 
-    NetManager.prototype.OnEndEvent =
-        function (clientSocket)
-        {
-            if (clientSocket == null)
+    OnEndEvent(clientSocket)
+    {
+        if (clientSocket == null)
                 return;
-            this._RemoveSession(clientSocket);
-        }
+        this._RemoveSession(clientSocket);
+    }
 
-
-NetManager.prototype.OnConnectedEvent =
-    function (clientSocket)
+    OnConnectedEvent(clientSocket)
     {
         if (clientSocket == null)
             return;
@@ -209,9 +190,8 @@ NetManager.prototype.OnConnectedEvent =
         this.OnAddSessionEvent(session);
     }
 
-// 发送给客户端
-NetManager.prototype.SendBuf = 
-    function (clientSocket, packetHandle, buf, args)
+    // 发送给客户端
+    SendBuf(clientSocket, packetHandle, buf, args)
     {
         if (clientSocket == null || packetHandle == null)
             return false;
@@ -223,8 +203,7 @@ NetManager.prototype.SendBuf =
         return session.SendBuf.call(session, packetHandle, buf, args);
     }
 
-NetManager.prototype.SendMessage =
-    function (packetHandle, message, args, targetSocket)
+    SendMessage(packetHandle, message, args, targetSocket)
     {
         if (targetSocket == null || packetHandle == null)
             return false;
@@ -236,5 +215,6 @@ NetManager.prototype.SendMessage =
         }
         return this.SendBuf(targetSocket, packetHandle, buf, args);
     }
+}
 
 module.exports = NetManager;

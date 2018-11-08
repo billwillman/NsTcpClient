@@ -5,13 +5,13 @@ var NetManager = require("./NetManager");
 var DefaultPacketHandler = require("./DefaultPacketHandler");
 var RegisterLoginMessage = require("./RegisterLoginMessage");
 
- function LoginServer(port)
- {
-     this.Init();
- }
-
- LoginServer.prototype = NetManager.prototype;
- LoginServer.prototype.constructor = LoginServer;
+class LoginServer extends NetManager
+{
+    constructor(port)
+    {
+        super();
+    }
+}
 
  LoginServer.Create = 
     function (port)

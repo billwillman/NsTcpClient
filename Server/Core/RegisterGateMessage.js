@@ -3,27 +3,26 @@ var AbstractMessageMgr = require("./AbstractMessageMgr");
 var MessageConsts = require("./MessageConsts");
 var  C_HeartMessage = require("./Messages/Client/C_HeartMessage");
 
-function RegisterGateMessage(netMgr, isGSGate)
+class RegisterGateMessage extends AbstractMessageMgr
 {
-    // 是否可以转发的ID
-    this.m_CrossIdMap = {};
-    netMgr.RegisterDefaultServerMsgListener.call(netMgr, this);
-    this._RegisterClientSendMessages(isGSGate);
-}
-
-RegisterGateMessage.prototype = AbstractMessageMgr.prototype;
-RegisterGateMessage.prototype.constructor = RegisterGateMessage;
-
-// 注册客户端发送过来的协议
-RegisterGateMessage.prototype._RegisterClientSendMessages =
-    function (isGSGate)
+    constructor(netMgr, isGSGate)
+    {
+        super();
+        // 是否可以转发的ID
+        this.m_CrossIdMap = {};
+        netMgr.RegisterDefaultServerMsgListener.call(netMgr, this);
+        this._RegisterClientSendMessages(isGSGate);
+    }
+    
+    // 注册客户端发送过来的协议
+     _RegisterClientSendMessages(isGSGate)
     {
         if (isGSGate)
         {
             // GameServer的Gate
 
             /*----------------------可穿透协议-----------------------*/
-            
+
             /*-----------------------处理协议------------------------*/
             this.RegisterSrvMsg(MessageConsts.ClientMessage.C_Heart, C_HeartMessage);
         } else
@@ -39,11 +38,9 @@ RegisterGateMessage.prototype._RegisterClientSendMessages =
         }
     }
 
-var superOnMessage = RegisterGateMessage.prototype.OnMessage;
-RegisterGateMessage.prototype.OnMessage = 
-    function (packet, clientSocket, netMgr)
+    OnMessage(packet, clientSocket, netMgr)
     {
-        var isDone = superOnMessage.call(this, packet, clientSocket, netMgr);
+        var isDone = super.OnMessage(packet, clientSocket, netMgr);
         if (!isDone)
         {
             // 判断是否可以分发
@@ -68,17 +65,15 @@ RegisterGateMessage.prototype.OnMessage =
         netMgr.CloseClientSocket(clientSocket);
     }
 
-// 转发给GS或者LS
-RegisterGateMessage.prototype.SendToServer =
-    function (replaceId, packet, clientSocket, netMgr)
+    // 转发给GS或者LS
+    SendToServer(replaceId, packet, clientSocket, netMgr)
     {
         // 分发
         netMgr.DispatchToServer(replaceId, packet);
     }
 
-// 注册可以转发的协议ID
-RegisterGateMessage.prototype.RegisterCrossId =
-    function (headerId, replaceId)
+    // 注册可以转发的协议ID
+    RegisterCrossId(headerId, replaceId)
     {
         if (headerId == null || replaceId == null)
             return;
@@ -86,7 +81,6 @@ RegisterGateMessage.prototype.RegisterCrossId =
             this.m_CrossIdMap = {};
         this.m_CrossIdMap[headerId] = replaceId;
     }
-
-
+}
 
 module.exports = RegisterGateMessage;

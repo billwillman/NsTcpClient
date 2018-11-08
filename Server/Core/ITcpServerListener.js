@@ -2,45 +2,33 @@
 侦听器
 */
 
-function ITcpServerListener()
-{ }
+class ITcpServerListener
+{
+    constructor() {}
 
-ITcpServerListener.prototype.constructor = ITcpServerListener;
-
-
-ITcpServerListener.prototype.OnConnectedEvent =
-    function (socket)
+    OnConnectedEvent(socket)
     {}
 
-ITcpServerListener.prototype.OnStartListeningEvent =
-    Function ()
+    OnStartListeningEvent()
     {}
 
-ITcpServerListener.prototype.OnErrorEvent = 
-    function (error)
+    OnErrorEvent(error)
     {}
 
-
-ITcpServerListener.prototype.OnSocketEndEvent =
-        function (socket)
-        {};
-
-ITcpServerListener.prototype.OnPacketRead =
-    function (data)
+    OnSocketEndEvent(socket)
     {}
 
-ITcpServerListener.prototype.OnTimeOut =
-    function (socket)
-    {
-
-    }
-
-ITcpServerListener.prototype.OnEndEvent =
-    function (socket)
+    OnPacketRead(data)
     {}
 
-ITcpServerListener.prototype.OnCloseEvent =
-    function()
+    OnTimeOut(socket)
     {}
+
+    OnEndEvent(socket)
+    {}
+
+    OnCloseEvent()
+    {}
+}
 
 module.exports = ITcpServerListener;

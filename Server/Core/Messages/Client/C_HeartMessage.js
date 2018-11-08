@@ -5,19 +5,19 @@
 var AbstractServerMessage = require("../../AbstractServerMessage");
 var MessageConsts = require("../../MessageConsts");
 
+class C_HeartMessage extends AbstractServerMessage
+{
+    constructor()
+    {
+        super();
+    }
 
-function C_HeartMessage()
-{}
-
-C_HeartMessage.prototype = AbstractServerMessage.prototype;
-C_HeartMessage.prototype.constructor = C_HeartMessage;
-
-// 客户端发送上来的心跳包
-C_HeartMessage.prototype.DoRecv =
-    function(clientSocket)
+    // 客户端发送上来的心跳包
+    DoRecv(clientSocket)
     {
         // 返回心跳包
         this.SendMessage(MessageConsts.SrvToClientMessage.S_Heart, null, clientSocket);
     }
+}
 
 module.exports = C_HeartMessage;

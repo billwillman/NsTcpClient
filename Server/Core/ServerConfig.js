@@ -11,19 +11,18 @@ ServerConfigType = {
     Type_DBServer: 2,
 };
 
-function ServerConfig()
+class ServerConfig
 {
-    // GATE数组
-    this.m_GateArray = [];
-    // GameServer数组
-    this.m_GS = null;
-    this.m_DB = null;
-}
+    constructor()
+    {
+        // GATE数组
+        this.m_GateArray = [];
+        // GameServer数组
+        this.m_GS = null;
+        this.m_DB = null;
+    }
 
-ServerConfig.prototype.constructor = ServerConfig;
-
-ServerConfig.prototype.LoadConfig =
-    function (fileName)
+    LoadConfig(fileName)
     {
         if (fileName == null)
             return false;
@@ -42,14 +41,7 @@ ServerConfig.prototype.LoadConfig =
         return true;
     }
 
-//ServerConfig.GatePath = "${__dirname}/Core/RunGate.js";\
-ServerConfig.GatePath = "./Core/RunGate.js";
-ServerConfig.GsPath = "./Core/RunGS.js";
-ServerConfig.DBPath = "./Core/RunDB.js";
-ServerConfig.RunGatePath = "node.exe " + ServerConfig.GatePath;
-
-ServerConfig.prototype.RunServer = 
-    function (serverType, id, port)
+    RunServer(serverType, id, port)
     {
         if (serverType == ServerConfigType.Type_GateSever)
         {
@@ -65,10 +57,9 @@ ServerConfig.prototype.RunServer =
         }
     }
 
-ServerConfig.prototype.RunGates =
-    function ()
+    RunGates()
     {
-     //   console.log("=>Start All Gates");
+        //   console.log("=>Start All Gates");
 
         if (this.m_GateArray != null)
         {
@@ -86,31 +77,35 @@ ServerConfig.prototype.RunGates =
        // console.log("=>End All Gates");
     }
 
-ServerConfig.prototype.RunGS =
-    function ()
+    RunGS()
     {
         if (this.m_GS != null)
         {
             this.RunServer(ServerConfigType.Type_GameServer, 0, this.m_GS.port);
         }
-    }
+    }  
 
-    ServerConfig.prototype.RunDB =
-        function ()
-        {
-            if (this.m_DB != null)
+    RunDB()
+    {
+        if (this.m_DB != null)
             {
                 this.RunServer(ServerConfigType.Type_DBServer, 0, this.m_DB.port);
             }
-        }
+    }
 
-// 根据配置启动服务器组
-ServerConfig.prototype.RunConfig =
-    function ()
+    // 根据配置启动服务器组
+    RunConfig()
     {
         this.RunDB();
         this.RunGS();
         this.RunGates();
     }
+}
+
+//ServerConfig.GatePath = "${__dirname}/Core/RunGate.js";\
+ServerConfig.GatePath = "./Core/RunGate.js";
+ServerConfig.GsPath = "./Core/RunGS.js";
+ServerConfig.DBPath = "./Core/RunDB.js";
+ServerConfig.RunGatePath = "node.exe " + ServerConfig.GatePath;
 
 module.exports = ServerConfig;

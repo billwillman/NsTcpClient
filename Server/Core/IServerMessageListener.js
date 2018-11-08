@@ -2,12 +2,13 @@
   网络协议处理
 */
 
-function IServerMessagListener()
-{}
+class IServerMessagListener
+{
+  constructor()
+  {}
 
-IServerMessagListener.prototype.constructor = IServerMessagListener;
-
-IServerMessagListener.prototype.OnMessage = function (packet, clientSocket, netMgr)
-{}
+  OnMessage(packet, clientSocket, netMgr)
+  {}
+}
 
 module.exports = IServerMessagListener;

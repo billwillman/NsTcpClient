@@ -2,14 +2,15 @@
     协议处理
 * */
 
-function AbstractPacketHandler(netMgr, recvBufSize)
+class AbstractPacketHandler
 {
-    this.m_NetMgr = netMgr;
-    this.InitRecvBuffer(recvBufSize);
-}
+    constructor(netMgr, recvBufSize)
+    {
+        this.m_NetMgr = netMgr;
+        this.InitRecvBuffer(recvBufSize);
+    }
 
-AbstractPacketHandler.prototype.InitRecvBuffer =
-    function (allocSize)
+    InitRecvBuffer(allocSize)
     {
         this.m_RecvSize = 0;
         // 20K, 一个用户20K数据
@@ -18,10 +19,7 @@ AbstractPacketHandler.prototype.InitRecvBuffer =
         this.m_RecvBuffer = Buffer.allocUnsafe(allocSize); 
     }
 
-AbstractPacketHandler.prototype.constructor = AbstractPacketHandler;
-
-AbstractPacketHandler.prototype.GetReadData =
-    function (data)
+    GetReadData(data)
     {
         if (data == null || !Buffer.isBuffer(data))
             return -1;
@@ -46,25 +44,23 @@ AbstractPacketHandler.prototype.GetReadData =
         return ret;
     }
 
-AbstractPacketHandler.prototype.OnPacketRead =
-    function (data, clientSocket)
+    OnPacketRead(data, clientSocket)
     {
         console.log("OnPakcetRead");
     }
 
-AbstractPacketHandler.prototype.SendBuf =
-    function (clientSocket, packetHandle, buf)
+    SendBuf(clientSocket, packetHandle, buf)
     {
         console.log("SendBuffer");
         return false;
     }
 
-AbstractPacketHandler.prototype.MoveMySelf =
-    function (recvBufSz, i)
+    MoveMySelf(recvBufSz, i)
     {
         if (recvBufSz == null || recvBufSz <= 0)
             return;
         this.m_RecvBuffer.copy(this.m_RecvBuffer, 0, i, i + recvBufSz);
     }
+}
 
 module.exports = AbstractPacketHandler

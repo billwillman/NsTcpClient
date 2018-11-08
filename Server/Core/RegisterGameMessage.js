@@ -1,10 +1,8 @@
 
 
-function RegisterGameMessage(netMgr)
+class RegisterGameMessage
 {
 
 }
-
-RegisterGameMessage.prototype.constructor = RegisterGameMessage;
 
 module.exports = RegisterGameMessage;

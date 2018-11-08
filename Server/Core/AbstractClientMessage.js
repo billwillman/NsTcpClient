@@ -2,16 +2,15 @@
  抽象客户端发送消息
 */
 
-function AbstractClientMessage()
+class AbstractClientMessage
 {
-    this.m_Buf = null;
-    this.m_BufOffset = 0;
-}
+    constructor()
+    {
+        this.m_Buf = null;
+        this.m_BufOffset = 0;
+    }
 
-AbstractClientMessage.prototype.constructor = AbstractClientMessage;
-
-AbstractClientMessage.prototype._InitBuf =
-    function (requireSize)
+    _InitBuf(requireSize)
     {
         if (requireSize == null)
             requireSize = 0;
@@ -32,52 +31,44 @@ AbstractClientMessage.prototype._InitBuf =
         }
     }
 
-AbstractClientMessage.prototype.DoSend =
-    function ()
+    DoSend()
     {}
 
-AbstractClientMessage.prototype.WriteByte =
-    function (byte)
+    WriteByte(byte)
     {
         this._InitBuf(1);
         this.m_Buf.writeUInt8(byte, this.m_BufOffset);
         this.m_BufOffset++;
     }
 
-AbstractClientMessage.prototype.WriteBool =
-    function (bool)
+    WriteBool(bool)
     {
         var byte = bool ? 1: 0;
         this.WriteByte(byte);
     }
 
-AbstractClientMessage.prototype.WriteInt =
-    function (int)
+    WriteInt(int)
     {
         this._InitBuf(4);
         this.m_Buf.writeInt32LE(int, this.m_BufOffset);
         this.m_BufOffset += 4;
     }
 
-AbstractClientMessage.prototype.WriteUInt =
-    function (uint)
+    WriteUInt(uint)
     {
         this._InitBuf(4);
         this.m_Buf.writeUInt32LE(uint, this.m_BufOffset);
         this.m_BufOffset += 4;
     }
 
-AbstractClientMessage.prototype.WriteInt64 =
-    function (int64)
+    WriteInt64(int64)
     {
         this._InitBuf(6);
         this.m_Buf.writeIntLE(int64, this.m_BufOffset, 6);
         this.m_BufOffset += 6;
     }
 
-// 写入字符串
-AbstractClientMessage.prototype.WriteString =
-    function (str)
+    WriteString(str)
     {
         this._InitBuf(4 + str.length);
         // 字符串长度
@@ -86,37 +77,34 @@ AbstractClientMessage.prototype.WriteString =
         this.m_BufOffset += str.length;
     }
 
-AbstractClientMessage.prototype.WriteUInt16 =
-    function (uint16)
+    WriteUInt16(uint16)
     {
         this._InitBuf(2);
         this.m_Buf.writeUInt16LE(uint16, this.m_BufOffset);
         this.m_BufOffset += 2;
     }
 
-AbstractClientMessage.prototype.WriteInt16 =
-    function (int16)
+    WriteInt16(int16)
     {
         this._InitBuf(2);
         this.m_Buf.writeInt16LE(int16, this.m_BufOffset);
         this.m_BufOffset += 2;
     }
 
-AbstractClientMessage.prototype.WriteFloat =
-    function (float)
+    WriteFloat(float)
     {
         this._InitBuf(4);
         this.m_Buf.writeFloatLE(float, this.m_BufOffset);
         this.m_BufOffset += 4;
     }
 
-AbstractClientMessage.prototype.WriteDouble =
-    function (double)
+    WriteDouble(double)
     {
         this._InitBuf(8);
         this.m_Buf.writeDoubleLE(double, this.m_BufOffset);
         this.m_BufOffset += 8;
     }
+}
 
 
 module.exports = AbstractClientMessage;

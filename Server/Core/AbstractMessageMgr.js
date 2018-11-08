@@ -4,16 +4,15 @@
 
 var IServerMessagListener = require("./IServerMessageListener");
 
-function AbstractMessageMgr()
+class AbstractMessageMgr extends IServerMessagListener
 {
-    this.m_AbstractSrvMapClass = null;
-}
+    constructor()
+    {
+        super();
+        this.m_AbstractSrvMapClass = null;
+    }
 
-AbstractMessageMgr.prototype = IServerMessagListener.prototype;
-AbstractMessageMgr.prototype.construcotr = AbstractMessageMgr;
-
-AbstractMessageMgr.prototype.OnMessage =
-    function (packet, clientSocket, netMgr)
+    OnMessage(packet, clientSocket, netMgr)
     {
         // 分发
         if (this.m_AbstractSrvMapClass == null)
@@ -33,8 +32,7 @@ AbstractMessageMgr.prototype.OnMessage =
         return false;
     }
 
-AbstractMessageMgr.prototype.RegisterSrvMsg =
-    function (headerId, abstractMessageClass)
+    RegisterSrvMsg(headerId, abstractMessageClass)
     {
         if (headerId == null || abstractMessageClass == null)
             return;
@@ -42,7 +40,7 @@ AbstractMessageMgr.prototype.RegisterSrvMsg =
             this.m_AbstractSrvMapClass = {};
         this.m_AbstractSrvMapClass[headerId] = abstractMessageClass;
     }
-
+}
 
 
 module.exports = AbstractMessageMgr;

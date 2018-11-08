@@ -3,14 +3,14 @@
 */
 var IServerMessagListener = require("./IServerMessageListener");
 
-function AbsractServerMessage()
-{}
+class AbsractServerMessage extends IServerMessagListener
+{
+    constructor()
+    {
+        super();
+    }
 
-AbsractServerMessage.prototype = IServerMessagListener.prototype;
-AbsractServerMessage.prototype.constructor = AbsractServerMessage;
-
-AbsractServerMessage.prototype.OnMessage = 
-    function (packet, clientSocket, netMgr)
+    OnMessage(packet, clientSocket, netMgr)
     {
         this.m_HeaderId = packet.header.header;
         this.m_Buf = packet.data;
@@ -21,15 +21,12 @@ AbsractServerMessage.prototype.OnMessage =
         this.DoRecv(clientSocket);
     }
 
-AbsractServerMessage.prototype.NetManager =
-    function ()
+    NetManager()
     {
         return this.m_NetMgr;
     }
 
-// 是否是读到头了
-AbsractServerMessage.prototype.IsBufEnd =
-    function (readLen)
+    IsBufEnd(readLen)
     {
         if (this.m_Buf == null)
             return true;
@@ -39,21 +36,18 @@ AbsractServerMessage.prototype.IsBufEnd =
         if (this.m_BufOffset + readLen > byteLen)
             return true;
         return false;
-    }
+    } 
 
-AbsractServerMessage.prototype.GetHeaderId =
-    function ()
+    GetHeaderId()
     {
         return this.m_HeaderId;
     }
 
-// 接收继承方法
-AbsractServerMessage.prototype.DoRecv =
-    function (clientSocket)
+    // 接收继承方法
+    DoRecv(clientSocket)
     {}
 
-AbsractServerMessage.prototype.ReadInt =
-    function ()
+    ReadInt()
     {
         if (this.IsBufEnd(4))
             return null;
@@ -62,8 +56,7 @@ AbsractServerMessage.prototype.ReadInt =
         return ret;
     }
 
-AbsractServerMessage.prototype.ReadUInt =
-    function ()
+    ReadUInt()
     {
         if (this.IsBufEnd(4))
             return null;
@@ -72,8 +65,7 @@ AbsractServerMessage.prototype.ReadUInt =
         return ret;
     }
 
-AbsractServerMessage.prototype.ReadInt64 =
-    function ()
+    ReadInt64()
     {
         if (this.IsBufEnd(6))
             return null;
@@ -82,8 +74,7 @@ AbsractServerMessage.prototype.ReadInt64 =
         return ret;
     }
 
-AbsractServerMessage.prototype.ReadUInt64 =
-    function ()
+    ReadUInt64()
     {
         if (this.IsBufEnd(6))
             return null;
@@ -92,8 +83,7 @@ AbsractServerMessage.prototype.ReadUInt64 =
         return ret;
     }
 
-AbsractServerMessage.prototype.ReadString =
-    function ()
+    ReadString()
     {
         var byteLen = this.ReadUInt();
         if (byteLen == null)
@@ -105,8 +95,7 @@ AbsractServerMessage.prototype.ReadString =
         return ret;
     }
 
-AbsractServerMessage.prototype.ReadByte =
-    function ()
+    ReadByte()
     {
         if (this.IsBufEnd(1))
             return null;
@@ -115,8 +104,7 @@ AbsractServerMessage.prototype.ReadByte =
         return ret;
     }
 
-AbsractServerMessage.prototype.ReadBool =
-    function ()
+    ReadBool()
     {
         var byte = this.ReadByte();
         if (byte == null)
@@ -125,8 +113,7 @@ AbsractServerMessage.prototype.ReadBool =
         return ret;
     }
 
-AbsractServerMessage.prototype.ReadInt16 =
-    function ()
+    ReadInt16()
     {
         if (this.IsBufEnd(2))
             return null;
@@ -135,8 +122,7 @@ AbsractServerMessage.prototype.ReadInt16 =
         return ret;
     }
 
-AbsractServerMessage.prototype.ReadUInt16 =
-    function ()
+    ReadUInt16()
     {
         if (this.IsBufEnd(2))
             return null;
@@ -145,8 +131,7 @@ AbsractServerMessage.prototype.ReadUInt16 =
         return ret;
     }
 
-AbsractServerMessage.prototype.ReadFloat =
-    function ()
+    ReadFloat()
     {
         if (this.IsBufEnd(4))
             return null;
@@ -155,8 +140,7 @@ AbsractServerMessage.prototype.ReadFloat =
         return ret;
     }
 
-AbsractServerMessage.prototype.ReadDouble =
-    function ()
+    ReadDouble()
     {
         if (this.IsBufEnd(8))
             return null;
@@ -165,12 +149,12 @@ AbsractServerMessage.prototype.ReadDouble =
         return ret;
     }
 
-AbsractServerMessage.prototype.SendMessage =
-    function (packetHandle, message, targetSocket, args)
+    SendMessage(packetHandle, message, targetSocket, args)
     {
         if (this.m_NetMgr == null)
             return;
         this.m_NetMgr.SendMessage.call(this.m_NetMgr, packetHandle, message, args, targetSocket);
     }
+}
 
 module.exports = AbsractServerMessage;

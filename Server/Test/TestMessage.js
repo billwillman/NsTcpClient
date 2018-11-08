@@ -2,14 +2,14 @@
 var IServerMessageListener = require("../Core/IServerMessageListener");
 var NetManager = require("../Core/NetManager")
 
-function TestMessage()
-{}
+class TestMessage extends IServerMessageListener
+{
+    constructor()
+    {
+        super();
+    }
 
-TestMessage.prototype = IServerMessageListener.prototype;
-TestMessage.prototype.constructor = TestMessage;
-
-TestMessage.prototype.OnMessage =
-    function (packet, clientSocket, netMgr)
+    OnMessage(packet, clientSocket, netMgr)
     {
         if (packet.data != null)
         {
@@ -20,5 +20,6 @@ TestMessage.prototype.OnMessage =
            netMgr.SendBuf(clientSocket, 1);
         }
     }
+}
 
 module.exports = TestMessage;

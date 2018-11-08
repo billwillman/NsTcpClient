@@ -5,30 +5,25 @@
 var net = require("net");
 
 // ---------------------------------类定义: TcpServer
-function TcpServer(bindPort)
+class TcpServer
 {
-    this.m_BindPort = bindPort;
-    this.m_Listener = null;
-}
+    constructor(bindPort)
+    {
+        this.m_BindPort = bindPort;
+        this.m_Listener = null;
+    }
 
-// 构造函数
-TcpServer.prototype.constructor = TcpServer;
+    SetListener(listener)
+    {
+        this.m_Listener = listener;
+    }
 
-TcpServer.prototype.SetListener = function (listener)
-{
-    this.m_Listener = listener;
-}
-
-
-// 获得绑定端口
-TcpServer.prototype.GetBindPort =
-    function()
+    GetBindPort()
     {
         return this.m_BindPort;
     }
 
-TcpServer.prototype.GetAddress =
-    function()
+    GetAddress()
     {
         if (this.m_Server != null)
         {
@@ -37,8 +32,7 @@ TcpServer.prototype.GetAddress =
         return null;
     }
 
-TcpServer.prototype.Close =
-    function ()
+    Close()
     {
         if (this.m_Server != null)
         {
@@ -48,67 +42,65 @@ TcpServer.prototype.Close =
         }
     }
 
-// 产生链接时调用
-TcpServer.prototype._OnConnected = function (socket)
-{
-    if (socket != null)
+    // 产生链接时调用
+    _OnConnected(socket)
     {
-        //socket.setNoDelay(true);
-        if (this.m_Listener != null)
-            this.m_Listener.OnConnectedEvent.call(this.m_Listener, socket);
+        if (socket != null)
+        {
+            //socket.setNoDelay(true);
+            if (this.m_Listener != null)
+                this.m_Listener.OnConnectedEvent.call(this.m_Listener, socket);
+        }
+        console.log("_OnConnected");
     }
 
-    console.log("_OnConnected");
-}
+    // 侦听时候
+    _OnListening()
+    {
+        if (this.m_Listener != null)
+            this.m_Listener.OnStartListeningEvent.call(this.m_Listener);
+        console.log("_OnListening");
+    }
 
-// 侦听时候
-TcpServer.prototype._OnListening = function ()
-{
-    if (this.m_Listener != null)
-        this.m_Listener.OnStartListeningEvent.call(this.m_Listener);
-    console.log("_OnListening");
-}
+    // 出错
+    _OnError(error)
+    {
+        if (this.m_Listener != null)
+            this.m_Listener.OnErrorEvent.call(this.m_Listener, error);
+        console.log("_OnError");
+    }
 
-// 出错
-TcpServer.prototype._OnError = function (error)
-{
-    if (this.m_Listener != null)
-        this.m_Listener.OnErrorEvent.call(this.m_Listener, error);
-    console.log("_OnError");
-}
+    _OnPacketRead(data, socket)
+    {
+        if (this.m_Listener != null && socket != null)
+            this.m_Listener.OnPacketRead.call(this.m_Listener, data, socket);
+    }
 
-TcpServer.prototype._OnPacketRead = function (data, socket)
-{
-    if (this.m_Listener != null && socket != null)
-        this.m_Listener.OnPacketRead.call(this.m_Listener, data, socket);
-}
+    _OnClose()
+    {
+        if (this.m_Listener != null)
+            this.m_Listener.OnCloseEvent.call(this.m_Listener);
+        console.log("_OnClose");
+    }
 
-TcpServer.prototype._OnClose = function ()
-{
-    if (this.m_Listener != null)
-        this.m_Listener.OnCloseEvent.call(this.m_Listener);
-    console.log("_OnClose");
-}
+    // 客户端断开连接
+    _OnEnd(socket)
+    {
+        if (this.m_Listener != null)
+            this.m_Listener.OnEndEvent.call(this.m_Listener, socket);
+        console.log("_OnEnd");
+    }
 
-// 客户端断开连接
-TcpServer.prototype._OnEnd = function (socket)
-{
-    if (this.m_Listener != null)
-        this.m_Listener.OnEndEvent.call(this.m_Listener, socket);
-    console.log("_OnEnd");
-}
+    _OnTimeOut(socket)
+    {
+        if (this.m_Listener != null)
+            this.m_Listener.OnTimeOut.call(this.m_Listener, socket);
+        console.log("_OnTimeOut");
+    }
 
-TcpServer.prototype._OnTimeOut = function (socket)
-{
-    if (this.m_Listener != null)
-        this.m_Listener.OnTimeOut.call(this.m_Listener, socket);
-    console.log("_OnTimeOut");
-}
-
-// 开始接受网络连接，返回值：是否成功监听
-// timeout为心跳包
-TcpServer.prototype.Accept =
-    function (heartTimeout)
+    // 开始接受网络连接，返回值：是否成功监听
+    // timeout为心跳包
+    Accept(heartTimeout)
     {
         this.Close();
         if (this.m_BindPort == null)
@@ -188,6 +180,8 @@ TcpServer.prototype.Accept =
         server.listen(this.m_BindPort);
         return true;
     }
+}
+
 //---------------------------------------------------
 
 

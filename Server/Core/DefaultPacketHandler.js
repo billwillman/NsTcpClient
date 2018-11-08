@@ -2,20 +2,16 @@
 var AbstractPacketHandler = require("./AbstractPacketHandler")
 var GamePacketHander = require("./GamePacketHander");
 var GamePacket = require("./GamePacket");
-var NetManager = require("./NetManager")
+var NetManager = require("./NetManager");
 
-function DefaultPacketHandler(netMgr, recvBufSize)
+class DefaultPacketHandler extends AbstractPacketHandler
 {
-    this.m_NetMgr = netMgr;
-    this.InitRecvBuffer(recvBufSize);
-}
+    constructor(netMgr, recvBufSize)
+    {
+        super(netMgr, recvBufSize);
+    }
 
-// 继承
-DefaultPacketHandler.prototype = AbstractPacketHandler.prototype;
-
-DefaultPacketHandler.prototype.constructor = DefaultPacketHandler;
-DefaultPacketHandler.prototype.OnPacketRead =
-    function (data, clientSocket)
+    OnPacketRead(data, clientSocket)
     {
         if (data == null ||  !Buffer.isBuffer(data))
             return;
@@ -69,8 +65,7 @@ DefaultPacketHandler.prototype.OnPacketRead =
         }
     }
 
-DefaultPacketHandler.prototype.SendBuf =
-    function (clientSocket, packetHandle, buf, args)
+    SendBuf(clientSocket, packetHandle, buf, args)
     {
         if (clientSocket == null || packetHandle == null)
             return false;
@@ -109,6 +104,7 @@ DefaultPacketHandler.prototype.SendBuf =
         
         return true;
     }
+}
 
 
 module.exports = DefaultPacketHandler

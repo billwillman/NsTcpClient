@@ -12,35 +12,33 @@ TcpClientStatus = {
     ConnectAbort: 4
 }
 
-function TcpClient(packetHandleClass, listener, recvBufSize)
+class TcpClient
 {
-    this.m_ServerIp = null;
-    this.m_ServerPort = null;
-    this.m_PacketHandle = null;
-    this.m_ServerListener = null;
-    if (packetHandleClass != null)
+    constructor(packetHandleClass, listener, recvBufSize)
     {
-        this.m_PacketHandle = new packetHandleClass(this, recvBufSize);
+        this.m_ServerIp = null;
+        this.m_ServerPort = null;
+        this.m_PacketHandle = null;
+        this.m_ServerListener = null;
+        if (packetHandleClass != null)
+        {
+            this.m_PacketHandle = new packetHandleClass(this, recvBufSize);
+        }
+        this.m_Status = TcpClientStatus.None;
+        this.m_Socket = null;
+        this.m_Listener = listener;
+        // 默认的消息处理对象，只有一个
+        this.m_DefaultServerMsgListener = null;
     }
-    this.m_Status = TcpClientStatus.None;
-    this.m_Socket = null;
-    this.m_Listener = listener;
-    // 默认的消息处理对象，只有一个
-    this.m_DefaultServerMsgListener = null;
-}
 
-TcpClient.prototype.constructor = TcpClient;
-
-TcpClient.prototype.RegisterDefaultServerMsgListener =
-    function (listener)
+    RegisterDefaultServerMsgListener(listener)
     {
         if (listener == null)
             listener = new AbstractMessageMgr();
         this.m_DefaultServerMsgListener = listener;
     }
 
-TcpClient.prototype.RegisterDefaultSrvAbstractMsg =
-    function (headerId, abstractMsg)
+    RegisterDefaultSrvAbstractMsg(headerId, abstractMsg)
     {
         if (headerId == null || abstractMsg == null)
             return;
@@ -49,39 +47,32 @@ TcpClient.prototype.RegisterDefaultSrvAbstractMsg =
         this.m_DefaultServerMsgListener.RegisterSrvMsg.call(this.m_DefaultServerMsgListener, headerId, abstractMsg);
     }
 
-TcpClient.prototype.IsConnected = 
-    function ()
+    IsConnected()
     {
         return (this.m_Socket != null) && (this.GetStatus() == TcpClientStatus.Connected);
     }
 
-TcpClient.prototype.IsConnecting =
-    function ()
+    IsConnecting()
     {
         return (this.m_Socket != null) && (this.GetStatus() == TcpClientStatus.Connecting);
     }
 
-TcpClient.prototype.GetStatus = 
-    function ()
+    GetStatus()
     {
         return this.m_Status;
     }
 
-
-TcpClient.prototype.GetServerIp = 
-    function ()
+    GetServerIp()
     {
         return this.m_ServerIp;
-    };
+    }
 
-TcpClient.prototype.GetServerPort =
-    function ()
+    GetServerPort()
     {
         return this.m_ServerPort;
     }
 
-TcpClient.prototype.DisConnect =
-    function ()
+    DisConnect()
     {
         if (this.m_Socket == null)
             return;
@@ -91,8 +82,7 @@ TcpClient.prototype.DisConnect =
         this.m_Status = TcpClientStatus.None;
     }
 
-TcpClient.prototype._OnError = 
-    function (error)
+    _OnError(error)
     {
         var isConnecting = this.m_Status == TcpClientStatus.Connecting;
         this.DisConnect();
@@ -110,24 +100,21 @@ TcpClient.prototype._OnError =
         }
     }
 
-TcpClient.prototype._OnPacketRead =
-    function (data)
+    _OnPacketRead(data)
     {
         if (this.m_PacketHandle == null || this.m_PacketHandle.OnPacketRead == null)
             return;
         this.m_PacketHandle.OnPacketRead.call(this.m_PacketHandle, data, this.m_Socket);
     }
 
-TcpClient.prototype._OnConnect =
-    function ()
+    _OnConnect()
     {
         this.m_Status = TcpClientStatus.Connected;
         if (this.m_Listener != null && this.m_Listener.OnConnectEvent != null)
             this.m_Listener.OnConnectEvent.call(this.m_Listener, true, this);
     }
 
-TcpClient.prototype.ConnectServer = 
-    function(serverIp, serverPort, heartTimeout)
+    ConnectServer(serverIp, serverPort, heartTimeout)
     {
         if (serverIp == null || serverPort == null)
             return false;
@@ -176,8 +163,7 @@ TcpClient.prototype.ConnectServer =
         return true;
     }
 
-TcpClient.prototype.SendBuf =
-    function (packetHandle, data, args)
+    SendBuf(packetHandle, data, args)
     {
         if (packetHandle == null || this.m_Socket == null || 
             this.m_Status == null || this.m_PacketHandle == null)
@@ -189,9 +175,7 @@ TcpClient.prototype.SendBuf =
         return this.m_PacketHandle.SendBuf(this.m_Socket, packetHandle, data, args);
     }
 
-// 发送消息
-TcpClient.prototype.SendMessage =
-    function (packetHandle, message, args)
+    SendMessage(packetHandle, message, args)
     {
         if (packetHandle == null)
             return false;
@@ -202,28 +186,25 @@ TcpClient.prototype.SendMessage =
             buf = message.m_Buf;
         }
         return this.SendBuf(packetHandle, buf, args);
-    };
+    }
 
-TcpClient.prototype.CloseClientSocket =
-    function (clientSocket, result)
+    CloseClientSocket(clientSocket, result)
     {
         /*
         if (result != null && result != -2)
             this._OnError(null);
             */
-        this._OnError(null);
+           this._OnError(null);
     }
 
-TcpClient.prototype._OnDefaultMessageHandle =
-    function (packet, clientSocket)
+    _OnDefaultMessageHandle(packet, clientSocket)
     {
         if (this.m_DefaultServerMsgListener == null || this.m_DefaultServerMsgListener.OnMessage == null)
             return;
         this.m_DefaultServerMsgListener.OnMessage.call(this.m_DefaultServerMsgListener, packet, clientSocket, this);
     }
 
-TcpClient.prototype._SendPacketRead =
-    function (packet, clientSocket)
+    _SendPacketRead(packet, clientSocket)
     {
         if (packet == null)
             return;
@@ -242,8 +223,7 @@ TcpClient.prototype._SendPacketRead =
         this._OnDefaultMessageHandle(packet, clientSocket);
     }
 
-TcpClient.prototype.RegisterServerMessage =
-    function(headerId, serverMsgListener)
+    RegisterServerMessage(headerId, serverMsgListener)
     {
         if (headerId == null || serverMsgListener == null)
             return;
@@ -251,5 +231,6 @@ TcpClient.prototype.RegisterServerMessage =
             this.m_ServerListener = {};
         this.m_ServerListener[headerId] = serverMsgListener;
     }
+}
 
 module.exports = TcpClient;

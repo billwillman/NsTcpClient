@@ -6,38 +6,31 @@ var TcpClient = require("./TcpClient");
 var DefaultPacketHandler = require("./DefaultPacketHandler");
 var RegisterGateMessage = require("./RegisterGateMessage");
 
-function GateServer(id, port)
+class GateServer extends NetManager
 {
-    this.Init();
-    this.m_Id = id;
-    // 连接GS或者LS
-    this.m_Client = null;
-    this.m_ClientId = [0];
-}
+    constructor(id, port)
+    {
+        super();
+        this.m_Id = id;
+        // 连接GS或者LS
+        this.m_Client = null;
+        this.m_ClientId = [0];
+    }
 
-GateServer.prototype = NetManager.prototype;
-GateServer.prototype.constructor = GateServer;
-
-GateServer.prototype.GetId =
-    function ()
+    GetId()
     {
         return this.m_Id;
     }
 
-GateServer.GlobalClientId = 0;
-
-GateServer.prototype.OnAddSessionEvent = 
-    function (session)
+    OnAddSessionEvent(session)
     {
         // 增加新的Session
         var globalId = ++GateServer.GlobalClientId;
         session.clientId = globalId;
     }
-
-
-// 分发到上层服务器
-GateServer.prototype.DispatchToServer =
-    function (headerId, packet, clientId)
+    
+    // 分发到上层服务器
+    DispatchToServer(headerId, packet, clientId)
     {
         if (this.m_Client == null || packet == null)
             return false;
@@ -50,11 +43,12 @@ GateServer.prototype.DispatchToServer =
         return this.m_Client.SendBuf(headerId, packet.data, this.m_ClientId);
     }
 
-/*-------------------------------------------业务逻辑--------------------------------------*/
+    /*-------------------------------------------业务逻辑--------------------------------------*/
 
+    /*----------------------------------------------------------------------------------------*/
+}
 
-
-/*----------------------------------------------------------------------------------------*/
+GateServer.GlobalClientId = 0;
 
 // 创建GATE服务器
 GateServer.Create =

@@ -6,27 +6,24 @@ var RegisterGameMessage = require("./RegisterGameMessage");
 var DefaultPacketHandler = require("./DefaultPacketHandler");
 var TcpClient = require("./TcpClient");
 
-function GameServer(id, port, dbIp, dbPort)
+class GameServer extends NetManager
 {
-    this.Init();
-    this.m_Id = id;
-    this.m_Port = port;
-    this.m_DBIp = dbIp;
-    this.m_DBPort = dbPort;
-    // 只有当所有都连接好了，才允许其他人进去
-    this.m_Enabled = false;
-    // 是否是可见的
-    this.m_Visible = true;
-    // 连接DB的
-    this.m_DBClient = null;
-}
+    constructor(id, port, dbIp, dbPort)
+    {
+        super();
+        this.m_Id = id;
+        this.m_Port = port;
+        this.m_DBIp = dbIp;
+        this.m_DBPort = dbPort;
+        // 只有当所有都连接好了，才允许其他人进去
+        this.m_Enabled = false;
+        // 是否是可见的
+        this.m_Visible = true;
+        // 连接DB的
+        this.m_DBClient = null;
+    }
 
-GameServer.prototype = NetManager.prototype;
-GameServer.prototype.constructor = GameServer;
-
-var superConnectedEvent = GameServer.prototype.OnConnectedEvent;
-GameServer.prototype.OnConnectedEvent =
-    function (socket)
+    OnConnectedEvent(socket)
     {
         if (!this.m_Enabled)
         {
@@ -38,27 +35,24 @@ GameServer.prototype.OnConnectedEvent =
             return;
         }
 
-        if (superConnectedEvent != null)
-            superConnectedEvent(socket);   
+        if (super.OnConnectedEvent != null)
+            super.OnConnectedEvent(socket);
     }
 
-// 是否是可以的
-GameServer.prototype.IsEnabled = 
-    function ()
+    // 是否是可以的
+    IsEnabled()
     {
         return this.m_Enabled;
     }
 
-// 是否是可见的
-GameServer.prototype.IsVisible =
-    function ()
+    // 是否是可见的
+    IsVisible()
     {
         return this.m_Visible;
     }
 
-// 连接需要连接的服务器
-GameServer.prototype.ConnectDB =
-    function (callBack)
+    // 连接需要连接的服务器
+    ConnectDB(callBack)
     {
         if (this.m_DBClient != null)
         {
@@ -74,10 +68,9 @@ GameServer.prototype.ConnectDB =
         return ret;
     }
 
-    GameServer.prototype.OnAbortEvent =
-        function (tcpClient)
-        {
-            if (this.m_DBClient == tcpClient)
+    OnAbortEvent(tcpClient)
+    {
+        if (this.m_DBClient == tcpClient)
             {
                 console.log("\n DB服务器异常断开");
 
@@ -86,12 +79,11 @@ GameServer.prototype.ConnectDB =
                 // 重新连接DB
                 this.ConnectDB();
             }
-        }
+    }
 
-    GameServer.prototype.OnConnectEvent =
-        function (sucess, tcpClient)
-        {
-            if (this.m_DBClient == tcpClient)
+    OnConnectEvent(sucess, tcpClient)
+    {
+        if (this.m_DBClient == tcpClient)
             {
                 this.m_Enabled = sucess;
                 if (sucess)
@@ -103,14 +95,14 @@ GameServer.prototype.ConnectDB =
                     this.KickAllGates();
                 }
             }
-        }
+    }
 
-// 踢掉所有Gate连接
-GameServer.prototype.KickAllGates =
-        function ()
-        {
-            this.CloseAllClientSocket();
-        }
+    // 踢掉所有Gate连接
+    KickAllGates()
+    {
+        this.CloseAllClientSocket();
+    }
+}
 
 GameServer.Create = function (id, port, dbIp, dbPort)
 {

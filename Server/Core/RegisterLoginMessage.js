@@ -1,9 +1,7 @@
 
-function RegisterLoginMessage()
+class RegisterLoginMessage
 {
 
 }
-
-RegisterLoginMessage.prototype.constructor = RegisterLoginMessage;
 
 module.exports = RegisterLoginMessage;

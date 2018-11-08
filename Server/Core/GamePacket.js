@@ -1,11 +1,12 @@
-var GamePacketHeader = require("./GamePacketHander")
+var GamePacketHeader = require("./GamePacketHander");
 
-function GamePacket(header, data)
+class GamePacket
 {
-    this.header = header;
-    this.data = data;
+    constructor(header, data)
+    {
+        this.header = header;
+        this.data = data;
+    }
 }
-
-GamePacket.prototype.constructor = GamePacket;
 
 module.exports = GamePacket;
