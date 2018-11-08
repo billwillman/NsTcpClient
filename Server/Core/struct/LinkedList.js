@@ -1,0 +1,77 @@
+var LinkedListNode = require("./LinkedListNode");
+
+
+class LinkedList
+{
+    constructor()
+    {
+        this.Clear();
+    }
+
+    GetCount()
+    {
+        return this.m_Count;
+    }
+
+    GetFirstNode()
+    {
+        return this.m_First;
+    }
+
+    GetLastNode()
+    {
+        return this.m_Last;
+    }
+
+    IsEmpty()
+    {
+        return this.m_Count > 0;
+    }
+
+    Clear()
+    {  
+        this.m_First = null;
+        this.m_Last = null;
+        this.m_Count = 0;
+    }
+
+    AddFirstNode(node)
+    {
+        if (node == null)
+            return;
+        node.m_Next = this.m_First;
+        if (this.m_First != null)
+            this.m_First.m_Prev = node;
+        this.m_First = node;
+        ++this.m_Count;
+        if (this.m_Count == 1)
+            this.m_Last = this.m_First;
+    }
+
+    AddFirstValue(value)
+    {
+        var node = new LinkedListNode();
+        node.m_Value = value;
+        AddFirstNode(node);
+    }
+
+    AddLastNode(node)
+    {
+        if (node == null)
+            return;
+        node.m_Prev = this.m_Last;
+        if (this.m_Last != null)
+            this.m_Last.m_Next = node;
+        this.m_Last = node;
+        ++this.m_Count;
+        if (this.m_Count == 1)
+            this.m_First = this.m_Last;
+    }
+
+    AddLastValue(value)
+    {
+        var node = new LinkedListNode();
+        node.m_Value = value;
+        AddLastNode(node);
+    }
+}
