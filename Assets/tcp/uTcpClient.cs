@@ -503,7 +503,31 @@ namespace NsTcpClient
 					{
 					}
 				}
-			}
+			} else
+            {
+                try
+                {
+                    // 再找AbstractServer
+                    if (mPacketAbstractServerMessageMap != null)
+                    {
+                        System.Type abstractMessageClass;
+                        if (mPacketAbstractServerMessageMap.TryGetValue(packet.header.header, out abstractMessageClass)
+                            && abstractMessageClass != null)
+                        {
+                            var obj = Activator.CreateInstance(abstractMessageClass, packet.data);
+                            if (obj != null)
+                            {
+                                AbstractServerMessage message = obj as AbstractServerMessage;
+                                if (message != null)
+                                    message.DoRecv();
+                            }
+                        }
+                    }
+                } catch
+                {
+
+                }
+            }
 		}
 
 		private void ProcessPackets()
@@ -539,6 +563,32 @@ namespace NsTcpClient
             }
 		}
 
+        public void RegisterServerMessageClass(int header, System.Type messageClass)
+        {
+            if (messageClass == null)
+                return;
+            if (mPacketAbstractServerMessageMap == null)
+            {
+                mPacketAbstractServerMessageMap = new Dictionary<int, Type>();
+                mPacketAbstractServerMessageMap.Add(header, messageClass);
+            }
+            else
+            {
+                if (mPacketAbstractServerMessageMap.ContainsKey(header))
+                    throw (new Exception());
+                else
+                    mPacketAbstractServerMessageMap.Add(header, messageClass);
+            }
+        }
+
+        public void RemoveServerMessageClass(int header)
+        {
+            if (mPacketAbstractServerMessageMap == null)
+                return;
+            if (mPacketAbstractServerMessageMap.ContainsKey(header))
+                mPacketAbstractServerMessageMap.Remove(header);
+        }
+
 		public void AddPacketListener(int header, OnPacketRead callBack)
 		{
 			if (mPacketListenerMap.ContainsKey (header)) {
@@ -558,7 +608,8 @@ namespace NsTcpClient
         private TcpClient mTcpClient = null;
 		private LinkedList<GamePacket> mPacketList = new LinkedList<GamePacket>();
 		private Dictionary<int, OnPacketRead> mPacketListenerMap = new Dictionary<int, OnPacketRead>();
-		private byte[] mRecvBuffer = new byte[TcpClient.MAX_TCP_CLIENT_BUFF_SIZE];
+        private Dictionary<int, System.Type> mPacketAbstractServerMessageMap = null;
+        private byte[] mRecvBuffer = new byte[TcpClient.MAX_TCP_CLIENT_BUFF_SIZE];
 		private int mRecvSize = 0;
 		private bool mConnecting = false;
 		private bool mAbort = false;

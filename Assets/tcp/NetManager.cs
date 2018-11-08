@@ -125,6 +125,13 @@ namespace NsTcpClient
 			m_Client.AddPacketListener(header, callBack);
 		}
 
+        public void AddServerMessageClass(int header, System.Type messageClass)
+        {
+            if (m_Client == null || messageClass == null)
+                return;
+            m_Client.RegisterServerMessageClass(header, messageClass);
+        }
+
         public void Send(byte[] buf, int packetHandle, int bufSize = -1)
 		{
 			if (m_Client == null)
@@ -166,6 +173,7 @@ namespace NsTcpClient
                 return;
             try
             {
+                message.DoSend();
                 long bufSize;
                 byte[] buffer = message.GetBuffer(out bufSize);
                 if (bufSize > int.MaxValue)
