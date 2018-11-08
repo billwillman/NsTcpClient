@@ -17,7 +17,7 @@ C_HeartMessage.prototype.DoRecv =
     function(clientSocket)
     {
         // 返回心跳包
-        this.SendMessage(MessageConsts.SrvToClientMessage.S_Heart, clientSocket);
+        this.SendMessage(MessageConsts.SrvToClientMessage.S_Heart, null, clientSocket);
     }
 
 module.exports = C_HeartMessage;

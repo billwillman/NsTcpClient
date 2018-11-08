@@ -166,7 +166,7 @@ AbsractServerMessage.prototype.ReadDouble =
     }
 
 AbsractServerMessage.prototype.SendMessage =
-    function (packetHandle, message, args, targetSocket)
+    function (packetHandle, message, targetSocket, args)
     {
         if (this.m_NetMgr == null)
             return;
