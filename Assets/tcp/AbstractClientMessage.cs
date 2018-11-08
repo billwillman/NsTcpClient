@@ -10,8 +10,12 @@ namespace NsTcpClient
         private long m_DataSize = 0;
 
         public AbstractClientMessage(): base()
+        {}
+
+        private void InitBuf()
         {
-            m_Buf = NetByteArrayPool.GetBuffer(1);
+            if (m_Buf == null)
+                m_Buf = NetByteArrayPool.GetBuffer(1);
         }
 
         public byte[] GetBuffer(out long dataSize)
@@ -33,8 +37,7 @@ namespace NsTcpClient
 
         protected void WriteInt(int value)
         {
-            if (m_Buf == null)
-                return;
+            InitBuf();
             long oldPos = m_Buf.Position;
             FilePathMgr.Instance.WriteInt(m_Buf, value);
             m_DataSize += m_Buf.Position - oldPos;
@@ -47,8 +50,7 @@ namespace NsTcpClient
 
         protected void WriteByte(byte value)
         {
-            if (m_Buf == null)
-                return;
+            InitBuf();
             long oldPos = m_Buf.Position;
             m_Buf.WriteByte(value);
             m_DataSize += m_Buf.Position - oldPos;
@@ -56,8 +58,7 @@ namespace NsTcpClient
 
         protected void WriteBool(bool value)
         {
-            if (m_Buf == null)
-                return;
+            InitBuf();
             long oldPos = m_Buf.Position;
             FilePathMgr.Instance.WriteBool(m_Buf, value);
             m_DataSize += m_Buf.Position - oldPos;
@@ -65,8 +66,7 @@ namespace NsTcpClient
 
         protected void WriteString(string value)
         {
-            if (m_Buf == null)
-                return;
+            InitBuf();
             long oldPos = m_Buf.Position;
             FilePathMgr.Instance.WriteString(m_Buf, value);
             m_DataSize += m_Buf.Position - oldPos;
@@ -74,8 +74,7 @@ namespace NsTcpClient
 
         protected void WriteShort(short value)
         {
-            if (m_Buf == null)
-                return;
+            InitBuf();
             long oldPos = m_Buf.Position;
             FilePathMgr.Instance.WriteShort(m_Buf, value);
             m_DataSize += m_Buf.Position - oldPos;
@@ -88,8 +87,7 @@ namespace NsTcpClient
 
         protected void WriteSingle(float value)
         {
-            if (m_Buf == null)
-                return;
+            InitBuf();
             long oldPos = m_Buf.Position;
             FilePathMgr.Instance.WriteSingle(m_Buf, value);
             m_DataSize += m_Buf.Position - oldPos;
@@ -97,8 +95,7 @@ namespace NsTcpClient
 
         protected void WriteDouble(double value)
         {
-            if (m_Buf == null)
-                return;
+            InitBuf();
             long oldPos = m_Buf.Position;
             FilePathMgr.Instance.WriteDouble(m_Buf, value);
             m_DataSize += m_Buf.Position - oldPos;
@@ -106,8 +103,7 @@ namespace NsTcpClient
 
         protected void WriteLong(long value)
         {
-            if (m_Buf == null)
-                return;
+            InitBuf();
             long oldPos = m_Buf.Position;
             FilePathMgr.Instance.WriteLong(m_Buf, value);
             m_DataSize += m_Buf.Position - oldPos;
