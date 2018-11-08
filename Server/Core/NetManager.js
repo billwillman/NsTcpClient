@@ -226,7 +226,7 @@ NetManager.prototype.SendBuf =
 NetManager.prototype.SendMessage =
     function (packetHandle, message, args, targetSocket)
     {
-        if (clientSocket == null || packetHandle == null)
+        if (targetSocket == null || packetHandle == null)
             return false;
         var buf = null;
         if (message != null)

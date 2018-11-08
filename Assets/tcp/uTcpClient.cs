@@ -221,7 +221,7 @@ namespace NsTcpClient
 			if (mTcpClient.GetState () != eClientState.eClient_STATE_CONNECTED)
 				return;
 
-            if (bufSize < 0)
+            if (bufSize < 0 && buf != null)
                 bufSize = buf.Length;
 
 

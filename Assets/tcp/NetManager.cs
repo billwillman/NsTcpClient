@@ -67,6 +67,16 @@ namespace NsTcpClient
 			return ret;
 		}
 
+        public eClientState ClietnState
+        {
+            get
+            {
+                if (m_Client == null)
+                    return eClientState.eCLIENT_STATE_NONE;
+                return m_Client.GetState();
+            }
+        }
+
 		public void Disconnect()
 		{
 			if (m_Client != null)
@@ -169,20 +179,27 @@ namespace NsTcpClient
         // 发送AbstractClientMessage
         public void SendMessage(int packetHandle, AbstractClientMessage message)
         {
-            if (m_Client == null || message == null)
+            if (m_Client == null)
                 return;
-            try
+            if (message != null)
             {
-                message.DoSend();
-                long bufSize;
-                byte[] buffer = message.GetBuffer(out bufSize);
-                if (bufSize > int.MaxValue)
-                    return;
-                Send(buffer, packetHandle, (int)bufSize);
-            } finally
+                try
+                {
+                    message.DoSend();
+                    long bufSize;
+                    byte[] buffer = message.GetBuffer(out bufSize);
+                    if (bufSize > int.MaxValue)
+                        return;
+                    Send(buffer, packetHandle, (int)bufSize);
+                }
+                finally
+                {
+                    message.Dispose();
+                }
+
+            } else
             {
-                // 协议Buffer回池
-                message.Dispose();
+                Send(packetHandle);
             }
         }
 

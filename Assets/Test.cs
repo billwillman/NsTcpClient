@@ -24,14 +24,26 @@ public class Test : MonoBehaviour {
             NetManager.Instance.OnSocketAbort = OnSocketAbort;
 			NetManager.Instance.Disconnect();
 			NetManager.Instance.ConnectServer("127.0.0.1", 1024);
-            NetManager.Instance.SendStr("123", 1);
+            //NetManager.Instance.SendStr("123", 1);
 		}
 	}
+
+    float lastSendTime = 0;
 
 	void Update()
 	{
 		TimerMgr.Instance.UnScaleTick(Time.unscaledDeltaTime);
 		TimerMgr.Instance.ScaleTick(Time.deltaTime);
+        float currentTime = Time.realtimeSinceStartup;
+        if (currentTime - lastSendTime >= 3f)
+        {
+            lastSendTime = currentTime;
+            if (NetManager.Instance.ClietnState == eClientState.eClient_STATE_CONNECTED)
+            {
+                NetManager.Instance.SendMessage(1000, null);
+            }
+        }
+
 	}
 
 	void OnApplicationQuit()
