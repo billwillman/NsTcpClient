@@ -72,6 +72,7 @@ GateServer.Create =
         // 注冊消息
         new RegisterGateMessage(server, isGS);
 
+        // 5秒必须收到心跳包，否则断线
         server.Listen(port);
         return server;
     }

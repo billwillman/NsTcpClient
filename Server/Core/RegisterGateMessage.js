@@ -1,6 +1,7 @@
 
 var AbstractMessageMgr = require("./AbstractMessageMgr");
 var MessageConsts = require("./MessageConsts");
+var  C_HeartMessage = require("./Messages/Client/C_HeartMessage");
 
 function RegisterGateMessage(netMgr, isGSGate)
 {
@@ -24,9 +25,12 @@ RegisterGateMessage.prototype._RegisterClientSendMessages =
         {
             // LoginServer的Gate
             
+            /*----------------------可穿透协议-----------------------*/
            // 用户登录协议
            this.RegisterCrossId(MessageConsts.ClientMessage.C_User_Login, 
                 MessageConsts.GateToLSMessage.C_User_Login);
+           /*-----------------------处理协议------------------------*/
+           this.RegisterSrvMsg(MessageConsts.ClientMessage.C_Heart, C_HeartMessage);
         }
     }
 

@@ -1,7 +1,7 @@
 /*
 服务器协议
 */
-var IServerMessagListener = require("./IServerMessagListener");
+var IServerMessagListener = require("./IServerMessageListener");
 
 function AbsractServerMessage()
 {}
@@ -18,7 +18,7 @@ AbsractServerMessage.prototype.OnMessage =
         this.m_NetMgr = netMgr;
 
         // 接收处理
-        this.DoRecv();
+        this.DoRecv(clientSocket);
     }
 
 AbsractServerMessage.prototype.NetManager =
@@ -49,7 +49,7 @@ AbsractServerMessage.prototype.GetHeaderId =
 
 // 接收继承方法
 AbsractServerMessage.prototype.DoRecv =
-    function ()
+    function (clientSocket)
     {}
 
 AbsractServerMessage.prototype.ReadInt =
@@ -163,6 +163,14 @@ AbsractServerMessage.prototype.ReadDouble =
         var ret = this.m_Buf.readDoubleLE(this.m_BufOffset);
         this.m_BufOffset += 8;
         return ret;
+    }
+
+AbsractServerMessage.prototype.SendMessage =
+    function (clientSocket, packetHandle, message, args)
+    {
+        if (this.m_NetMgr == null)
+            return;
+        this.m_NetMgr.SendMessage.call(this.m_NetMgr, clientSocket, packetHandle, message, args);
     }
 
 module.exports = AbsractServerMessage;
