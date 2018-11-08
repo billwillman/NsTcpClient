@@ -191,7 +191,7 @@ TcpClient.prototype.SendBuf =
 
 // 发送消息
 TcpClient.prototype.SendMessage =
-    function (packetHandle, message)
+    function (packetHandle, message, args)
     {
         if (packetHandle == null)
             return false;
@@ -201,7 +201,7 @@ TcpClient.prototype.SendMessage =
             message.DoSend();
             buf = message.m_Buf;
         }
-        return this.SendBuf(packetHandle, buf);
+        return this.SendBuf(packetHandle, buf, args);
     };
 
 TcpClient.prototype.CloseClientSocket =

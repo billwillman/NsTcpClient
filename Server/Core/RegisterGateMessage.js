@@ -21,6 +21,11 @@ RegisterGateMessage.prototype._RegisterClientSendMessages =
         if (isGSGate)
         {
             // GameServer的Gate
+
+            /*----------------------可穿透协议-----------------------*/
+            
+            /*-----------------------处理协议------------------------*/
+            this.RegisterSrvMsg(MessageConsts.ClientMessage.C_Heart, C_HeartMessage);
         } else
         {
             // LoginServer的Gate

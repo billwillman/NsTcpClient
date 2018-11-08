@@ -166,11 +166,11 @@ AbsractServerMessage.prototype.ReadDouble =
     }
 
 AbsractServerMessage.prototype.SendMessage =
-    function (clientSocket, packetHandle, message, args)
+    function (packetHandle, message, args, targetSocket)
     {
         if (this.m_NetMgr == null)
             return;
-        this.m_NetMgr.SendMessage.call(this.m_NetMgr, clientSocket, packetHandle, message, args);
+        this.m_NetMgr.SendMessage.call(this.m_NetMgr, packetHandle, message, args, targetSocket);
     }
 
 module.exports = AbsractServerMessage;

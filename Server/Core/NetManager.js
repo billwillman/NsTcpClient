@@ -224,7 +224,7 @@ NetManager.prototype.SendBuf =
     }
 
 NetManager.prototype.SendMessage =
-    function (clientSocket, packetHandle, message, args)
+    function (packetHandle, message, args, targetSocket)
     {
         if (clientSocket == null || packetHandle == null)
             return false;
@@ -234,7 +234,7 @@ NetManager.prototype.SendMessage =
             message.DoSend();
             buf = message.m_Buf;
         }
-        return this.SendBuf(clientSocket, packetHandle, buf, args);
+        return this.SendBuf(targetSocket, packetHandle, buf, args);
     }
 
 module.exports = NetManager;
