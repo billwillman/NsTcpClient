@@ -15,7 +15,10 @@ namespace NsTcpClient
         private void InitBuf()
         {
             if (m_Buf == null)
+            {
                 m_Buf = NetByteArrayPool.GetBuffer(1);
+                m_DataSize = 0;
+            }
         }
 
         public byte[] GetBuffer(out long dataSize)
