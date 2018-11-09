@@ -131,4 +131,10 @@ class LinkedList
             node = next;   
         }
     }
+
+    RemoveValue(value)
+    {
+        var node = this.FindNode(value);
+        this.RemoveNode(node);
+    }
 }
