@@ -29,4 +29,9 @@ class LinkedListNode
         this.m_Next = null;
         this.m_Value = null;
     }
+
+    IsReset()
+    {
+        return this.m_Next == null && this.m_Prev == null;
+    }
 }

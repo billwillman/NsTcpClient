@@ -53,6 +53,7 @@ class LinkedList
         var node = new LinkedListNode();
         node.m_Value = value;
         AddFirstNode(node);
+        return node;
     }
 
     AddLastNode(node)
@@ -73,6 +74,37 @@ class LinkedList
         var node = new LinkedListNode();
         node.m_Value = value;
         AddLastNode(node);
+        return node;
+    }
+
+    AddNode(node, currentNode)
+    {
+        if (node == null)
+            return;
+
+        if (!node.IsReset())
+        {
+            RemoveNode(node);
+        }
+
+        if (currentNode == null)
+        {
+            this.AddFirstNode(node);
+            return;
+        }
+
+        var next = currentNode.GetNext();
+        currentNode.m_Next = node;
+        next.m_Prev = node;
+        ++this.m_Count;
+    }
+
+    AddValue(value, currentNode)
+    {
+        var node = new LinkedListNode();
+        node.m_Value = value;
+        AddNode(node, currentNode);
+        return node;
     }
 
     RemoveNode(node)
