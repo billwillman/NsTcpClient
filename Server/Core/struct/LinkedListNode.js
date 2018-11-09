@@ -27,7 +27,6 @@ class LinkedListNode
     {
         this.m_Prev = null;
         this.m_Next = null;
-        this.m_Value = null;
     }
 
     IsReset()
