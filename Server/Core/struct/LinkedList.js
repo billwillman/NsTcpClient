@@ -25,7 +25,7 @@ class LinkedList
 
     IsEmpty()
     {
-        return this.m_Count > 0;
+        return this.m_Count <= 0;
     }
 
     Clear()
