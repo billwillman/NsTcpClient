@@ -162,6 +162,7 @@ class LinkedList
                 return node;
             node = next;   
         }
+        return null;
     }
 
     RemoveValue(value)
