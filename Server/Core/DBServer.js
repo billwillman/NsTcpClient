@@ -8,6 +8,7 @@ var RegisterDBMessage = require("./RegisterDBMessage");
 var LinkedList = require("./struct/LinkedList");
 var Dictionary = require("./struct/Dictionary");
 var DBCommand = require("./DB/DBCommand");
+require("./struct/StringHelper");
 
 class DBServer extends NetManager
 {
@@ -56,6 +57,17 @@ class DBServer extends NetManager
     RunCommand(command)
     {
       if (command == null)
+        return;
+       var fmt = command.m_sql;
+       var args = command.m_ParamArgs;
+       var sql = fmt.format(args);
+       SendToDBSql(sql);
+    }
+
+    // 發送給DB數據庫SQL
+    SendToDBSql(sql)
+    {
+      if (sql == null)
         return;
       
     }
