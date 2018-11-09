@@ -51,6 +51,8 @@ class DBServer extends NetManager
               this.m_CommandMap.RemoveKey(key);
             }
         }
+
+        process.nextTick(this.Run);
     }
 
     // 執行命令
@@ -85,6 +87,8 @@ DBServer.Create =
         new RegisterDBMessage();
          // 5秒钟必须要有数据接收, 心跳包
         server.Listen(port, 5000);
+        // 开始运行
+        server.Run();
         return server;
   }
 
