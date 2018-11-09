@@ -5,6 +5,8 @@ var NetManager = require("./NetManager");
 var RegisterGameMessage = require("./RegisterGameMessage");
 var DefaultPacketHandler = require("./DefaultPacketHandler");
 var TcpClient = require("./TcpClient");
+var MessageConsts = require("./MessageConsts");
+var GS_DB_Command = require("./Messages/Server/GS_DB_Command");
 
 class GameServer extends NetManager
 {
@@ -101,6 +103,15 @@ class GameServer extends NetManager
     KickAllGates()
     {
         this.CloseAllClientSocket();
+    }
+
+    SendToDBServer(commandId, clientId, args)
+    {
+        if (this.m_DBClient == null)
+            return false;
+        // 发送给DB SERVER
+        this.m_DBClient.SendMessage(MessageConsts.ToDBMessage.DB_COMMAND, new GS_DB_Command(commandId, clientId, args));
+        return true;
     }
 }
 

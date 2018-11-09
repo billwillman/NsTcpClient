@@ -25,6 +25,7 @@ class GS_DB_Command extends AbstractClientMessage
         var args = this.m_Args;
         if (args != null && args instanceof Array)
         {
+            this.WriteInt(args.length);
             for (var i = 0; i < args.length; ++i)
             {
                 var obj = args[i];
@@ -56,6 +57,11 @@ class GS_DB_Command extends AbstractClientMessage
         {
             this.WriteByte(SqlObjType.String);
             this.WriteString(obj);
+        } else
+        {
+            console.error("GS_DB_Command: type " + type + " not supported!");
         }
     }
 }
+
+module.exports = GS_DB_Command;

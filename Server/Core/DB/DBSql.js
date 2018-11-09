@@ -13,4 +13,19 @@ DBSql = {
 
 }
 
+DBSql.GetSql =
+    function (commandId)
+    {
+        if (commandId == null)
+            return null;
+        return null;
+    }
+
+DBSql.GetCommandKey =
+    function (clientId, commandId)
+    {
+        var key = {"clientId": clientId, "commandId": commandId};
+        return key;
+    }
+
 module.exports = DBSql;

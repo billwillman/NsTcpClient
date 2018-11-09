@@ -28,7 +28,7 @@ var MessageConsts =
     // 到DB
     ToDBMessage:
     {
-
+        DB_COMMAND = 1
     },
 
     GateToLSMessage:
