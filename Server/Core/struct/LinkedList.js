@@ -74,4 +74,61 @@ class LinkedList
         node.m_Value = value;
         AddLastNode(node);
     }
+
+    RemoveNode(node)
+    {
+        if (node == null)
+            return;
+        var prev = node.GetPrev();
+        var next = node.GetNext();
+        if (prev != null)
+            prev.m_Next = next;
+        if (next != null)
+            next.m_Prev = prev;
+
+        /*判斷是否是LAST或者FIRST*/
+        if (node == this.m_First)
+        {
+            this.m_First = next;
+        }
+
+        if (node == this.m_Last)
+        {
+            this.m_Last = prev;
+        }
+        /*----------------------*/
+
+        node.Reset();
+        --this.m_Count;
+        if (this.m_Count <= 0)
+        {
+            this.m_Count = 0;
+            this.m_First = null;
+            this.m_Last = null;
+        }
+    }
+
+    RemoveFirstNode()
+    {
+        var node = this.GetFirstNode();
+        RemoveNode(node);
+    }
+
+    RemoveLastNode()
+    {
+        var node = this.GetLastNode();
+        RemoveNode(node);
+    }
+
+    FindNode(value)
+    {
+        var node = this.GetFirstNode();
+        while (node != null)
+        {
+            var next = node.GetNext();
+            if (node.value == value)
+                return node;
+            node = next;   
+        }
+    }
 }
