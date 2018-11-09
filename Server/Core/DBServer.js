@@ -33,6 +33,32 @@ class DBServer extends NetManager
           command.ChangeParamArgs(paramArgs);
        }
     }
+
+    // 執行隊列
+    Run()
+    {
+        if (this.m_CommandList != null)
+        {
+            var first = this.m_CommandList.GetFirstNode();
+            
+            if (first != null)
+            {
+              this.m_CommandList.RemoveFirstNode();
+              var command = first.GetValue();
+              RunCommand(command);
+              var key = command.GetKey();
+              this.m_CommandMap.RemoveKey(key);
+            }
+        }
+    }
+
+    // 執行命令
+    RunCommand(command)
+    {
+      if (command == null)
+        return;
+      
+    }
 }
 
 // 创建DB服务器
