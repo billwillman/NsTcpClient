@@ -68,6 +68,13 @@ class AbstractClientMessage
         this.m_BufOffset += 6;
     }
 
+    WriteUInt64(uint64)
+    {
+        this._InitBuf(6);
+        this.m_Buf.writeUIntLE(uint64, this.m_BufOffset, 6);
+        this.m_BufOffset += 6;
+    }
+
     WriteString(str)
     {
         this._InitBuf(4 + str.length);

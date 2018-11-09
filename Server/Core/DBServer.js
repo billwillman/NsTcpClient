@@ -8,7 +8,7 @@ var RegisterDBMessage = require("./RegisterDBMessage");
 var LinkedList = require("./struct/LinkedList");
 var Dictionary = require("./struct/Dictionary");
 var DBCommand = require("./DB/DBCommand");
-require("./struct/StringHelper");
+require("./struct/Utils");
 
 class DBServer extends NetManager
 {

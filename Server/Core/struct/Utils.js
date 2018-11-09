@@ -47,3 +47,14 @@ alert(String.format(a, "You","Me"));
 
 alert(a.format("You","Me"));
 */
+
+_.isFloat = function (obj)
+{
+    if (obj == null)
+        return false;
+    var type = typeof(obj);
+    if (type != "number")
+        return false;
+    var ret = ~~obj != obj;
+    return ret;
+}
