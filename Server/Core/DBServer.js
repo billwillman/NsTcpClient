@@ -73,6 +73,12 @@ class DBServer extends NetManager
         return;
       
     }
+
+    // 检查是否初始化一些基础的TABLE
+    InitBaseTables()
+    {
+
+    }
 }
 
 // 创建DB服务器
