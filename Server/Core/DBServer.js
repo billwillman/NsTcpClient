@@ -24,6 +24,11 @@ class DBServer extends NetManager
        this.m_IsRunQueue = false;
     }
 
+    GetDB()
+    {
+      return this.m_DB;
+    }
+
     // 推入參數隊列
     Push(key, sql, paramArgs)
     {
@@ -156,6 +161,13 @@ class DBServer extends NetManager
     {
       this.KickGSAndLS();
       this.CloseDB();
+    }
+
+
+    // 从DB返回
+    OnDBResult(key, result, error)
+    {
+
     }
 }
 
