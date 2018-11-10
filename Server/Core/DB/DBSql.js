@@ -13,6 +13,11 @@ DBSql = {
 
 }
 
+// MongoDB的命令
+MongoDBCmd = {
+    "1": ""
+}
+
 DBSql.GetSql =
     function (commandId)
     {
@@ -27,5 +32,7 @@ DBSql.GetCommandKey =
         var key = {"clientId": clientId, "commandId": commandId};
         return key;
     }
+
+DBSql.MongoDBUlr = "mongodb://localhost:27017/data";
 
 module.exports = DBSql;

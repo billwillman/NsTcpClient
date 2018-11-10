@@ -9,6 +9,8 @@ var LinkedList = require("./struct/LinkedList");
 var Dictionary = require("./struct/Dictionary");
 var DBCommand = require("./DB/DBCommand");
 require("./struct/Utils");
+var MongoClient = require('mongodb').MongoClient
+    , assert = require('assert');
 
 class DBServer extends NetManager
 {
@@ -17,6 +19,9 @@ class DBServer extends NetManager
        super();
        this.m_CommandList = new LinkedList();
        this.m_CommandMap = new Dictionary();
+       this.m_IsConnectDB = false;
+       this.m_DB = null;
+       this.m_IsRunQueue = false;
     }
 
     // 推入參數隊列
@@ -35,8 +40,16 @@ class DBServer extends NetManager
        }
     }
 
-    // 執行隊列
     Run()
+    {
+      if (this.m_IsRunQueue)
+        return;
+      this.m_IsRunQueue = true;
+      this._Run();
+    }
+
+    // 執行隊列
+    _Run()
     {
         if (this.m_CommandList != null)
         {
@@ -52,7 +65,7 @@ class DBServer extends NetManager
             }
         }
 
-        process.nextTick(this.Run);
+        process.nextTick(this._Run);
     }
 
     // 執行命令
@@ -74,10 +87,75 @@ class DBServer extends NetManager
       
     }
 
-    // 检查是否初始化一些基础的TABLE
-    InitBaseTables()
-    {
 
+    CloseDB()
+    {
+      this.m_IsConnectDB = false;
+      try
+      {
+        if (this.m_DB != null)
+        {
+          this.m_DB.close();
+          this.m_DB = null;
+        }
+      } catch
+      {}
+    }
+
+    // 连接DB
+    Start()
+    {
+      this.CloseDB();
+
+      MongoClient.connect(DBSql.MongoDBUlr, (err, db)=>
+      {
+        if (err != null)
+        {
+           // 出错了
+           this.m_IsConnectDB = false;
+           this.KickGSAndLS();
+           // 重连数据库
+           this.Start();
+           return;
+        }
+
+        this.m_DB = db;
+        this.m_IsConnectDB = this.m_DB != null;
+        
+        // MongoDB不需要查看TABLE是否存在，会自动创建表结构
+
+        // 开启队列执行
+        this.Run();
+      }
+      );
+    }
+
+    /* 继承接口 */
+    OnConnectedEvent(clientSocket)
+    {
+      // 没有连接数据库
+       if (!this.m_IsConnectDB)
+       {
+          if (clientSocket != null)
+          {
+            clientSocket.destroy();
+            clientSocket = null;
+          }
+          return;
+       }
+       super.OnConnectedEvent(clientSocket);
+    }
+
+    KickGSAndLS()
+    {
+       this.CloseAllClientSocket();
+    }
+
+    // 关闭
+    Destroy()
+    {
+      this.KickGSAndLS();
+      this.CloseDB();
     }
 }
 
@@ -93,8 +171,8 @@ DBServer.Create =
         new RegisterDBMessage();
          // 5秒钟必须要有数据接收, 心跳包
         server.Listen(port, 5000);
-        // 开始运行
-        server.Run();
+        // 连接DB
+        server.Start();
         return server;
   }
 
