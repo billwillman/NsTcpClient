@@ -22,7 +22,12 @@ var MessageConsts =
     // Gate到GS
     GateToGSMessage : 
     {
+        
+    },
 
+    FromDBMessage:
+    {
+        S_User_LoginRet: 1
     },
 
     // 到DB

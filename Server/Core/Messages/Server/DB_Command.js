@@ -49,7 +49,7 @@ class DB_Command extends AbstractServerMessage
         var netMgr = this.NetManager();
         var key = DBSql.GetCommandKey(clientId, commandId);
         // 压入队列
-        netMgr.Push(key, sql, this.m_Args);
+        netMgr.Push(key, sql, this.m_Args, clientSocket);
     }
 
     PushToArgs(obj)

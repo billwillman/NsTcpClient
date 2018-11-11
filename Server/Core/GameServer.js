@@ -110,8 +110,15 @@ class GameServer extends NetManager
         if (this.m_DBClient == null)
             return false;
         // 发送给DB SERVER
-        this.m_DBClient.SendMessage(MessageConsts.ToDBMessage.DB_COMMAND, new GS_DB_Command(commandId, clientId, args));
-        return true;
+        return this.m_DBClient.SendMessage(MessageConsts.ToDBMessage.DB_COMMAND, 
+            new GS_DB_Command(commandId, clientId, args));
+    }
+
+    SendToGate(packetHandle, clientId, message)
+    {
+        if (packetHandle == null || message == null)
+            return false;
+        
     }
 }
 

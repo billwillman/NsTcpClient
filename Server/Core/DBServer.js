@@ -8,6 +8,8 @@ var RegisterDBMessage = require("./RegisterDBMessage");
 var LinkedList = require("./struct/LinkedList");
 var Dictionary = require("./struct/Dictionary");
 var DBCommand = require("./DB/DBCommand");
+var MessageConsts = require("./MessageConsts");
+var S_C_LoginRep = require("./Messages/Server/S_C_LoginRep");
 require("./struct/Utils");
 var MongoClient = require('mongodb').MongoClient
     , assert = require('assert');
@@ -17,8 +19,11 @@ class DBServer extends NetManager
     constructor(port)
     {
        super();
+       // 请求列表
        this.m_CommandList = new LinkedList();
        this.m_CommandMap = new Dictionary();
+       //---------------
+
        this.m_IsConnectDB = false;
        this.m_DB = null;
        this.m_IsRunQueue = false;
@@ -30,7 +35,7 @@ class DBServer extends NetManager
     }
 
     // 推入參數隊列
-    Push(key, sql, paramArgs)
+    Push(key, sql, paramArgs, targetSocket)
     {
        var command = this.m_CommandMap.GetValue(key);
        if (command == null)
@@ -64,13 +69,39 @@ class DBServer extends NetManager
             {
               this.m_CommandList.RemoveFirstNode();
               var command = first.GetValue();
-              RunCommand(command);
               var key = command.GetKey();
               this.m_CommandMap.RemoveKey(key);
+
+              RunCommand(command);
             }
         }
 
         process.nextTick(this._Run);
+    }
+
+    // 从DB返回
+    OnDBResult(key, result, error, targetSocket)
+    {
+      if (error != null)
+      {
+        this.SendToGSError(key, error);
+        return;
+      }
+
+      var args = [key.clientId];
+      // 发送给GS， GS转发给客户端
+      var commandId = key.commandId;
+      switch (commandId)
+      {
+        // 注册用户
+        case 1:
+          break;
+        // 检测登录用户
+        case 2:
+          this.SendMessage(MessageConsts.FromDBMessage.S_User_LoginRet, 
+            new S_C_LoginRep(S_C_LoginRet.Sucess), args, targetSocket);
+          break;
+      }
     }
 
     // 執行命令
@@ -81,15 +112,62 @@ class DBServer extends NetManager
        var fmt = command.m_sql;
        var args = command.m_ParamArgs;
        var sql = fmt.format(args);
-       SendToDBSql(sql);
+       var key = command.GetKey();
+       var targetSocket = command.GetTargetSocket();
+       SendToDBSql(key, sql, targetSocket);
     }
 
     // 發送給DB數據庫SQL
-    SendToDBSql(sql)
+    SendToDBSql(key, sql, targetSocket)
     {
-      if (sql == null)
+      if (key == null || sql == null)
         return;
-      
+       var commandId = key.commandId;
+       var ret = false;
+       switch (commandId)
+       {
+         // 注册用户
+          case 1:
+            ret = DBSql.MongoDB.InsertInTable(DBSql.MongoDB.Tables[0], sql, this, key, targetSocket);
+            break;
+          // 查询用户
+          case 2:
+            ret = DBSql.MongoDB.FindInTable(DBSql.MongoDB.Tables[0], sql, this, key, targetSocket);
+            break;
+       }
+
+       if (!ret)
+       {
+          this.SendToGSError(key, null, targetSocket)
+       }
+    }
+
+    SendToGSError(key, error, targetSocket)
+    {
+       var commandId = key.commandId;
+       var clientId = key.clientId;
+
+
+
+       // 发送失败
+       switch (commandId)
+       {
+          case 1:
+            break;
+          case 2:
+            {
+              if (error == null)
+              {
+                 this.SendMessage(MessageConsts.FromDBMessage.S_User_LoginRet, 
+                  new S_C_LoginRep(S_C_LoginRet.DBServerError), [key.clientId], targetSocket);
+              } else
+              {
+                this.SendMessage(MessageConsts.FromDBMessage.S_User_LoginRet, 
+                  new S_C_LoginRep(S_C_LoginRet.DBSqlError), [key.clientId], targetSocket);
+              }
+              break;
+            }
+       }
     }
 
 
@@ -161,13 +239,6 @@ class DBServer extends NetManager
     {
       this.KickGSAndLS();
       this.CloseDB();
-    }
-
-
-    // 从DB返回
-    OnDBResult(key, result, error)
-    {
-
     }
 }
 

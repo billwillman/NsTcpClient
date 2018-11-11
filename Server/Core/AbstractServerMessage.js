@@ -13,6 +13,7 @@ class AbsractServerMessage extends IServerMessagListener
     OnMessage(packet, clientSocket, netMgr)
     {
         this.m_HeaderId = packet.header.header;
+        this.m_HeaderCrc32 = packet.header.headerCrc32;
         this.m_Buf = packet.data;
         this.m_BufOffset = 0;
         this.m_NetMgr = netMgr;
