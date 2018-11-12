@@ -17,6 +17,8 @@ DBSql = {
 
 DBSql.MongoDB = {};
 
+DBSql.MongoDBUlr = "mongodb://localhost:27017/data";
+
 // MongoDB的命令
 MongoDBCmd = {
     "1": "{\"user\":\"{0}\", \"password\": \"{1}\"}"
