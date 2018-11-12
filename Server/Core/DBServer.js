@@ -197,7 +197,7 @@ class DBServer extends NetManager
     {
       this.CloseDB();
 
-      MongoClient.connect(DBSql.MongoDBUlr, (err, db)=>
+      MongoClient.connect(DBSql.MongoDBUlr, {useNewUrlParser: true}, (err, db)=>
       {
         if (err != null)
         {
