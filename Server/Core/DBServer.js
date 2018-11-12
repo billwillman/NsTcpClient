@@ -97,7 +97,7 @@ class DBServer extends NetManager
         return;
       }
 
-      var args = [key.clientId];
+      this.m_ClientArr[0] = key.clientId;
       // 发送给GS， GS转发给客户端
       var commandId = key.commandId;
       switch (commandId)
@@ -108,7 +108,7 @@ class DBServer extends NetManager
         // 检测登录用户
         case 2:
           this.SendMessage(MessageConsts.FromDBMessage.S_User_LoginRet, 
-            new S_C_LoginRep(S_C_LoginRet.Sucess), args, targetSocket);
+            new S_C_LoginRep(S_C_LoginRet.Sucess), this.m_ClientArr, targetSocket);
           break;
       }
     }
