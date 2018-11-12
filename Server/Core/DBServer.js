@@ -28,6 +28,8 @@ class DBServer extends NetManager
        this.m_IsConnectDB = false;
        this.m_DB = null;
        this.m_IsRunQueue = false;
+
+       this.m_ClientArr = [0];
     }
 
     GetDB()
@@ -155,7 +157,7 @@ class DBServer extends NetManager
        var clientId = key.clientId;
 
 
-
+       this.m_ClientArr[0] = clientId;
        // 发送失败
        switch (commandId)
        {
@@ -166,11 +168,11 @@ class DBServer extends NetManager
               if (error == null)
               {
                  this.SendMessage(MessageConsts.FromDBMessage.S_User_LoginRet, 
-                  new S_C_LoginRep(S_C_LoginRet.DBServerError), [clientId], targetSocket);
+                  new S_C_LoginRep(S_C_LoginRet.DBServerError), this.m_ClientArr, targetSocket);
               } else
               {
                 this.SendMessage(MessageConsts.FromDBMessage.S_User_LoginRet, 
-                  new S_C_LoginRep(S_C_LoginRet.DBSqlError), [clientId], targetSocket);
+                  new S_C_LoginRep(S_C_LoginRet.DBSqlError), this.m_ClientArr, targetSocket);
               }
               break;
             }
