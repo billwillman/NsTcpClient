@@ -166,11 +166,11 @@ class DBServer extends NetManager
               if (error == null)
               {
                  this.SendMessage(MessageConsts.FromDBMessage.S_User_LoginRet, 
-                  new S_C_LoginRep(S_C_LoginRet.DBServerError), [key.clientId], targetSocket);
+                  new S_C_LoginRep(S_C_LoginRet.DBServerError), [clientId], targetSocket);
               } else
               {
                 this.SendMessage(MessageConsts.FromDBMessage.S_User_LoginRet, 
-                  new S_C_LoginRep(S_C_LoginRet.DBSqlError), [key.clientId], targetSocket);
+                  new S_C_LoginRep(S_C_LoginRet.DBSqlError), [clientId], targetSocket);
               }
               break;
             }
