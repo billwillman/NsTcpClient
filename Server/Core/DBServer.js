@@ -75,7 +75,7 @@ class DBServer extends NetManager
               var key = command.GetKey();
               this.m_CommandMap.RemoveKey(key);
 
-              RunCommand(command);
+              this.RunCommand(command);
             }
         }
 
