@@ -4,6 +4,7 @@ var AbstractMessageMgr = require("../Server/Core/AbstractMessageMgr");
 var TcpClient = require("../Server/Core/TcpClient");
 var C_User_Login = require("./Messages/C_User_Login");
 var S_HeartMessage = require("./Messages/S_HeartMessage");
+var GS_DB_Command = require("../Server/Core/Messages/Server/GS_DB_Command");
 
 function TestClient()
 {
@@ -21,7 +22,7 @@ TestClient.prototype.OnConnectEvent =
         {
             console.info("连接成功");
             // 发送第一个协议包
-            this.SendHeartMsg();
+            this.SendLoginMsg();
         }
         else
         {
@@ -32,10 +33,13 @@ TestClient.prototype.OnConnectEvent =
 TestClient.prototype.Run = 
     function ()
     {
-        //while (true)
-        {
-
-        }
+        
+        process.nextTick(
+            ()=>
+            {
+                this.Run();
+            }
+        )
     }
 
 TestClient.prototype.SendHeartMsg =
@@ -54,6 +58,12 @@ TestClient.prototype.RegisterSrvMessages =
     function ()
     {
         this.m_TcpClient.RegisterDefaultSrvAbstractMsg(1000, S_HeartMessage);
+    }
+
+TestClient.prototype.SendDBMessage =
+    function ()
+    {
+        //this.m_TcpClient.SendMessage()
     }
 
 module.exports = TestClient;
