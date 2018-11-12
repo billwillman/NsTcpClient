@@ -15,6 +15,8 @@ DBSql = {
 
 }
 
+DBSql.MongoDB = {};
+
 // MongoDB的命令
 MongoDBCmd = {
     "1": "{\"user\":\"{0}\", \"password\": \"{1}\"}"
@@ -42,10 +44,7 @@ DBSql.GetCommandKey =
         return key;
     }
 
-DBSql.MongoDBUlr = "mongodb://localhost:27017/data";
-
-DBSql.MongoDB.Tables = 
-["user", "player"];
+DBSql.MongoDB.Tables = ["user", "player"];
 
 // 插入
 DBSql.MongoDB.InsertInTable =

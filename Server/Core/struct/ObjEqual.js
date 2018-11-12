@@ -1,7 +1,6 @@
 /*
  *判断对象是否相等 
 */
-
 // Internal recursive comparison function for `isEqual`.
 var eq = function(a, b, aStack, bStack) {
     // Identical objects are equal. `0 === -0`, but they aren't identical.
@@ -91,8 +90,17 @@ var eq = function(a, b, aStack, bStack) {
     bStack.pop();
     return result;
   };
-   
+
+function Check_()
+  {
+    if (typeof(_) == "undefined")
+      _ = {};
+  }
+  
+  Check_();
+  
+  
   // Perform a deep comparison to check if two objects are equal.
-  _.isEqual = function(a, b) {
+_.isEqual = function(a, b) {
     return eq(a, b, [], []);
   };

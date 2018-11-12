@@ -11,6 +11,7 @@ var DBCommand = require("./DB/DBCommand");
 var MessageConsts = require("./MessageConsts");
 var S_C_LoginRep = require("./Messages/Server/S_C_LoginRep");
 require("./struct/Utils");
+require("./DB/DBSql");
 var MongoClient = require('mongodb').MongoClient
     , assert = require('assert');
 
@@ -76,7 +77,13 @@ class DBServer extends NetManager
             }
         }
 
-        process.nextTick(this._Run);
+        process.nextTick(
+          ()=>
+          {
+            this._Run();
+          }
+
+        );
     }
 
     // 从DB返回
@@ -198,7 +205,10 @@ class DBServer extends NetManager
            this.m_IsConnectDB = false;
            this.KickGSAndLS();
            // 重连数据库
-           this.Start();
+           process.nextTick(()=>
+           {
+              this.Start();
+           });
            return;
         }
 

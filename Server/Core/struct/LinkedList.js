@@ -171,3 +171,5 @@ class LinkedList
         this.RemoveNode(node);
     }
 }
+
+module.exports = LinkedList;

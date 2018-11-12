@@ -1,7 +1,7 @@
 
 var LinkedList = require("./LinkedList");
 var LinkedListNode = require("./LinkedListNode");
-require("ObjEqual");
+require("./ObjEqual");
 
 class Dictionary
 {

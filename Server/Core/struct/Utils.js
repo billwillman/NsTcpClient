@@ -48,6 +48,14 @@ alert(String.format(a, "You","Me"));
 alert(a.format("You","Me"));
 */
 
+function Check_()
+  {
+    if (typeof(_) == "undefined")
+      _ = {};
+  }
+  
+Check_();
+
 _.isFloat = function (obj)
 {
     if (obj == null)
