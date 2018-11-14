@@ -6,10 +6,7 @@ class IUdpServerListener
 
     OnErrorEvent(error)
     {}
-
-    OnPacketRead(data)
-    {}
-
+    
     OnStartListeningEvent()
     {}
 }
