@@ -19,6 +19,11 @@ class AbstractPacketHandler
         this.m_RecvBuffer = Buffer.allocUnsafe(allocSize); 
     }
 
+    UdpBufToPacket(data)
+    {
+        return null;
+    }
+
     GetReadData(data)
     {
         if (data == null || !Buffer.isBuffer(data))
@@ -44,9 +49,14 @@ class AbstractPacketHandler
         return ret;
     }
 
-    OnPacketRead(data, clientSocket)
+    OnPacketRead(data, clientSocket,)
     {
         console.log("OnPakcetRead");
+    }
+
+    GeneratorSendBuf(packetHandle, buf, bufOffset, sendSize)
+    {
+        return null;
     }
 
     SendBuf(clientSocket, packetHandle, buf)

@@ -11,6 +11,27 @@ class DefaultPacketHandler extends AbstractPacketHandler
         super(netMgr, recvBufSize);
     }
 
+    UdpBufToPacket(data)
+    {
+        if (data == null ||  !Buffer.isBuffer(data))
+            return null;
+        var headerSize = GamePacketHander.Size;
+        var header = new GamePacketHander(data, data.length, 0);
+        if (header.dataSize + headerSize > data.length)
+            return null;
+        var packet = new GamePacket(header, null);
+        if (packet.header.dataSize <= 0)
+        {
+            packet.header.dataSize = 0;
+        } else
+        {
+            packet.data = Buffer.allocUnsafe(packet.header.dataSize);
+            var sourceStart = headerSize;
+            data.copy(packet.data, 0, sourceStart, sourceStart + packet.header.dataSize);
+        }
+        return packet;
+    }
+
     OnPacketRead(data, clientSocket)
     {
         if (data == null ||  !Buffer.isBuffer(data))
@@ -65,14 +86,11 @@ class DefaultPacketHandler extends AbstractPacketHandler
         }
     }
 
-    SendBuf(clientSocket, packetHandle, buf, args)
+    GeneratorSendBuf(packetHandle, buf, bufOffset, sendSize, args)
     {
-        if (clientSocket == null || packetHandle == null)
-            return false;
-
         if (buf != null && !Buffer.isBuffer(buf))
-            return false;
-        
+            return null;
+
         var hasData = buf != null && buf.length > 0;
         var packetHead = new GamePacketHander(null, 0, 0);
         packetHead.header = packetHandle;
@@ -82,18 +100,46 @@ class DefaultPacketHandler extends AbstractPacketHandler
         {
             packetHead.headerCrc32 = args[0];
         }
-
+    
         var sendBufSize = GamePacketHander.Size + packetHead.dataSize;
         var sendBuf = Buffer.allocUnsafe(sendBufSize);
         if (!packetHead.ToBuf(sendBuf))
-            return false;
-
+            return null;
+    
         if (hasData)
         {
-            var dataOffset = GamePacketHander.Size;
-            buf.copy(sendBuf, dataOffset);
-        }
 
+            if (bufOffset == null && sendSize == null)
+            {
+                buf.copy(sendBuf, dataOffset);
+            } else
+            {
+                if (bufOffset == null)
+                    bufOffset = 0;
+                if (bufOffset >= buf.length)
+                    return null;
+                var maxSendSize = buf.length - bufOffset;
+                if (sendSize == null || sendSize > maxSendSize)
+                {
+                    sendSize = maxSendSize;
+                }
+
+                var dataOffset = GamePacketHander.Size;
+                buf.copy(sendBuf, dataOffset, bufOffset, bufOffset + sendSize);
+            }
+        }
+        return sendBuf;
+    }
+
+    SendBuf(clientSocket, packetHandle, buf, args)
+    {
+        if (clientSocket == null || packetHandle == null)
+            return false;
+
+        var sendBuf = GeneratorSendBuf(packetHandle, buf, null, null, args);
+        if (sendBuf == null)
+            return false;
+        
         // 发送过去
         if (!clientSocket.write(sendBuf))
         {
