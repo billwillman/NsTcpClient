@@ -147,11 +147,10 @@ class UdpClient
         return this.Send(ip, port, buf);
     }
 
-    Send(ip, port, packetHandle, buf, bufOffset, sendSize)
+    _CreateSocket(ip, port)
     {
-        if (ip == null || this.m_PacketHandle == null || packetHandle == null || 
-            port == null || buf == null || !Buffer.isBuffer(buf))
-            return false;
+        if (ip == null || port == null)
+            return;
 
         if (this.m_LastRemoteIp != ip || this.m_LastRemotePort != port)
         {
@@ -181,6 +180,15 @@ class UdpClient
                     this._OnMessage(msg, info);
                 });
         }
+    }
+
+    Send(ip, port, packetHandle, buf, bufOffset, sendSize)
+    {
+        if (ip == null || this.m_PacketHandle == null || packetHandle == null || 
+            port == null || buf == null || !Buffer.isBuffer(buf))
+            return false;
+
+        this._CreateSocket(ip, port);
 
         var sendBuf = this.m_PacketHandle.GeneratorSendBuf(packetHandle, buf, bufOffset, sendSize);
         if (sendBuf == null)

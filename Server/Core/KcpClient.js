@@ -28,20 +28,24 @@ class KcpClient extends UdpClient
         this.m_LastKcpTimerTick = -1;
     }
 
-    _OnKcpMessage(msg, size, context)
-    {
-        super._OnMessage(msg, context);
-    }
-
-    _OnCheckTimerCallBack()
+    _OnCheckTimerCallBack(info)
     {
         if (this.m_Kcp != null)
             {
                 this.m_Kcp.update(Date.now());
 
-                // 查看CHECK时间
-                var newInteral = this.m_Kcp.check();
-                this._StartCheckTimer(newInteral);
+                // 看是否Recv了
+                var recv = this.m_Kcp.recv();
+                if (recv != null)
+                {
+                    super._OnMessage(recv, info);
+                    this._StartCheckTimer(KCPInternal, info);
+                } else
+                {
+                    // 查看CHECK时间
+                    var newInteral = this.m_Kcp.check();
+                    this._StartCheckTimer(newInteral, info);
+                }
             }
             else {
                     clearInterval(this.m_KcpTimer);
@@ -49,7 +53,7 @@ class KcpClient extends UdpClient
                 }
     }
 
-    _StartCheckTimer(internal)
+    _StartCheckTimer(internal, info)
     {
         if (this.m_KcpTimer != null)
         {
@@ -67,17 +71,17 @@ class KcpClient extends UdpClient
             return;
             
         this.m_LastKcpTimerTick = internal;
-        this.m_KcpTimer = setInterval(()=>
+        this.m_KcpTimer = setInterval((info)=>
         {
-            this._OnCheckTimerCallBack();
-        }, internal);
+            this._OnCheckTimerCallBack(info);
+        }, internal, info);
     }
 
-    _OnMessage(msg, info)
+    _CheckKcp(ip, port)
     {
-        if (this.m_Kcp == null || this.m_Kcp.context.address != info.address || this.m_Kcp.port != info.port)
-        {
-            var context = {"address": info.address, "port": info.port};
+        if (this.m_Kcp == null || this.m_Kcp.context.address != ip || this.m_Kcp.context.port != port)
+         {
+            var context = {"address": ip, "port": port};
             this.m_Kcp = new kcp.KCP(this.m_kcpId, context);
             this.m_Kcp.context = context;
             if (this.m_KcpMode == KCPMode.quick)
@@ -86,17 +90,68 @@ class KcpClient extends UdpClient
                 this.m_Kcp.nodelay(0, 40, 0, 0);
             // 设置滑动窗口
             this.m_Kcp.wndsize(this.m_WndSize, this.m_WndSize);
+            // 发送时回调
             this.m_Kcp.output(
                 (data, size, context)=>
                 {
-                    this._OnKcpMessage(data, size, context);
+                    this._OnKcpSendMessage(data, size, context);
                 });
         }
+    }
 
+    _CheckKcp(info)
+    {
+        if (info == null)
+            return;
+        this._CheckKcp(info.address, info.port);
+    }
+
+    // 接收入口
+    _OnMessage(msg, info)
+    {
+        // 检查KCP
+        this._CheckKcp(info);
+
+        // 接收数据
         this.m_Kcp.input(msg);
 
-        // 10ms调用
-        this._StartCheckTimer(10);
+        // 默认10ms调用
+        this._StartCheckTimer(KCPInternal, info);
+    }
+
+    // 发送入口
+    Send(ip, port, packetHandle, buf, bufOffset, sendSize)
+    {
+        if (ip == null || this.m_PacketHandle == null || packetHandle == null || 
+            port == null || buf == null || !Buffer.isBuffer(buf))
+            return false;
+
+        this._CreateSocket(ip, port);
+        this._CheckKcp(ip, port);
+
+        if (this.m_Kcp == null)
+            return false;
+
+        var sendBuf = this.m_PacketHandle.GeneratorSendBuf(packetHandle, buf, bufOffset, sendSize);
+        if (sendBuf == null)
+            return false;
+
+        var ret = this.m_Kcp.send(sendBuf);
+        
+        return ret == 0;
+    }
+
+    _OnKcpSendMessage(msg, size, context)
+    {
+        // UDP发送
+        if (this.m_Socket == null || msg == null || size <= 0 || 
+            context == null || context.address == null || context.port == null)
+            return;
+        this.m_Socket.send(msg, 0, size, context.port, context.address, 
+            (err, bytes)=>
+            {
+                this._OnSendError(err, bytes);
+            });
     }
 }
 
