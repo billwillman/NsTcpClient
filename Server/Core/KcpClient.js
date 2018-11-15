@@ -153,6 +153,12 @@ class KcpClient extends UdpClient
                 this._OnSendError(err, bytes);
             });
     }
+
+    Close()
+    {
+        super.Close();
+        this.m_Kcp == null;
+    }
 }
 
 module.exports = KcpClient;

@@ -57,6 +57,9 @@ class UdpClient
             {}
             this.m_Socket = null;
         }
+        
+        this.m_LastRemoteIp = null;
+        this.m_LastRemotePort = null;
     }
 
     _OnSendError(err, bytes)
