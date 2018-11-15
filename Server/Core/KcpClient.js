@@ -137,6 +137,8 @@ class KcpClient extends UdpClient
             return false;
 
         var ret = this.m_Kcp.send(sendBuf);
+        if (ret == 0)
+            this._StartCheckTimer(KCPInternal, this.m_Kcp.context);
         
         return ret == 0;
     }
@@ -158,6 +160,12 @@ class KcpClient extends UdpClient
     {
         super.Close();
         this.m_Kcp == null;
+        if (this.m_KcpTimer != null)
+        {
+            clearInterval(this.m_KcpTimer);
+            this.m_KcpTimer = null;
+        }
+        this.m_LastKcpTimerTick = -1;
     }
 }
 
