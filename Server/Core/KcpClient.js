@@ -54,7 +54,7 @@ class KcpClient extends UdpClient
         if (this.m_KcpTimer != null)
         {
 
-            if (internal != null && m_LastKcpTimerTick == internal)
+            if (internal != null && this.m_LastKcpTimerTick == internal)
             {
                 this.m_KcpTimer.refresh();
                 return;
@@ -65,6 +65,8 @@ class KcpClient extends UdpClient
         }
         if (internal == null)
             return;
+            
+        this.m_LastKcpTimerTick = internal;
         this.m_KcpTimer = setInterval(()=>
         {
             this._OnCheckTimerCallBack();
