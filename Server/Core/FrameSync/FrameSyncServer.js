@@ -70,7 +70,7 @@ class FrameSyncServer extends NetManager
     // 转发所有
     SendAllChannelMessage(packetId, message, clientId)
     {
-        if (channelId == null || packetId == null || clientId == null)
+        if (packetId == null || clientId == null)
             return false;
 
         var userSession = this.FindSessionById(clientId);
