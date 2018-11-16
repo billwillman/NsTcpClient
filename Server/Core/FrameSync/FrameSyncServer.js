@@ -26,8 +26,12 @@ class FrameSyncServer extends NetManager
     constructor()
     {
         super();
+        this.SetPacketHandlerClass(DefaultPacketHandler);
+        // kcpId=1983
         this.m_KcpServer = new KcpServer(DefaultPacketHandler, 1983, KCPMode.quick);
+        this.m_KcpServer.SetListener(this);
         this.m_UdpServer = new UdpServer(DefaultPacketHandler);
+        this.m_UdpServer.SetListener(this);
 
         this.m_ClientMap = {};
     }
@@ -130,10 +134,35 @@ class FrameSyncServer extends NetManager
         this.m_ClientMap[globalId] = session;
     }
 
+    // 关闭状态
     Close()
     {
         super.Close();
+        if (this.m_KcpServer != null)
+        {
+            this.m_KcpServer.Close();
+        }
+        if (this.m_UdpServer != null)
+        {
+            this.m_UdpServer.Close();
+        }
         this.m_ClientMap = null;
+    }
+
+
+    // 运行起来
+    Run()
+    {
+        // 侦听事件
+        this.Listen(1983);
+        if (this.m_KcpServer != null)
+        {
+            this.m_KcpServer.StartListen(1984, false);
+        }
+        if (this.m_UdpServer != null)
+        {
+            this.m_UdpServer.StartListen(1985, false);
+        }
     }
 }
 

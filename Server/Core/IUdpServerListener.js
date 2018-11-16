@@ -9,4 +9,10 @@ class IUdpServerListener
     
     OnStartListeningEvent()
     {}
+
+    OnMessage(msg, info)
+    {}
+
+    OnMessagePacket(packet, info)
+    {}
 }

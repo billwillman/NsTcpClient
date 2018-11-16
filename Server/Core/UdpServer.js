@@ -71,6 +71,16 @@ class UdpServer
     {
         if (packet == null)
             return;
+
+        if (this.m_Listener != null && this.m_Listener.OnMessagePacket != null)
+        {
+            try
+            {
+                this.m_Listener.OnMessagePacket.call(this.m_Listener, packet, clientInfo);
+            } catch
+            {}
+        }
+        
         if (this.m_ServerListener != null && packet.header != null)
         {
             var headerId = packet.header.header;
@@ -92,6 +102,12 @@ class UdpServer
         var packet = this.m_PacketHandle.UdpBufToPacket.call(this.m_PacketHandle, msg);
         if (packet == null)
             return;
+
+        if (this.m_Listener != null && this.m_Listener.OnMessage != null)
+        {
+            this.m_Listener.OnMessage.call(this.m_Listener, msg, clientInfo);
+        }
+        
         this._SendPacketRead(packet, clientInfo);
     }
 
