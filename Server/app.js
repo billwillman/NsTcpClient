@@ -1,2 +1,2 @@
 
-require("./Core/Run");
+require("./Core/FrameSync/RunFrameSyncServer");
