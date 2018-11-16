@@ -34,6 +34,9 @@ class FrameSyncServer extends NetManager
         this.m_UdpServer.SetListener(this);
 
         this.m_ClientMap = {};
+
+        // 初始化协议处理
+        this._InitPackets();
     }
 
     static m_GlobalClientId = 0;
