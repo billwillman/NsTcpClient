@@ -44,7 +44,7 @@ class UdpServer
             try
             {
                 this.m_Socket.close();
-            } catch
+            } catch (except)
             {}
             this.m_Socket = null;
         }
@@ -77,7 +77,7 @@ class UdpServer
             try
             {
                 this.m_Listener.OnMessagePacket.call(this.m_Listener, packet, clientInfo);
-            } catch
+            } catch (except)
             {}
         }
         

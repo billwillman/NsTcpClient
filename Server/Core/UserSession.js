@@ -15,7 +15,7 @@ class UserSession
             try
             {
                 this.m_Socket.destroy();
-            } catch
+            } catch (except)
             {
             
             }

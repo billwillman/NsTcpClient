@@ -190,7 +190,7 @@ class DBServer extends NetManager
           this.m_DB.close();
           this.m_DB = null;
         }
-      } catch
+      } catch (except)
       {}
     }
 

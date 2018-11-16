@@ -53,7 +53,7 @@ class UdpClient
             try
             {
                 this.m_Socket.close();
-            } catch
+            } catch (except)
             {}
             this.m_Socket = null;
         }
@@ -70,7 +70,7 @@ class UdpClient
             {   
                 this.m_Listener.OnSendErrorEvent.call(this.m_Listener, err, bytes);
             }
-        } catch
+        } catch (except)
         {}
 
         this.Close();
@@ -84,7 +84,7 @@ class UdpClient
             {   
                 this.m_Listener.OnErrorEvent.call(this.m_Listener, err);
             }
-        } catch
+        } catch (except)
         {}
 
         this.Close();
