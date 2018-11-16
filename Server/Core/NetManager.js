@@ -162,6 +162,14 @@ class NetManager extends ITcpServerListener
         userSession.HandleMessage.call(userSession, data);
     }
 
+    FindSession(clientSocket)
+    {
+        if (clientSocket == null || this.m_SessionMap == null)
+            return null;
+        var ret = this.m_SessionMap[clientSocket];
+        return ret;
+    }
+
     _GetPacketHandlerClass()
     {
         if (this.m_PacketHandlerClass == null)

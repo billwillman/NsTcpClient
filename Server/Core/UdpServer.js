@@ -187,6 +187,21 @@ class UdpServer
             {});
         return true;
     }
+
+    SendMessage(clientInfo, packetHandle, message)
+    {
+        if (clientInfo == null || clientInfo.address == null || clientInfo.port == null || packetHandle == null)
+            return false;
+        return this.SendMessage(clientInfo.address, clientInfo.port, packetHandle, message);
+    }
+
+    SendMessage(ip, port, packetHandle, message)
+    {
+        if (ip == null || port == null || packetHandle == null)
+            return false;
+        
+        return true;
+    }
 }
 
 module.exports = UdpServer;

@@ -20,25 +20,120 @@ var DefaultPacketHandler = require("../DefaultPacketHandler");
 require("../Kcp");
 
 
-class FrameSyncServer
+// 三个服务器接收
+class FrameSyncServer extends NetManager
 {
     constructor()
     {
-        // 三个服务器接收
-        this.m_TcpServer = new NetManager();
+        super();
         this.m_KcpServer = new KcpServer(DefaultPacketHandler, 1983, KCPMode.quick);
         this.m_UdpServer = new UdpServer(DefaultPacketHandler);
+
+        this.m_ClientMap = {};
     }
+
+    static m_GlobalClientId = 0;
 
     _InitPackets()
     {
 
     }
 
-    // 注册消息处理
-    RegisterSrvMessage()
+    FindSessionById(clientId)
     {
+        if (clientId == null)
+            return null;
+        var session = this.m_ClientMap[clientId];
+        return session;
+    }
 
+    // 注册收到消息处理
+    RegisterSrvMessageClass(packetId, messageClass)
+    {
+        if (packetId == null || messageClass == null)
+            return;
+        // Tcp注册
+        this.RegisterDefaultSrvAbstractMsg(packetId, messageClass);
+        // Kcp注册
+        this.m_KcpServer.RegisterDefaultSrvAbstractMsg(packetId, messageClass);
+        // Udp注册
+        this.m_UdpServer.RegisterDefaultSrvAbstractMsg(packetId, messageClass);
+    }
+
+    // 转发所有
+    SendAllChannelMessage(packetId, message, clientId)
+    {
+        if (channelId == null || packetId == null || clientId == null)
+            return false;
+
+        var userSession = this.FindSessionById(clientId);
+        if (userSession == null)
+            return false;
+        this.SendChannelMessage(0, packetId, message, clientSocket);
+        var kcpClient = userSession.kcpClient;
+        if (kcpClient != null)
+        {
+            this.SendChannelMessage(1, packetId, message, kcpClient);
+        }
+        var udpClient = userSession.udpClient;
+        if (udpClient != null)
+        {
+            this.SendChannelMessage(2, packetId, message, udpClient);
+        }
+    }
+
+    // 发送通道协议
+    SendChannelMessage(channelId, packetId, message, client)
+    {
+        if (channelId == null || packetId == null || client == null)
+            return false;
+        switch (channelId)
+        {
+            case 0:
+                // TCP消息
+                return this.SendMessage(packetId, message, null, client);
+            case 1:
+                // Kcp消息
+                return this.m_KcpServer.SendMessage(client, packetId, message);
+            case 2:
+                return this.m_UdpServer.SendMessage(client, packetId, message);
+        }
+
+        return false;
+    }
+
+    OnRemoveSessionEvent(session)
+    {
+        if (session == null)
+            return;
+        var globalId = session.globalId;
+        if (globalId != null)
+        {
+            if (this.m_ClientMap != null)
+            {
+                if (this.m_ClientMap[globalId] != null)
+                {
+                    delete this.m_ClientMap[globalId];
+                }
+            }
+        }
+    }
+
+    OnAddSessionEvent(session)
+    {
+        if (session == null)
+            return;
+        var globalId = this.m_GlobalClientId++;
+        session.globalId = globalId;
+        if (this.m_ClientMap == null)
+            this.m_ClientMap = {};
+        this.m_ClientMap[globalId] = session;
+    }
+
+    Close()
+    {
+        super.Close();
+        this.m_ClientMap = null;
     }
 }
 
