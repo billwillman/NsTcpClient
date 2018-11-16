@@ -19,6 +19,7 @@ var UdpServer = require("../UdpServer");
 var DefaultPacketHandler = require("../DefaultPacketHandler");
 require("../Kcp");
 
+var m_GlobalClientId = 0;
 
 // 三个服务器接收
 class FrameSyncServer extends NetManager
@@ -38,8 +39,6 @@ class FrameSyncServer extends NetManager
         // 初始化协议处理
         this._InitPackets();
     }
-
-    static m_GlobalClientId = 0;
 
     _InitPackets()
     {
@@ -130,7 +129,7 @@ class FrameSyncServer extends NetManager
     {
         if (session == null)
             return;
-        var globalId = this.m_GlobalClientId++;
+        var globalId = m_GlobalClientId++;
         session.globalId = globalId;
         if (this.m_ClientMap == null)
             this.m_ClientMap = {};
