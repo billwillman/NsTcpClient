@@ -185,6 +185,7 @@ class UdpServer
 
         this.m_Socket.send(sendBuf, port, ip, (err, bytes)=>
             {});
+        return true;
     }
 }
 

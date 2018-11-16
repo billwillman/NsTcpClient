@@ -62,7 +62,6 @@ class KcpClient extends UdpClient
         if (this.m_KcpObj != null)
         {
             this.m_KcpObj.Close();
-            this.m_KcpObj = null;
         }
     }
 }
