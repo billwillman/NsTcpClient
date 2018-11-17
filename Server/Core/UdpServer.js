@@ -10,7 +10,7 @@ class UdpServer
         this.m_DefaultServerMsgListener = null;
         if (packetHandleClass != null)
         {
-            this.m_PacketHandle = new packetHandleClass(this, recvBufSize);
+            this.m_PacketHandle = new packetHandleClass(this, 0);
         }
     }
 

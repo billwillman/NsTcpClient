@@ -34,7 +34,7 @@ class DefaultPacketHandler extends AbstractPacketHandler
 
     OnPacketRead(data, clientSocket)
     {
-        if (data == null ||  !Buffer.isBuffer(data))
+        if (this.m_RecvBuffer == null || data == null ||  !Buffer.isBuffer(data))
             return;
 
         // 粘包处理

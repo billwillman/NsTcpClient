@@ -16,6 +16,11 @@ class AbstractPacketHandler
         // 20K, 一个用户20K数据
         if (allocSize == null)
             allocSize = 20 * 1024;
+        if (allocSize <= 0)
+        {
+            this.m_RecvBuffer = null;
+            return;
+        }
         this.m_RecvBuffer = Buffer.allocUnsafe(allocSize); 
     }
 
@@ -26,7 +31,7 @@ class AbstractPacketHandler
 
     GetReadData(data)
     {
-        if (data == null || !Buffer.isBuffer(data))
+        if (this.m_RecvBuffer == null || data == null || !Buffer.isBuffer(data))
             return -1;
         if (data.length <= 0)
             return 0;
@@ -67,7 +72,7 @@ class AbstractPacketHandler
 
     MoveMySelf(recvBufSz, i)
     {
-        if (recvBufSz == null || recvBufSz <= 0)
+        if (this.m_RecvBuffer == null || recvBufSz == null || recvBufSz <= 0)
             return;
         this.m_RecvBuffer.copy(this.m_RecvBuffer, 0, i, i + recvBufSz);
     }
