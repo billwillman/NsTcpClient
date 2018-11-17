@@ -66,3 +66,10 @@ _.isFloat = function (obj)
     var ret = ~~obj != obj;
     return ret;
 }
+
+// 单位：秒;可以用来做频率高的时间戳
+_.GetTickTimer =
+    function ()
+    {
+        return process.uptime();
+    }
