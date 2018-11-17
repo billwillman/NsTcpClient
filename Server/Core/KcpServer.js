@@ -6,7 +6,7 @@ class KcpServer extends UdpServer
 {
     constructor(packetHandleClass, kcpId, kcpMode, wndSize)
     {
-        super(packetHandleClass, 0);
+        super(packetHandleClass);
         this.m_Kcp = new KcpObj(this, kcpId, kcpMode, wndSize);
     }
 

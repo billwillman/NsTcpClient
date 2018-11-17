@@ -3,7 +3,7 @@ const dgram = require('dgram');
 
 class UdpServer
 {
-    constructor(packetHandleClass, recvBufSize)
+    constructor(packetHandleClass)
     {
         this.m_Socket = null;
         this.m_Listener = null;
