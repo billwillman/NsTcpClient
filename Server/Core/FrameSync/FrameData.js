@@ -4,6 +4,14 @@
 
 var LinkedListNode = require("../struct/LinkedListNode");
 
+FrameDataType =
+{
+    // 空帧
+    ZeroFrame : 0,
+    // 关键帧
+    KeyFrame = 1
+}
+
 // 一个用户的数据
 class FrameData
 {
@@ -21,8 +29,11 @@ class FrameData
     {
         if (clientMsg == null)
             return;
+        var frameType = this.m_KeyControl == 0? FrameDataType.ZeroFrame: FrameDataType.KeyFrame;
+        clientMsg.WriteByte(frameType);
         clientMsg.WriteUInt(this.m_UserId);
-        clientMsg.WriteInt(this.m_KeyControl);
+        if (frameType != FrameDataType.ZeroFrame)
+            clientMsg.WriteInt(this.m_KeyControl);
     }
 
     GetLinkedListNode()
