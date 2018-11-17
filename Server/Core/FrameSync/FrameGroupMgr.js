@@ -4,11 +4,12 @@ require("../struct/Utils");
 
 class FrameGroupMgr
 {
-     constructor(userCount)
+     constructor(userCount, frameSyncServer)
      {
         this.m_UserCount = userCount;
         this.m_FrameGroupMap = {};
         this.m_FrameGroupList = new LinkedList();
+        this.m_Server = frameSyncServer;
      }
 
      AddFrameData(frameIndex, frameData)
@@ -67,6 +68,9 @@ class FrameGroupMgr
      _SendFrameDataGroup(frameDataGroup)
      {
         // 发送当前帧组
+        if (this.m_Server == null || frameDataGroup == null)
+            return;
+        this.m_Server._SendFrameGroup(frameDataGroup);
      }
 }
 

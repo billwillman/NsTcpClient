@@ -164,6 +164,12 @@ class FrameSyncServer extends NetManager
             this.m_UdpServer.StartListen(1985, false);
         }
     }
+
+    _SendFrameGroup(frameGroup)
+    {
+        if (frameGroup == null)
+            return;
+    }
 }
 
 FrameSyncServer.m_GlobalClientId = 0;

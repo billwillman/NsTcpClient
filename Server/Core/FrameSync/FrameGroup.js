@@ -56,6 +56,7 @@ class FrameGroup
         var oldData = this.m_UserFrameMap[userId];
         if (oldData == frameData)
             return true;
+        var isUpdateData = oldData != null;
         var node = oldData.GetLinkedListNode();
         this.m_UserFrameList.RemoveNode(node);
         oldData = null;
@@ -64,8 +65,9 @@ class FrameGroup
         this.m_UserFrameMap[userId] = node;
         this.m_UserFrameList.AddLastNode(node);
 
-        // 更新TICK
-        this.UpdateUsedTick();
+        // 更新TICK, 只有是真的新加数据才可以UPDATE，防止一个人用外挂攻击，乱跳帧
+        if (!isUpdateData)
+            this.UpdateUsedTick();
 
         return this.IsReady();
     }
