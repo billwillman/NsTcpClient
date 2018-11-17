@@ -19,6 +19,23 @@ class FrameGroup
         this.UpdateUsedTick();
     }
 
+    ToMessage(clientMsg)
+    {
+        if (clientMsg == null)
+            return;
+        clientMsg.WriteUInt(this.m_FrameIndex);
+        clientMsg.WriteInt(this.m_UserFrameList.GetCount());
+        var node = this.m_UserFrameList.GetFirstNode();
+        while (node != null)
+        {
+            var nextNode = node.GetNext();
+            var frame = node.GetValue();
+            frame.ToMessage(clientMsg);
+
+            node = nextNode;
+        }
+    }
+
     GetFrameIndex()
     {
         return this.m_FrameIndex;

@@ -17,6 +17,14 @@ class FrameData
         this.m_Node = new LinkedListNode(this);
     }
 
+    ToMessage(clientMsg)
+    {
+        if (clientMsg == null)
+            return;
+        clientMsg.WriteUInt(this.m_UserId);
+        clientMsg.WriteInt(this.m_KeyControl);
+    }
+
     GetLinkedListNode()
     {
         return this.m_Node;

@@ -11,7 +11,7 @@ class S_C_FrameGroupMessage extends AbstractClientMessage
     DoSend()
     {
         // 发送数据
-        
+        this.m_FrameGroup.ToMessage(this);
     }
 }
 
