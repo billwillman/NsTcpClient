@@ -88,12 +88,12 @@ namespace NsUdpClient
            
         }
 
-        private void DoSend()
+        private virtual void DoSend()
         {
             
         }
 
-        private void DoRead()
+        private virtual void DoRead()
         {
 
         }
