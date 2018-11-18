@@ -53,4 +53,15 @@ namespace NsTcpClient
 			}
 		}
 	}
+
+    internal class UdpReqSend : tReqSend
+    {
+        public string ip;
+        public int port;
+        public UdpReqSend(byte[] pData, int bufSize, string ip, int port): base(pData, bufSize)
+        {
+            this.ip = ip;
+            this.port = port;
+        }
+    }
 }

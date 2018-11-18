@@ -46,7 +46,7 @@ namespace NsUdpClient
         {
             if (m_Udp != null)
                 return;
-            CloseThread();
+            //CloseThread();
 
             System.Net.Sockets.AddressFamily family = m_IsIpv6 ? System.Net.Sockets.AddressFamily.InterNetworkV6 : System.Net.Sockets.AddressFamily.InterNetwork;
             m_Udp = new System.Net.Sockets.UdpClient(m_BindPort, family);
@@ -83,14 +83,49 @@ namespace NsUdpClient
             return pReq;
         }
 
-        private void Execute()
+        private void RemoteFirstReq()
         {
-           
+            lock (m_Mutex)
+            {
+                m_QueueReq.RemoveFirst();
+            }
         }
 
-        private virtual void DoSend()
+        private void Execute()
         {
+            if (m_Udp == null)
+                return;
             
+            tReqHead pHead = GetFirstReq();
+            if (pHead != null)
+            {
+                if (pHead.uReqType == eReqType.eREQ_TYPE_SEND)
+                {
+                    RemoteFirstReq();
+                    UdpReqSend sndReq = pHead as UdpReqSend;
+                    if (sndReq != null)
+                    {
+                        DoSend(sndReq);
+                    }
+                }
+            }
+        }
+
+        private virtual void DoSend(UdpReqSend req)
+        {
+            if (req == null || m_Udp == null || req.pSendData == null || req.pSendData.Length <= 0 || req.SendSize <= 0 || 
+                string.IsNullOrEmpty(req.ip) || req.port <= 0)
+                return;
+            try
+            {
+                m_Udp.Send(req.pSendData, req.SendSize, req.ip, req.port);
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                UnityEngine.Debug.LogError(e.ToString());
+#endif
+            }
         }
 
         private virtual void DoRead()
@@ -111,6 +146,9 @@ namespace NsUdpClient
 
         private void CreateThread()
         {
+            if (m_Thread != null)
+                return;
+            
             m_Thread = new Thread(ThreadProc);
 #if !_USE_ABORT
             LocalThreadState = ThreadState.Running;
@@ -171,13 +209,13 @@ namespace NsUdpClient
 
             if (bufSize < 0)
                 bufSize = pData.Length;
-            AddSendReq(pData, bufSize);
+            AddSendReq(pData, bufSize, ip, port);
             return true;
         }
 
-        private void AddSendReq(byte[] pData, int bufSize)
+        private void AddSendReq(byte[] pData, int bufSize, string ip, int port)
         {
-            tReqSend pReq = new tReqSend(pData, bufSize);
+            UdpReqSend pReq = new UdpReqSend(pData, bufSize, ip, port);
             lock (m_Mutex)
             {
                 LinkedListNode<tReqHead> node = new LinkedListNode<tReqHead>(pReq);
@@ -210,6 +248,22 @@ namespace NsUdpClient
             }
         }
 
+        private void CloseSocket()
+        {
+            if (m_Udp != null)
+            {
+                try
+                {
+                    m_Udp.Close();
+                }
+                catch
+                { }
+                m_Udp = null;
+            }
+
+            FreeSendQueue();
+        }
+
         protected void Dispose(bool Diposing)
         {
             if (!m_IsDispose)
@@ -219,16 +273,7 @@ namespace NsUdpClient
                 FreeSendQueue();
                 if (Diposing)
                 {
-                    if (m_Udp != null)
-                    {
-                        try
-                        {
-                            m_Udp.Close();
-                        }
-                        catch
-                        { }
-                        m_Udp = null;
-                    }
+                    CloseSocket();
 
                     m_Thread = null;
                     m_Mutex = null;
