@@ -15,7 +15,6 @@
 
 var NetManager = require("../NetManager");
 var KcpServer = require("../KcpServer");
-var UdpServer = require("../UdpServer");
 var DefaultPacketHandler = require("../DefaultPacketHandler");
 require("../Kcp");
 
@@ -74,11 +73,6 @@ class FrameSyncServer extends NetManager
         if (kcpClient != null)
         {
             this.SendChannelMessage(1, packetId, message, kcpClient);
-        }
-        var udpClient = userSession.udpClient;
-        if (udpClient != null)
-        {
-            this.SendChannelMessage(2, packetId, message, udpClient);
         }
     }
 
