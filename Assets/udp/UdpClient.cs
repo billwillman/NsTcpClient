@@ -25,6 +25,7 @@ namespace NsUdpClient
         private Dictionary<int, System.Type> mPacketAbstractServerMessageMap = null;
         private LinkedList<GamePacket> mPacketList = new LinkedList<GamePacket>();
         private ICRC mCrc = new Crc32();
+        private Dictionary<int, OnPacketRead> mPacketListenerMap = new Dictionary<int, OnPacketRead>();
 
         public UdpClient(bool isIpv6 = false, int bindPort = 0)
         {
@@ -463,6 +464,27 @@ namespace NsUdpClient
             }
         }
 
+        public void AddPacketListener(int header, OnPacketRead callBack)
+        {
+            if (mPacketListenerMap.ContainsKey(header))
+            {
+                throw (new Exception());
+            }
+            else
+            {
+                mPacketListenerMap.Add(header, callBack);
+            }
+        }
+
+        public void RemovePacketListener(int header)
+        {
+            if (mPacketListenerMap.ContainsKey(header))
+            {
+                mPacketListenerMap.Remove(header);
+            }
+        }
+
+
         private void ProcessPackets()
         {
             while (true)
@@ -507,7 +529,56 @@ namespace NsUdpClient
 
         private void ProcessPacket(GamePacket packet)
         {
+            packet.DoDone();
+            OnPacketRead onRead;
+            if (mPacketListenerMap.TryGetValue(packet.header.header, out onRead))
+            {
+                if (onRead != null)
+                {
+                    try
+                    {
+                        onRead(packet);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    // 再找AbstractServer
+                    if (mPacketAbstractServerMessageMap != null)
+                    {
+                        System.Type abstractMessageClass;
+                        if (mPacketAbstractServerMessageMap.TryGetValue(packet.header.header, out abstractMessageClass)
+                            && abstractMessageClass != null)
+                        {
+                            var obj = Activator.CreateInstance(abstractMessageClass, packet.data);
+                            if (obj != null)
+                            {
+                                AbstractServerMessage message = obj as AbstractServerMessage;
+                                if (message != null)
+                                {
+                                    try
+                                    {
+                                        message.DoRecv();
+                                    }
+                                    finally
+                                    {
+                                        message.Dispose();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch
+                {
 
+                }
+            }
         }
 
         // 处理格式

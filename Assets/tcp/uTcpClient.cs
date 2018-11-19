@@ -520,8 +520,14 @@ namespace NsTcpClient
                                 AbstractServerMessage message = obj as AbstractServerMessage;
                                 if (message != null)
                                 {
-                                    message.DoRecv();
-                                    message.Dispose();
+                                    try
+                                    {
+                                        message.DoRecv();
+                                    }
+                                    finally
+                                    {
+                                        message.Dispose();
+                                    }
                                 }
                             }
                         }
