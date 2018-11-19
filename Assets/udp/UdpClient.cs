@@ -11,7 +11,7 @@ using NsTcpClient;
 
 namespace NsUdpClient
 {
-    public class UdpClient : IDisposable
+    public class KcpClient : IDisposable
     {
         private System.Net.Sockets.UdpClient m_Udp = null;
         private bool m_IsIpv6 = false;
@@ -27,7 +27,7 @@ namespace NsUdpClient
         private ICRC mCrc = new Crc32();
         private Dictionary<int, OnPacketRead> mPacketListenerMap = new Dictionary<int, OnPacketRead>();
 
-        public UdpClient(bool isIpv6 = false, int bindPort = 0)
+        public KcpClient(bool isIpv6 = false, int bindPort = 0)
         {
             m_IsIpv6 = isIpv6;
             if (bindPort < 0)
@@ -368,7 +368,7 @@ namespace NsUdpClient
             }
         }
 
-        ~UdpClient()
+        ~KcpClient()
         {
             Dispose(false);
         }
