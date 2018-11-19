@@ -150,7 +150,12 @@ namespace NsUdpClient
         {
             try
             {
-                
+                if (m_Udp == null)
+                    return;
+                byte[] recvBuf = m_Udp.Receive();
+                if (recvBuf == null)
+                    return;
+                OnThreadBufferProcess(recvBuf, recvBuf.Length);
             }
             catch (Exception e)
             {

@@ -29,8 +29,6 @@ class FrameSyncServer extends NetManager
         // kcpId=1983
         this.m_KcpServer = new KcpServer(DefaultPacketHandler, 1983, KCPMode.quick);
         this.m_KcpServer.SetListener(this);
-        this.m_UdpServer = new UdpServer(DefaultPacketHandler);
-        this.m_UdpServer.SetListener(this);
 
         this.m_ClientMap = {};
 
@@ -60,8 +58,6 @@ class FrameSyncServer extends NetManager
         this.RegisterDefaultSrvAbstractMsg(packetId, messageClass);
         // Kcp注册
         this.m_KcpServer.RegisterDefaultSrvAbstractMsg(packetId, messageClass);
-        // Udp注册
-        this.m_UdpServer.RegisterDefaultSrvAbstractMsg(packetId, messageClass);
     }
 
     // 转发所有
@@ -99,8 +95,6 @@ class FrameSyncServer extends NetManager
             case 1:
                 // Kcp消息
                 return this.m_KcpServer.SendMessage(client, packetId, message);
-            case 2:
-                return this.m_UdpServer.SendMessage(client, packetId, message);
         }
 
         return false;
@@ -142,10 +136,6 @@ class FrameSyncServer extends NetManager
         {
             this.m_KcpServer.Close();
         }
-        if (this.m_UdpServer != null)
-        {
-            this.m_UdpServer.Close();
-        }
         this.m_ClientMap = null;
     }
 
@@ -158,10 +148,6 @@ class FrameSyncServer extends NetManager
         if (this.m_KcpServer != null)
         {
             this.m_KcpServer.StartListen(1984, false);
-        }
-        if (this.m_UdpServer != null)
-        {
-            this.m_UdpServer.StartListen(1985, false);
         }
     }
 
