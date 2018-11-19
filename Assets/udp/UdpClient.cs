@@ -511,14 +511,55 @@ namespace NsUdpClient
         }
 
         // 处理格式
-        protected virtual void OnThreadBufferProcess(byte[] buf, int readSize)
+        protected virtual void OnThreadBufferProcess(byte[] recvBuffer, int recvBufSz)
         {
-            if (buf == null || buf.Length <= 0 || readSize <= 0)
+            if (recvBuffer == null || recvBuffer.Length <= 0 || recvBufSz <= 0)
                 return;
-            if (readSize > buf.Length)
-                readSize = buf.Length;
+            if (recvBufSz > recvBuffer.Length)
+                recvBufSz = recvBuffer.Length;
 
             GamePackHeader header = new GamePackHeader();
+            int headerSize = Marshal.SizeOf(header);
+            IntPtr headerBuffer = Marshal.AllocHGlobal(headerSize);
+            try {
+                if (recvBufSz >= headerSize)
+                {
+                    Marshal.Copy(recvBuffer, 0, headerBuffer, headerSize);
+                    header = (GamePackHeader)Marshal.PtrToStructure(headerBuffer, typeof(GamePackHeader));
+#if USE_NETORDER
+                        // used Net
+                        header.headerCrc32 = (uint)IPAddress.NetworkToHostOrder(header.headerCrc32);
+                        header.dataCrc32 = (uint)IPAddress.NetworkToHostOrder(header.dataCrc32);
+                        header.header = IPAddress.NetworkToHostOrder(header.header);
+                        header.dataSize = IPAddress.NetworkToHostOrder(header.dataSize);
+#endif
+                    if (recvBufSz < (header.dataSize + headerSize))
+                        return;
+
+                    GamePacket packet = new GamePacket();
+                    packet.header = header;
+                    if (packet.header.dataSize <= 0)
+                    {
+                        packet.header.dataSize = 0;
+                        packet.data = null;
+                    }
+                    else
+                    {
+                        packet.data = new byte[packet.header.dataSize];
+                        Buffer.BlockCopy(recvBuffer, headerSize, packet.data, 0, packet.header.dataSize);
+                    }
+
+                    LinkedListNode<GamePacket> node = new LinkedListNode<GamePacket>(packet);
+                    lock (this)
+                    {
+                        mPacketList.AddLast(node);
+                    }
+
+                } 
+            } finally
+            {
+                Marshal.FreeHGlobal(headerBuffer);
+            }
         }
 
     }
