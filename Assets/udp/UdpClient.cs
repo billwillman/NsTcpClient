@@ -2,7 +2,12 @@
 using System.Net;
 using System.Threading;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+#if USE_NETORDER
+using System.Net;
+#endif
 using NsTcpClient;
+
 
 namespace NsUdpClient
 {
@@ -17,6 +22,9 @@ namespace NsUdpClient
         private object m_Mutex = new object();
         private LinkedList<tReqHead> m_QueueReq = new LinkedList<tReqHead>();
         private bool m_IsDispose = false;
+        private Dictionary<int, System.Type> mPacketAbstractServerMessageMap = null;
+        private LinkedList<GamePacket> mPacketList = new LinkedList<GamePacket>();
+        private ICRC mCrc = new Crc32();
 
         public UdpClient(bool isIpv6 = false, int bindPort = 0)
         {
@@ -40,6 +48,13 @@ namespace NsUdpClient
             {
                 return m_IsIpv6;
             }
+        }
+
+        // 更新
+        public void Update(float delta)
+        {
+            // 处理包
+            ProcessPackets();
         }
 
         private void CreateSocket()
@@ -109,9 +124,11 @@ namespace NsUdpClient
                     }
                 }
             }
+
+            DoRead();
         }
 
-        private virtual void DoSend(UdpReqSend req)
+        protected virtual void DoSend(UdpReqSend req)
         {
             if (req == null || m_Udp == null || req.pSendData == null || req.pSendData.Length <= 0 || req.SendSize <= 0 || 
                 string.IsNullOrEmpty(req.ip) || req.port <= 0)
@@ -128,9 +145,18 @@ namespace NsUdpClient
             }
         }
 
-        private virtual void DoRead()
+        protected virtual void DoRead()
         {
-
+            try
+            {
+                
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                UnityEngine.Debug.LogError(e.ToString());
+#endif
+            }
         }
 
         private void ThreadProc()
@@ -198,7 +224,119 @@ namespace NsUdpClient
             }
         }
 
-        public bool Send(string ip, int port, byte[] pData, int bufSize = -1)
+        public bool SendMessage(string ip, int port, int packetHandle, AbstractClientMessage message)
+        {
+            if (string.IsNullOrEmpty(ip) || port <= 0)
+                return false;
+            if (message != null)
+            {
+                try
+                {
+                    message.DoSend();
+                    long bufSize;
+                    byte[] buffer = message.GetBuffer(out bufSize);
+                    if (bufSize > int.MaxValue)
+                        return false;
+                    return Send(ip, port, buffer, packetHandle, (int)bufSize);
+                }
+                finally
+                {
+                    message.Dispose();
+                }
+            } else
+            {
+                return Send(ip, port, null, packetHandle);
+            }
+        }
+        
+
+        public bool Send(string ip, int port, byte[] buf, int packetHandle, int bufSize = -1)
+        {
+            if (string.IsNullOrEmpty(ip) || port <= 0)
+                return false;
+
+            if (bufSize < 0 && buf != null)
+                bufSize = buf.Length;
+
+            bool hasBufData = (buf != null) && (bufSize > 0);
+
+            GamePackHeader header = new GamePackHeader();
+
+            if (hasBufData)
+                header.dataSize = bufSize;
+            else
+                header.dataSize = 0;
+
+            header.header = packetHandle;
+
+            if (hasBufData)
+            {
+                mCrc.Crc(buf, bufSize);
+                header.dataCrc32 = (uint)mCrc.Value;
+            }
+            else
+                header.dataCrc32 = 0;
+
+            int headerSize = Marshal.SizeOf(header);
+            int dstSize = headerSize;
+            if (hasBufData)
+                dstSize += bufSize;
+
+            // 下面注释是未优化代码
+            //byte[] dstBuffer = new byte[dstSize];
+            // 此处已优化
+            var dstStream = NetByteArrayPool.GetBuffer(dstSize);
+            try
+            {
+                byte[] dstBuffer = dstStream.GetBuffer();
+
+                // 此处可优化，可以考虑后续使用RINGBUF优化，RINGBUF用完可以自动关闭掉连接
+                IntPtr pStruct = Marshal.AllocHGlobal(headerSize);
+                try
+                {
+                    Marshal.StructureToPtr(header, pStruct, false);
+                    Marshal.Copy(pStruct, dstBuffer, 0, headerSize);
+
+#if USE_NETORDER
+				// Calc header Crc
+				CalcHeaderCrc (ref header, dstBuffer);
+
+				// used net
+				header.headerCrc32 = (uint)IPAddress.HostToNetworkOrder(header.headerCrc32);
+				header.dataCrc32 = (uint)IPAddress.HostToNetworkOrder(header.dataCrc32);
+				header.header = IPAddress.HostToNetworkOrder(header.header);
+				header.dataSize = IPAddress.HostToNetworkOrder(header.dataSize);
+
+				Marshal.StructureToPtr(header, pStruct, false);
+				Marshal.Copy(pStruct, dstBuffer, 0, headerSize);
+#endif
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(pStruct);
+                }
+
+#if USE_NETORDER
+#else
+                // Calc header Crc
+                //  CalcHeaderCrc(ref header, dstBuffer);
+#endif
+                if (hasBufData)
+                    Buffer.BlockCopy(buf, 0, dstBuffer, headerSize, bufSize);
+                return this.SendBuf(ip, port, dstBuffer, dstSize);
+            }
+            finally
+            {
+                if (dstStream != null)
+                {
+                    dstStream.Dispose();
+                    dstStream = null;
+                }
+            }
+
+        }
+
+        private bool SendBuf(string ip, int port, byte[] pData, int bufSize = -1)
         {
             if (string.IsNullOrEmpty(ip) || port <= 0 || pData == null || pData.Length <= 0 || bufSize == 0)
                 return false;
@@ -209,6 +347,7 @@ namespace NsUdpClient
 
             if (bufSize < 0)
                 bufSize = pData.Length;
+
             AddSendReq(pData, bufSize, ip, port);
             return true;
         }
@@ -262,6 +401,9 @@ namespace NsUdpClient
             }
 
             FreeSendQueue();
+
+            // 清理掉所有处理
+            ClearAllProcessPackets();
         }
 
         protected void Dispose(bool Diposing)
@@ -282,5 +424,102 @@ namespace NsUdpClient
                 m_IsDispose = true;
             }
         }
+
+        /*注册消息*/
+        public void RegisterServerMessageClass(int header, System.Type messageClass)
+        {
+            if (messageClass == null)
+                return;
+            if (mPacketAbstractServerMessageMap == null)
+            {
+                mPacketAbstractServerMessageMap = new Dictionary<int, Type>();
+                mPacketAbstractServerMessageMap.Add(header, messageClass);
+            }
+            else
+            {
+                if (mPacketAbstractServerMessageMap.ContainsKey(header))
+                    throw (new Exception());
+                else
+                    mPacketAbstractServerMessageMap.Add(header, messageClass);
+            }
+        }
+
+        public void RemoveServerMessageClass(int header)
+        {
+            if (mPacketAbstractServerMessageMap == null)
+                return;
+            if (mPacketAbstractServerMessageMap.ContainsKey(header))
+                mPacketAbstractServerMessageMap.Remove(header);
+        }
+
+        private void ClearAllProcessPackets()
+        {
+            if (mPacketList != null)
+            {
+                lock (this)
+                {
+                    mPacketList.Clear();
+                }
+            }
+        }
+
+        private void ProcessPackets()
+        {
+            while (true)
+            {
+                LinkedListNode<GamePacket> node;
+                lock (this)
+                {
+                    node = mPacketList.First;
+                    if (node != null)
+                        mPacketList.RemoveFirst();
+                }
+
+                if (node == null)
+                    break;
+                GamePacket packet = node.Value;
+                if (packet != null)
+                {
+                    if (packet.status == GamePacketStatus.GPNone)
+                    {
+                        ProcessPacket(packet);
+                        // 如果为标记为正在处理
+                        if (packet.status == GamePacketStatus.GPProcessing)
+                        {
+                            lock (this)
+                            {
+                                mPacketList.AddFirst(node);
+                            }
+                            break;
+                        }
+                    }
+                    else if (packet.status == GamePacketStatus.GPProcessing)
+                    {
+                        lock (this)
+                        {
+                            mPacketList.AddFirst(node);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void ProcessPacket(GamePacket packet)
+        {
+
+        }
+
+        // 处理格式
+        protected virtual void OnThreadBufferProcess(byte[] buf, int readSize)
+        {
+            if (buf == null || buf.Length <= 0 || readSize <= 0)
+                return;
+            if (readSize > buf.Length)
+                readSize = buf.Length;
+
+            GamePackHeader header = new GamePackHeader();
+        }
+
     }
 }

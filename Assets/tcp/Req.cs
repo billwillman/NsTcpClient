@@ -2,13 +2,13 @@ using System;
 
 namespace NsTcpClient
 {
-	internal enum eReqType
+	public enum eReqType
 	{
 		eREQ_TYPE_CONNECT = 0,
 		eREQ_TYPE_SEND,
 	}
 
-	internal class tReqHead
+	public class tReqHead
 	{
 		public eReqType uReqType;
 	}
@@ -28,7 +28,7 @@ namespace NsTcpClient
 		}
 	}
 
-	internal class tReqSend: tReqHead
+	public class tReqSend: tReqHead
 	{
 		public byte[] pSendData;
 		public tReqSend(byte[] pData, int bufSize)
@@ -54,7 +54,7 @@ namespace NsTcpClient
 		}
 	}
 
-    internal class UdpReqSend : tReqSend
+    public class UdpReqSend : tReqSend
     {
         public string ip;
         public int port;
