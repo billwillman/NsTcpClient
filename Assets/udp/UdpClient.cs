@@ -3,9 +3,6 @@ using System.Net;
 using System.Threading;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-#if USE_NETORDER
-using System.Net;
-#endif
 using NsTcpClient;
 
 
@@ -26,6 +23,13 @@ namespace NsUdpClient
         private LinkedList<GamePacket> mPacketList = new LinkedList<GamePacket>();
         private ICRC mCrc = new Crc32();
         private Dictionary<int, OnPacketRead> mPacketListenerMap = new Dictionary<int, OnPacketRead>();
+        private IPEndPoint m_RecvEndPoint = new IPEndPoint(IPAddress.Any, 0);
+
+        private static readonly DateTime utc_time = new DateTime(1970, 1, 1);
+        public static UInt32 iclock()
+        {
+            return (UInt32)(Convert.ToInt64(DateTime.UtcNow.Subtract(utc_time).TotalMilliseconds) & 0xffffffff);
+        }
 
         public KcpClient(bool isIpv6 = false, int bindPort = 0)
         {
@@ -152,7 +156,7 @@ namespace NsUdpClient
             {
                 if (m_Udp == null)
                     return;
-                byte[] recvBuf = m_Udp.Receive();
+                byte[] recvBuf = m_Udp.Receive(ref m_RecvEndPoint);
                 if (recvBuf == null)
                     return;
                 OnThreadBufferProcess(recvBuf, recvBuf.Length);
