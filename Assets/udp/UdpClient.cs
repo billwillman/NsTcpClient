@@ -24,6 +24,7 @@ namespace NsUdpClient
         private ICRC mCrc = new Crc32();
         private Dictionary<int, OnPacketRead> mPacketListenerMap = new Dictionary<int, OnPacketRead>();
         private IPEndPoint m_RecvEndPoint = new IPEndPoint(IPAddress.Any, 0);
+        private KCP m_Kcp = null;
 
         private static readonly DateTime utc_time = new DateTime(1970, 1, 1);
         public static UInt32 iclock()
@@ -333,7 +334,7 @@ namespace NsUdpClient
 #endif
                 if (hasBufData)
                     Buffer.BlockCopy(buf, 0, dstBuffer, headerSize, bufSize);
-                return this.SendBuf(ip, port, dstBuffer, dstSize);
+                return SendBuf(ip, port, dstBuffer, dstSize);
             }
             finally
             {
@@ -409,6 +410,9 @@ namespace NsUdpClient
                 { }
                 m_Udp = null;
             }
+
+            // 清空KCP
+            m_Kcp = null;
 
             FreeSendQueue();
 
@@ -644,6 +648,20 @@ namespace NsUdpClient
 
 
         //--------------------------- KCP相关 ----------------------------------------------//
+
+        void init_kcp(UInt32 conv)
+        {
+            if (m_Kcp != null)
+                return;
+            m_Kcp = new KCP(conv, (byte[] buf, int size) =>
+            {
+               // m_UdpClient.SendBuf(buf, size);
+            });
+
+            // fast mode.
+            m_Kcp.NoDelay(1, 10, 2, 1);
+            m_Kcp.WndSize(128, 128);
+        }
 
 
         //---------------------------------------------------------------------------------//
