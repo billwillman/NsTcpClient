@@ -30,6 +30,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
+#define NET35
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -157,7 +159,7 @@ namespace Google.Protobuf
         /// <returns>A ByteString with content read from the given stream.</returns>
         public static ByteString FromStream(Stream stream)
         {
-            ProtoPreconditions.CheckNotNull(stream, nameof(stream));
+            ProtoPreconditions.CheckNotNull(stream, "stream");
             int capacity = stream.CanSeek ? checked((int) (stream.Length - stream.Position)) : 0;
             var memoryStream = new MemoryStream(capacity);
             stream.CopyTo(memoryStream);

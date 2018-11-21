@@ -461,8 +461,8 @@ namespace Google.Protobuf
             int endField = WireFormat.GetTagFieldNumber(tag);
             if (startField != endField)
             {
-                throw new InvalidProtocolBufferException(
-                    $"Mismatched end-group tag. Started with field {startField}; ended with field {endField}");
+                var err = string.Format("Mismatched end-group tag. Started with field {0}; ended with field {1}", startField, endField);
+                throw new InvalidProtocolBufferException(err);
             }
             recursionDepth--;
         }

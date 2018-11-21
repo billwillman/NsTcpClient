@@ -30,6 +30,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
+#define NET35
+
 #if NET35
 using System;
 using System.IO;
@@ -52,7 +54,7 @@ namespace Google.Protobuf.Compatibility
         {
             if (destination == null)
             {
-                throw new ArgumentNullException(nameof(destination));
+                throw new ArgumentNullException("destination");
             }
 
             byte[] buffer = new byte[BUFFER_SIZE];

@@ -30,6 +30,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
+#define NET35
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -230,7 +232,7 @@ namespace Google.Protobuf.Collections
         /// <param name="item">The item to add.</param>
         public void Add(T item)
         {
-            ProtoPreconditions.CheckNotNullUnconstrained(item, nameof(item));
+            ProtoPreconditions.CheckNotNullUnconstrained(item, "item");
             EnsureSize(count + 1);
             array[count++] = item;
         }
@@ -285,12 +287,24 @@ namespace Google.Protobuf.Collections
         /// <summary>
         /// Gets the number of elements contained in the collection.
         /// </summary>
-        public int Count => count;
+        public int Count 
+        {
+            get
+            {
+                return count;
+            }
+        }
 
         /// <summary>
         /// Gets a value indicating whether the collection is read-only.
         /// </summary>
-        public bool IsReadOnly => false;
+        public bool IsReadOnly
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// Adds all of the specified values into this collection.
@@ -298,7 +312,7 @@ namespace Google.Protobuf.Collections
         /// <param name="values">The values to add to this collection.</param>
         public void AddRange(IEnumerable<T> values)
         {
-            ProtoPreconditions.CheckNotNull(values, nameof(values));
+            ProtoPreconditions.CheckNotNull(values, "values");
 
             // Optimization 1: If the collection we're adding is already a RepeatedField<T>,
             // we know the values are valid.
@@ -331,7 +345,7 @@ namespace Google.Protobuf.Collections
                     {
                         if (item == null)
                         {
-                            throw new ArgumentException("Sequence contained null element", nameof(values));
+                            throw new ArgumentException("Sequence contained null element", "values");
                         }
                     }
                 }
@@ -454,7 +468,7 @@ namespace Google.Protobuf.Collections
         /// <returns>The zero-based index of the item, or -1 if it is not found.</returns>
         public int IndexOf(T item)
         {
-            ProtoPreconditions.CheckNotNullUnconstrained(item, nameof(item));
+            ProtoPreconditions.CheckNotNullUnconstrained(item, "item");
             EqualityComparer<T> comparer = EqualityComparer;
             for (int i = 0; i < count; i++)
             {
@@ -473,10 +487,10 @@ namespace Google.Protobuf.Collections
         /// <param name="item">The item to insert.</param>
         public void Insert(int index, T item)
         {
-            ProtoPreconditions.CheckNotNullUnconstrained(item, nameof(item));
+            ProtoPreconditions.CheckNotNullUnconstrained(item, "item");
             if (index < 0 || index > count)
             {
-                throw new ArgumentOutOfRangeException(nameof(index));
+                throw new ArgumentOutOfRangeException("index");
             }
             EnsureSize(count + 1);
             Array.Copy(array, index, array, index + 1, count - index);
@@ -492,7 +506,7 @@ namespace Google.Protobuf.Collections
         {
             if (index < 0 || index >= count)
             {
-                throw new ArgumentOutOfRangeException(nameof(index));
+                throw new ArgumentOutOfRangeException("index");
             }
             Array.Copy(array, index + 1, array, index, count - index - 1);
             count--;
@@ -524,7 +538,7 @@ namespace Google.Protobuf.Collections
             {
                 if (index < 0 || index >= count)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(index));
+                    throw new ArgumentOutOfRangeException("index");
                 }
                 return array[index];
             }
@@ -532,24 +546,42 @@ namespace Google.Protobuf.Collections
             {
                 if (index < 0 || index >= count)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(index));
+                    throw new ArgumentOutOfRangeException("index");
                 }
-                ProtoPreconditions.CheckNotNullUnconstrained(value, nameof(value));
+                ProtoPreconditions.CheckNotNullUnconstrained(value, "value");
                 array[index] = value;
             }
         }
 
         #region Explicit interface implementation for IList and ICollection.
-        bool IList.IsFixedSize => false;
+        bool IList.IsFixedSize
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         void ICollection.CopyTo(Array array, int index)
         {
             Array.Copy(this.array, 0, array, index, count);
         }
 
-        bool ICollection.IsSynchronized => false;
+        bool ICollection.IsSynchronized
+        {
+            get
+            {
+                return false;
+            }
+        }
 
-        object ICollection.SyncRoot => this;
+        object ICollection.SyncRoot
+        {
+            get
+            {
+                return this;
+            }
+        }
 
         object IList.this[int index]
         {

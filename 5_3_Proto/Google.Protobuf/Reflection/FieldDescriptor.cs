@@ -49,20 +49,20 @@ namespace Google.Protobuf.Reflection
         /// <summary>
         /// Get the field's containing message type.
         /// </summary>
-        public MessageDescriptor ContainingType { get; }
+        public MessageDescriptor ContainingType { get; private set;}
 
         /// <summary>
         /// Returns the oneof containing this field, or <c>null</c> if it is not part of a oneof.
         /// </summary>
-        public OneofDescriptor ContainingOneof { get; }
+        public OneofDescriptor ContainingOneof { get; private set;}
 
         /// <summary>
         /// The effective JSON name for this field. This is usually the lower-camel-cased form of the field name,
         /// but can be overridden using the <c>json_name</c> option in the .proto file.
         /// </summary>
-        public string JsonName { get; }
+        public string JsonName { get; private set;}
 
-        internal FieldDescriptorProto Proto { get; }
+        internal FieldDescriptorProto Proto { get; private set;}
 
         internal FieldDescriptor(FieldDescriptorProto proto, FileDescriptor file,
                                  MessageDescriptor parent, int index, string propertyName)
@@ -85,7 +85,7 @@ namespace Google.Protobuf.Reflection
                 if (proto.OneofIndex < 0 || proto.OneofIndex >= parent.Proto.OneofDecl.Count)
                 {
                     throw new DescriptorValidationException(this,
-                        $"FieldDescriptorProto.oneof_index is out of range for type {parent.Name}");
+                        string.Format("FieldDescriptorProto.oneof_index is out of range for type {0}", parent.Name));
                 }
                 ContainingOneof = parent.Oneofs[proto.OneofIndex];
             }
@@ -104,7 +104,13 @@ namespace Google.Protobuf.Reflection
         /// <summary>
         /// The brief name of the descriptor's target.
         /// </summary>
-        public override string Name => Proto.Name;
+        public override string Name
+        {
+            get
+            {
+                return Proto.Name;
+            }
+        }
 
         /// <summary>
         /// Returns the accessor for this field.
@@ -124,7 +130,13 @@ namespace Google.Protobuf.Reflection
         /// and this property will return null.
         /// </para>
         /// </remarks>
-        public IFieldAccessor Accessor => accessor;
+        public IFieldAccessor Accessor
+        {
+            get
+            {
+                return accessor;
+            }
+        }
         
         /// <summary>
         /// Maps a field type as included in the .proto file to a FieldType.
@@ -177,32 +189,61 @@ namespace Google.Protobuf.Reflection
         /// <summary>
         /// Returns <c>true</c> if this field is a repeated field; <c>false</c> otherwise.
         /// </summary>
-        public bool IsRepeated => Proto.Label == FieldDescriptorProto.Types.Label.Repeated;
+        public bool IsRepeated
+        {
+            get
+            {
+                return Proto.Label == FieldDescriptorProto.Types.Label.Repeated;
+            }
+        }
 
         /// <summary>
         /// Returns <c>true</c> if this field is a map field; <c>false</c> otherwise.
         /// </summary>
-        public bool IsMap => fieldType == FieldType.Message && messageType.Proto.Options != null && messageType.Proto.Options.MapEntry;
+        public bool IsMap
+        {
+            get
+            {
+                return fieldType == FieldType.Message && messageType.Proto.Options != null && messageType.Proto.Options.MapEntry;
+            }
+        }
 
         /// <summary>
         /// Returns <c>true</c> if this field is a packed, repeated field; <c>false</c> otherwise.
         /// </summary>
-        public bool IsPacked => 
+        public bool IsPacked
+        {
             // Note the || rather than && here - we're effectively defaulting to packed, because that *is*
             // the default in proto3, which is all we support. We may give the wrong result for the protos
             // within descriptor.proto, but that's okay, as they're never exposed and we don't use IsPacked
             // within the runtime.
-            Proto.Options == null || Proto.Options.Packed;
+            get
+            {
+                return Proto.Options == null || Proto.Options.Packed;
+            }
+        }
         
         /// <summary>
         /// Returns the type of the field.
         /// </summary>
-        public FieldType FieldType => fieldType;
+        public FieldType FieldType
+        {
+            get
+            {
+                return fieldType;
+            }
+        }
 
         /// <summary>
         /// Returns the field number declared in the proto file.
         /// </summary>
-        public int FieldNumber => Proto.Number;
+        public int FieldNumber
+        {
+            get
+            {
+                return Proto.Number;
+            }
+        }
 
         /// <summary>
         /// Compares this descriptor with another one, ordering in "canonical" order
@@ -253,7 +294,15 @@ namespace Google.Protobuf.Reflection
         /// <summary>
         /// The (possibly empty) set of custom options for this field.
         /// </summary>
-        public CustomOptions CustomOptions => Proto.Options?.CustomOptions ?? CustomOptions.Empty;
+        public CustomOptions CustomOptions
+        {
+            get 
+            {
+                if ( Proto.Options != null)
+                    return  Proto.Options.CustomOptions;
+                return CustomOptions.Empty;
+            }
+        }
 
         /// <summary>
         /// Look up and cross-link all field types etc.
@@ -278,7 +327,7 @@ namespace Google.Protobuf.Reflection
                     }
                     else
                     {
-                        throw new DescriptorValidationException(this, $"\"{Proto.TypeName}\" is not a type.");
+                        throw new DescriptorValidationException(this, string.Format("\"{0}\" is not a type.", Proto.TypeName));
                     }
                 }
 
@@ -286,7 +335,7 @@ namespace Google.Protobuf.Reflection
                 {
                     if (!(typeDescriptor is MessageDescriptor))
                     {
-                        throw new DescriptorValidationException(this, $"\"{Proto.TypeName}\" is not a message type.");
+                        throw new DescriptorValidationException(this, string.Format("\"{0}\" is not a message type.", Proto.TypeName));
                     }
                     messageType = (MessageDescriptor) typeDescriptor;
 
@@ -299,7 +348,7 @@ namespace Google.Protobuf.Reflection
                 {
                     if (!(typeDescriptor is EnumDescriptor))
                     {
-                        throw new DescriptorValidationException(this, $"\"{Proto.TypeName}\" is not an enum type.");
+                        throw new DescriptorValidationException(this, string.Format("\"{0}\" is not an enum type.", Proto.TypeName));
                     }
                     enumType = (EnumDescriptor) typeDescriptor;
                 }
@@ -338,7 +387,7 @@ namespace Google.Protobuf.Reflection
             var property = ContainingType.ClrType.GetProperty(propertyName);
             if (property == null)
             {
-                throw new DescriptorValidationException(this, $"Property {propertyName} not found in {ContainingType.ClrType}");
+                throw new DescriptorValidationException(this, string.Format("Property {0} not found in {1}", propertyName, ContainingType.ClrType));
             }
             return IsMap ? new MapFieldAccessor(property, this)
                 : IsRepeated ? new RepeatedFieldAccessor(property, this)

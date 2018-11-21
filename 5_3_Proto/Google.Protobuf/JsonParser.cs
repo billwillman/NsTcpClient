@@ -196,7 +196,7 @@ namespace Google.Protobuf
                         }
                         if (!seenOneofs.Add(field.ContainingOneof))
                         {
-                            throw new InvalidProtocolBufferException($"Multiple values specified for oneof {field.ContainingOneof.Name}");
+                            throw new InvalidProtocolBufferException(string.Format("Multiple values specified for oneof {0}", field.ContainingOneof.Name));
                         }
                     }
                     MergeField(message, field, tokenizer);
@@ -380,7 +380,7 @@ namespace Google.Protobuf
         /// <exception cref="InvalidProtocolBufferException">The JSON does not represent a Protocol Buffers message correctly</exception>
         public T Parse<T>(string json) where T : IMessage, new()
         {
-            ProtoPreconditions.CheckNotNull(json, nameof(json));
+            ProtoPreconditions.CheckNotNull(json, "json");
             return Parse<T>(new StringReader(json));
         }
 
@@ -393,7 +393,7 @@ namespace Google.Protobuf
         /// <exception cref="InvalidProtocolBufferException">The JSON does not represent a Protocol Buffers message correctly</exception>
         public T Parse<T>(TextReader jsonReader) where T : IMessage, new()
         {
-            ProtoPreconditions.CheckNotNull(jsonReader, nameof(jsonReader));
+            ProtoPreconditions.CheckNotNull(jsonReader, "jsonReader");
             T message = new T();
             Merge(message, jsonReader);
             return message;
@@ -408,8 +408,8 @@ namespace Google.Protobuf
         /// <exception cref="InvalidProtocolBufferException">The JSON does not represent a Protocol Buffers message correctly</exception>
         public IMessage Parse(string json, MessageDescriptor descriptor)
         {
-            ProtoPreconditions.CheckNotNull(json, nameof(json));
-            ProtoPreconditions.CheckNotNull(descriptor, nameof(descriptor));
+            ProtoPreconditions.CheckNotNull(json, "json)");
+            ProtoPreconditions.CheckNotNull(descriptor, "descriptor");
             return Parse(new StringReader(json), descriptor);
         }
 
@@ -422,8 +422,8 @@ namespace Google.Protobuf
         /// <exception cref="InvalidProtocolBufferException">The JSON does not represent a Protocol Buffers message correctly</exception>
         public IMessage Parse(TextReader jsonReader, MessageDescriptor descriptor)
         {
-            ProtoPreconditions.CheckNotNull(jsonReader, nameof(jsonReader));
-            ProtoPreconditions.CheckNotNull(descriptor, nameof(descriptor));
+            ProtoPreconditions.CheckNotNull(jsonReader, "jsonReader");
+            ProtoPreconditions.CheckNotNull(descriptor, "descriptor");
             IMessage message = descriptor.Parser.CreateTemplate();
             Merge(message, jsonReader);
             return message;
@@ -524,7 +524,7 @@ namespace Google.Protobuf
             MessageDescriptor descriptor = settings.TypeRegistry.Find(typeName);
             if (descriptor == null)
             {
-                throw new InvalidOperationException($"Type registry has no descriptor for type name '{typeName}'");
+                throw new InvalidOperationException(string.Format("Type registry has no descriptor for type name '{0}'", typeName));
             }
 
             // Now replay the token stream we've already read and anything that remains of the object, just parsing it
@@ -556,17 +556,18 @@ namespace Google.Protobuf
             // TODO: What about an absent Int32Value, for example?
             if (token.Type != JsonToken.TokenType.Name || token.StringValue != JsonFormatter.AnyWellKnownTypeValueField)
             {
-                throw new InvalidProtocolBufferException($"Expected '{JsonFormatter.AnyWellKnownTypeValueField}' property for well-known type Any body");
+                throw new InvalidProtocolBufferException(string.Format("Expected '{0}' property for well-known type Any body", JsonFormatter.AnyWellKnownTypeValueField));
             }
             Merge(body, tokenizer);
             token = tokenizer.Next();
             if (token.Type != JsonToken.TokenType.EndObject)
             {
-                throw new InvalidProtocolBufferException($"Expected end-object token after @type/value for well-known type");
+                throw new InvalidProtocolBufferException("Expected end-object token after @type/value for well-known type");
             }
         }
 
         #region Utility methods which don't depend on the state (or settings) of the parser.
+
         private static object ParseMapKey(FieldDescriptor field, string keyText)
         {
             switch (field.FieldType)
@@ -586,17 +587,17 @@ namespace Google.Protobuf
                 case FieldType.Int32:
                 case FieldType.SInt32:
                 case FieldType.SFixed32:
-                    return ParseNumericString(keyText, int.Parse);
+                    return ParseNumericString<int>(keyText, int.Parse);
                 case FieldType.UInt32:
                 case FieldType.Fixed32:
-                    return ParseNumericString(keyText, uint.Parse);
+                    return ParseNumericString<uint>(keyText, uint.Parse);
                 case FieldType.Int64:
                 case FieldType.SInt64:
                 case FieldType.SFixed64:
-                    return ParseNumericString(keyText, long.Parse);
+                    return ParseNumericString<long>(keyText, long.Parse);
                 case FieldType.UInt64:
                 case FieldType.Fixed64:
-                    return ParseNumericString(keyText, ulong.Parse);
+                    return ParseNumericString<ulong>(keyText, ulong.Parse);
                 default:
                     throw new InvalidProtocolBufferException("Invalid field type for map: " + field.FieldType);
             }
@@ -646,7 +647,7 @@ namespace Google.Protobuf
                                 {
                                     return float.NegativeInfinity;
                                 }
-                                throw new InvalidProtocolBufferException($"Value out of range: {value}");
+                                throw new InvalidProtocolBufferException(string.Format("Value out of range: {0}", value));
                             }
                             return (float) value;
                         case FieldType.Enum:
@@ -655,12 +656,12 @@ namespace Google.Protobuf
                             // Note that we deliberately don't check that it's a known value.
                             return (int) value;
                         default:
-                            throw new InvalidProtocolBufferException($"Unsupported conversion from JSON number for field type {field.FieldType}");
+                            throw new InvalidProtocolBufferException(string.Format("Unsupported conversion from JSON number for field type {0}", field.FieldType));
                     }
                 }
                 catch (OverflowException)
                 {
-                    throw new InvalidProtocolBufferException($"Value out of range: {value}");
+                    throw new InvalidProtocolBufferException(string.Format("Value out of range: {0}", value));
                 }
             }
         }
@@ -669,11 +670,11 @@ namespace Google.Protobuf
         {
             if (double.IsInfinity(value) || double.IsNaN(value))
             {
-                throw new InvalidProtocolBufferException($"Value not an integer: {value}");
+                throw new InvalidProtocolBufferException(string.Format("Value not an integer: {0}", value));
             }
             if (value != Math.Floor(value))
             {
-                throw new InvalidProtocolBufferException($"Value not an integer: {value}");
+                throw new InvalidProtocolBufferException(string.Format("Value not an integer: {0}", value));
             }            
         }
 
@@ -695,35 +696,35 @@ namespace Google.Protobuf
                 case FieldType.Int32:
                 case FieldType.SInt32:
                 case FieldType.SFixed32:
-                    return ParseNumericString(text, int.Parse);
+                    return ParseNumericString<int>(text, int.Parse);
                 case FieldType.UInt32:
                 case FieldType.Fixed32:
-                    return ParseNumericString(text, uint.Parse);
+                    return ParseNumericString<uint>(text, uint.Parse);
                 case FieldType.Int64:
                 case FieldType.SInt64:
                 case FieldType.SFixed64:
-                    return ParseNumericString(text, long.Parse);
+                    return ParseNumericString<long>(text, long.Parse);
                 case FieldType.UInt64:
                 case FieldType.Fixed64:
-                    return ParseNumericString(text, ulong.Parse);
+                    return ParseNumericString<ulong>(text, ulong.Parse);
                 case FieldType.Double:
-                    double d = ParseNumericString(text, double.Parse);
+                    double d = ParseNumericString<double>(text, double.Parse);
                     ValidateInfinityAndNan(text, double.IsPositiveInfinity(d), double.IsNegativeInfinity(d), double.IsNaN(d));
                     return d;
                 case FieldType.Float:
-                    float f = ParseNumericString(text, float.Parse);
+                    float f = ParseNumericString<float>(text, float.Parse);
                     ValidateInfinityAndNan(text, float.IsPositiveInfinity(f), float.IsNegativeInfinity(f), float.IsNaN(f));
                     return f;
                 case FieldType.Enum:
                     var enumValue = field.EnumType.FindValueByName(text);
                     if (enumValue == null)
                     {
-                        throw new InvalidProtocolBufferException($"Invalid enum value: {text} for enum type: {field.EnumType.FullName}");
+                        throw new InvalidProtocolBufferException(string.Format("Invalid enum value: {0} for enum type: {1}", text, field.EnumType.FullName));
                     }
                     // Just return it as an int, and let the CLR convert it.
                     return enumValue.Number;
                 default:
-                    throw new InvalidProtocolBufferException($"Unsupported conversion from JSON string for field type {field.FieldType}");
+                    throw new InvalidProtocolBufferException(string.Format("Unsupported conversion from JSON string for field type {0}", field.FieldType));
             }
         }
 
@@ -740,20 +741,20 @@ namespace Google.Protobuf
             // Can't prohibit this with NumberStyles.
             if (text.StartsWith("+"))
             {
-                throw new InvalidProtocolBufferException($"Invalid numeric value: {text}");
+                throw new InvalidProtocolBufferException(string.Format("Invalid numeric value: {0}", text));
             }
             if (text.StartsWith("0") && text.Length > 1)
             {
                 if (text[1] >= '0' && text[1] <= '9')
                 {
-                    throw new InvalidProtocolBufferException($"Invalid numeric value: {text}");
+                    throw new InvalidProtocolBufferException(string.Format("Invalid numeric value: {0}", text));
                 }
             }
             else if (text.StartsWith("-0") && text.Length > 2)
             {
                 if (text[2] >= '0' && text[2] <= '9')
                 {
-                    throw new InvalidProtocolBufferException($"Invalid numeric value: {text}");
+                    throw new InvalidProtocolBufferException(string.Format("Invalid numeric value: {0}", text));
                 }
             }
             try
@@ -762,11 +763,11 @@ namespace Google.Protobuf
             }
             catch (FormatException)
             {
-                throw new InvalidProtocolBufferException($"Invalid numeric value for type: {text}");
+                throw new InvalidProtocolBufferException(string.Format("Invalid numeric value for type: {0}", text));
             }
             catch (OverflowException)
             {
-                throw new InvalidProtocolBufferException($"Value out of range: {text}");
+                throw new InvalidProtocolBufferException(string.Format("Value out of range: {0}", text));
             }
         }
 
@@ -781,7 +782,7 @@ namespace Google.Protobuf
                 (isNegativeInfinity && text != "-Infinity") ||
                 (isNaN && text != "NaN"))
             {
-                throw new InvalidProtocolBufferException($"Invalid numeric value: {text}");
+                throw new InvalidProtocolBufferException(string.Format("Invalid numeric value: {0}", text));
             }
         }
 
@@ -794,7 +795,7 @@ namespace Google.Protobuf
             var match = TimestampRegex.Match(token.StringValue);
             if (!match.Success)
             {
-                throw new InvalidProtocolBufferException($"Invalid Timestamp value: {token.StringValue}");
+                throw new InvalidProtocolBufferException(string.Format("Invalid Timestamp value: {0}", token.StringValue));
             }
             var dateTime = match.Groups["datetime"].Value;
             var subseconds = match.Groups["subseconds"].Value;
@@ -894,14 +895,14 @@ namespace Google.Protobuf
                 }
                 if (!Duration.IsNormalized(seconds, nanos))
                 {
-                    throw new InvalidProtocolBufferException($"Invalid Duration value: {token.StringValue}");
+                    throw new InvalidProtocolBufferException(string.Format("Invalid Duration value: {0}", token.StringValue));
                 }
                 message.Descriptor.Fields[Duration.SecondsFieldNumber].Accessor.SetValue(message, seconds);
                 message.Descriptor.Fields[Duration.NanosFieldNumber].Accessor.SetValue(message, nanos);
             }
             catch (FormatException)
             {
-                throw new InvalidProtocolBufferException($"Invalid Duration value: {token.StringValue}");
+                throw new InvalidProtocolBufferException(string.Format("Invalid Duration value: {0}", token.StringValue));
             }
         }
 
@@ -961,7 +962,7 @@ namespace Google.Protobuf
                     builder.Append(c);
                     if (c == '_')
                     {
-                        throw new InvalidProtocolBufferException($"Invalid field mask: {text}");
+                        throw new InvalidProtocolBufferException(string.Format("Invalid field mask: {0}", text));
                     }
                     wasNotUnderscore = true;
                     wasNotCap = true;
@@ -980,7 +981,7 @@ namespace Google.Protobuf
             /// Default settings, as used by <see cref="JsonParser.Default"/>. This has the same default
             /// recursion limit as <see cref="CodedInputStream"/>, and an empty type registry.
             /// </summary>
-            public static Settings Default { get; }
+            public static Settings Default { get; private set;}
 
             // Workaround for the Mono compiler complaining about XML comments not being on
             // valid language elements.
@@ -994,23 +995,23 @@ namespace Google.Protobuf
             /// messages, not collections - so a message within a collection within a message only counts as
             /// depth 2, not 3.
             /// </summary>
-            public int RecursionLimit { get; }
+            public int RecursionLimit { get; private set;}
 
             /// <summary>
             /// The type registry used to parse <see cref="Any"/> messages.
             /// </summary>
-            public TypeRegistry TypeRegistry { get; }
+            public TypeRegistry TypeRegistry { get; private set;}
 
             /// <summary>
             /// Whether the parser should ignore unknown fields (<c>true</c>) or throw an exception when
             /// they are encountered (<c>false</c>).
             /// </summary>
-            public bool IgnoreUnknownFields { get; }
+            public bool IgnoreUnknownFields { get; private set;}
 
             private Settings(int recursionLimit, TypeRegistry typeRegistry, bool ignoreUnknownFields)
             {
                 RecursionLimit = recursionLimit;
-                TypeRegistry = ProtoPreconditions.CheckNotNull(typeRegistry, nameof(typeRegistry));
+                TypeRegistry = ProtoPreconditions.CheckNotNull(typeRegistry, "typeRegistry");
                 IgnoreUnknownFields = ignoreUnknownFields;
             }
 
@@ -1036,25 +1037,31 @@ namespace Google.Protobuf
             /// when unknown fields are encountered.
             /// </summary>
             /// <param name="ignoreUnknownFields"><c>true</c> if unknown fields should be ignored when parsing; <c>false</c> to throw an exception.</param>
-            public Settings WithIgnoreUnknownFields(bool ignoreUnknownFields) =>
-                new Settings(RecursionLimit, TypeRegistry, ignoreUnknownFields);
+            public Settings WithIgnoreUnknownFields(bool ignoreUnknownFields)
+            {
+                return new Settings(RecursionLimit, TypeRegistry, ignoreUnknownFields);
+            }
 
             /// <summary>
             /// Creates a new <see cref="Settings"/> object based on this one, but with the specified recursion limit.
             /// </summary>
             /// <param name="recursionLimit">The new recursion limit.</param>
-            public Settings WithRecursionLimit(int recursionLimit) =>
-                new Settings(recursionLimit, TypeRegistry, IgnoreUnknownFields);
+            public Settings WithRecursionLimit(int recursionLimit)
+            {
+                return new Settings(recursionLimit, TypeRegistry, IgnoreUnknownFields);
+            }
 
             /// <summary>
             /// Creates a new <see cref="Settings"/> object based on this one, but with the specified type registry.
             /// </summary>
             /// <param name="typeRegistry">The new type registry. Must not be null.</param>
-            public Settings WithTypeRegistry(TypeRegistry typeRegistry) =>
-                new Settings(
+            public Settings WithTypeRegistry(TypeRegistry typeRegistry)
+            {
+                return new Settings(
                     RecursionLimit,
-                    ProtoPreconditions.CheckNotNull(typeRegistry, nameof(typeRegistry)),
+                    ProtoPreconditions.CheckNotNull(typeRegistry, "typeRegistry"),
                     IgnoreUnknownFields);
+            }
         }
     }
 }

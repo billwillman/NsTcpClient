@@ -19,6 +19,11 @@
     <RepositoryUrl>https://github.com/google/protobuf.git</RepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
+    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <!-- 
@@ -28,6 +33,13 @@
     -->
   <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
     <TargetFrameworks>netstandard1.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.0|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
   </PropertyGroup>
 
 </Project>

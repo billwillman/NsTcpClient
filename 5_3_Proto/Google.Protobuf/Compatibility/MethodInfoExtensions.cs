@@ -30,6 +30,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
+#define NET35
+
 #if NET35
 using System;
 using System.Reflection;
@@ -40,8 +42,10 @@ namespace Google.Protobuf.Compatibility
     // MethodInfo.CreateDelegate. Proxy from one to the other on .NET 3.5...
     internal static class MethodInfoExtensions
     {
-        internal static Delegate CreateDelegate(this MethodInfo method, Type type) =>
-            Delegate.CreateDelegate(type, method);
+        internal static Delegate CreateDelegate(this MethodInfo method, Type type)
+        {
+            return Delegate.CreateDelegate(type, method);
+        }
     }
 }
 #endif

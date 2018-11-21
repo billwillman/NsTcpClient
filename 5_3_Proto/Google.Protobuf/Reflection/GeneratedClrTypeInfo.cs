@@ -51,31 +51,31 @@ namespace Google.Protobuf.Reflection
         /// <summary>
         /// Irrelevant for file descriptors; the parser for message descriptors.
         /// </summary>
-        public MessageParser Parser { get; }
+        public MessageParser Parser { get; private set; }
 
         /// <summary>
         /// Irrelevant for file descriptors; the CLR property names (in message descriptor field order)
         /// for fields in the message for message descriptors.
         /// </summary>
-        public string[] PropertyNames { get; }
+        public string[] PropertyNames { get; private set; }
 
         /// <summary>
         /// Irrelevant for file descriptors; the CLR property "base" names (in message descriptor oneof order)
         /// for oneofs in the message for message descriptors. It is expected that for a oneof name of "Foo",
         /// there will be a "FooCase" property and a "ClearFoo" method.
         /// </summary>
-        public string[] OneofNames { get; }
+        public string[] OneofNames { get; private set; }
 
         /// <summary>
         /// The reflection information for types within this file/message descriptor. Elements may be null
         /// if there is no corresponding generated type, e.g. for map entry types.
         /// </summary>
-        public GeneratedClrTypeInfo[] NestedTypes { get; }
+        public GeneratedClrTypeInfo[] NestedTypes { get; private set; }
 
         /// <summary>
         /// The CLR types for enums within this file/message descriptor.
         /// </summary>
-        public Type[] NestedEnums { get; }
+        public Type[] NestedEnums { get; private set; }
 
         /// <summary>
         /// Creates a GeneratedClrTypeInfo for a message descriptor, with nested types, nested enums, the CLR type, property names and oneof names.

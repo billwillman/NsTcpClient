@@ -38,6 +38,12 @@ using System.Collections.Generic;
 
 namespace Google.Protobuf
 {
+    interface IFieldCodec<T>
+    {
+        int CalculateSizeWithTag(T value);
+        void WriteTagAndValue(CodedOutputStream output, T value);
+    }
+
     /// <summary>
     /// Factory methods for <see cref="FieldCodec{T}"/>.
     /// </summary>
@@ -316,13 +322,13 @@ namespace Google.Protobuf
                 return value;
             }
 
-            internal static void Write<T>(CodedOutputStream output, T value, FieldCodec<T> codec)
+            internal static void Write<T>(CodedOutputStream output, T value, IFieldCodec<T> codec)
             {
                 output.WriteLength(codec.CalculateSizeWithTag(value));
                 codec.WriteTagAndValue(output, value);
             }
 
-            internal  static int CalculateSize<T>(T value, FieldCodec<T> codec)
+            internal  static int CalculateSize<T>(T value, IFieldCodec<T> codec)
             {
                 int fieldLength = codec.CalculateSizeWithTag(value);
                 return CodedOutputStream.ComputeLengthSize(fieldLength) + fieldLength;
@@ -345,7 +351,7 @@ namespace Google.Protobuf
     /// This never writes default values to the stream, and does not address "packedness"
     /// in repeated fields itself, other than to know whether or not the field *should* be packed.
     /// </remarks>
-    public sealed class FieldCodec<T>
+    public sealed class FieldCodec<T>: IFieldCodec<T>
     {
         private static readonly EqualityComparer<T> EqualityComparer = ProtobufEqualityComparers.GetEqualityComparer<T>();
         private static readonly T DefaultDefault;
@@ -365,31 +371,37 @@ namespace Google.Protobuf
             // Otherwise it's the default value of the CLR type
         }
 
-        internal static bool IsPackedRepeatedField(uint tag) =>
-            TypeSupportsPacking && WireFormat.GetTagWireType(tag) == WireFormat.WireType.LengthDelimited;
+        internal static bool IsPackedRepeatedField(uint tag)
+        {
+            return TypeSupportsPacking && WireFormat.GetTagWireType(tag) == WireFormat.WireType.LengthDelimited;
+        }
 
-        internal bool PackedRepeatedField { get; }
+        internal bool PackedRepeatedField { get; private set;}
 
         /// <summary>
         /// Returns a delegate to write a value (unconditionally) to a coded output stream.
         /// </summary>
-        internal Action<CodedOutputStream, T> ValueWriter { get; }
+        internal Action<CodedOutputStream, T> ValueWriter { get; private set;}
 
         /// <summary>
         /// Returns the size calculator for just a value.
         /// </summary>
-        internal Func<T, int> ValueSizeCalculator { get; }
+        internal Func<T, int> ValueSizeCalculator { get; private set;}
 
         /// <summary>
         /// Returns a delegate to read a value from a coded input stream. It is assumed that
         /// the stream is already positioned on the appropriate tag.
         /// </summary>
-        internal Func<CodedInputStream, T> ValueReader { get; }
+        
+        internal Func<CodedInputStream, T> ValueReader { 
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Returns the fixed size for an entry, or 0 if sizes vary.
         /// </summary>
-        internal int FixedSize { get; }
+        internal int FixedSize { get; private set;}
 
         /// <summary>
         /// Gets the tag of the codec.
@@ -397,7 +409,7 @@ namespace Google.Protobuf
         /// <value>
         /// The tag of the codec.
         /// </value>
-        internal uint Tag { get; }
+        internal uint Tag { get; private set;}
 
         /// <summary>
         /// Default value for this codec. Usually the same for every instance of the same type, but
@@ -407,7 +419,7 @@ namespace Google.Protobuf
         /// <value>
         /// The default value of the codec's type.
         /// </value>
-        internal T DefaultValue { get; }
+        internal T DefaultValue { get; private set;}
 
         private readonly int tagSize;
         
@@ -463,14 +475,23 @@ namespace Google.Protobuf
         /// </summary>
         /// <param name="input">The input stream to read from.</param>
         /// <returns>The value read from the stream.</returns>
-        public T Read(CodedInputStream input) => ValueReader(input);
+        public T Read(CodedInputStream input)
+        {
+            return ValueReader(input);
+        }
 
         /// <summary>
         /// Calculates the size required to write the given value, with a tag,
         /// if the value is not the default.
         /// </summary>
-        public int CalculateSizeWithTag(T value) => IsDefault(value) ? 0 : ValueSizeCalculator(value) + tagSize;
+        public int CalculateSizeWithTag(T value)
+        {   
+            return IsDefault(value) ? 0 : ValueSizeCalculator(value) + tagSize;
+        }
 
-        private bool IsDefault(T value) => EqualityComparer.Equals(value, DefaultValue);
+        private bool IsDefault(T value)
+        {
+            return EqualityComparer.Equals(value, DefaultValue);
+        }
     }
 }

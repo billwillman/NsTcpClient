@@ -30,6 +30,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
+#define NET35
+
 using System.Reflection;
 
 namespace Google.Protobuf.Compatibility

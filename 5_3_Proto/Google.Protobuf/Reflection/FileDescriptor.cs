@@ -134,63 +134,87 @@ namespace Google.Protobuf.Reflection
         /// <value>
         /// The descriptor in its protocol message representation.
         /// </value>
-        internal FileDescriptorProto Proto { get; }
+        internal FileDescriptorProto Proto { get; private set;}
 
         /// <value>
         /// The file name.
         /// </value>
-        public string Name => Proto.Name;
+        public string Name
+        {
+            get
+            {
+                return Proto.Name;
+            }
+        }
 
         /// <summary>
         /// The package as declared in the .proto file. This may or may not
         /// be equivalent to the .NET namespace of the generated classes.
         /// </summary>
-        public string Package => Proto.Package;
+        public string Package 
+        {
+            get
+            {
+                return Proto.Package;
+            }
+        }
 
         /// <value>
         /// Unmodifiable list of top-level message types declared in this file.
         /// </value>
-        public IList<MessageDescriptor> MessageTypes { get; }
+        public IList<MessageDescriptor> MessageTypes { get; private set;}
 
         /// <value>
         /// Unmodifiable list of top-level enum types declared in this file.
         /// </value>
-        public IList<EnumDescriptor> EnumTypes { get; }
+        public IList<EnumDescriptor> EnumTypes { get; private set;}
 
         /// <value>
         /// Unmodifiable list of top-level services declared in this file.
         /// </value>
-        public IList<ServiceDescriptor> Services { get; }
+        public IList<ServiceDescriptor> Services { get; private set;}
 
         /// <value>
         /// Unmodifiable list of this file's dependencies (imports).
         /// </value>
-        public IList<FileDescriptor> Dependencies { get; }
+        public IList<FileDescriptor> Dependencies { get; private set;}
 
         /// <value>
         /// Unmodifiable list of this file's public dependencies (public imports).
         /// </value>
-        public IList<FileDescriptor> PublicDependencies { get; }
+        public IList<FileDescriptor> PublicDependencies { get; private set;}
 
         /// <value>
         /// The original serialized binary form of this descriptor.
         /// </value>
-        public ByteString SerializedData { get; }
+        public ByteString SerializedData { get; private set;}
 
         /// <value>
         /// Implementation of IDescriptor.FullName - just returns the same as Name.
         /// </value>
-        string IDescriptor.FullName => Name;
+        string IDescriptor.FullName
+        {
+            get
+            {
+                return Name;
+            }
+        }
 
         /// <value>
         /// Implementation of IDescriptor.File - just returns this descriptor.
         /// </value>
-        FileDescriptor IDescriptor.File => this;
+        FileDescriptor IDescriptor.File
+        {
+            get
+            {
+                return this;
+            }
+        }
 
         /// <value>
         /// Pool containing symbol descriptors.
         /// </value>
-        internal DescriptorPool DescriptorPool { get; }
+        internal DescriptorPool DescriptorPool { get; private set;}
 
         /// <summary>
         /// Finds a type (message, enum, service or extension) in the file by name. Does not find nested types.
@@ -311,7 +335,7 @@ namespace Google.Protobuf.Reflection
             }
             catch (DescriptorValidationException e)
             {
-                throw new ArgumentException($"Invalid embedded descriptor for \"{proto.Name}\".", e);
+                throw new ArgumentException(string.Format("Invalid embedded descriptor for \"{0}\".", proto.Name), e);
             }
         }
 
@@ -323,7 +347,7 @@ namespace Google.Protobuf.Reflection
         /// </returns>
         public override string ToString()
         {
-            return $"FileDescriptor for {Name}";
+            return string.Format("FileDescriptor for {0}", Name);
         }
 
         /// <summary>
@@ -344,7 +368,15 @@ namespace Google.Protobuf.Reflection
         /// <summary>
         /// The (possibly empty) set of custom options for this file.
         /// </summary>
-        public CustomOptions CustomOptions => Proto.Options?.CustomOptions ?? CustomOptions.Empty;
+        public CustomOptions CustomOptions
+        {
+            get
+            {
+                if (Proto.Options != null)
+                    return Proto.Options.CustomOptions;
+                return CustomOptions.Empty;
+            }
+        }
 
         /// <summary>
         /// Performs initialization for the given generic type argument.
@@ -357,6 +389,9 @@ namespace Google.Protobuf.Reflection
         /// accordingly.
         /// </remarks>
         /// <typeparam name="T">The type to force initialization for.</typeparam>
-        public static void ForceReflectionInitialization<T>() => ReflectionUtil.ForceInitialize<T>();
+        public static void ForceReflectionInitialization<T>()
+        {
+            ReflectionUtil.ForceInitialize<T>();
+        }
     }
 }
