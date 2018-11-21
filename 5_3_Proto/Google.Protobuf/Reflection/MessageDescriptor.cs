@@ -94,14 +94,14 @@ namespace Google.Protobuf.Reflection
                 (type, index) =>
                 new EnumDescriptor(type, file, this, index, generatedCodeInfo.NestedEnums[index]));
 
-            fieldsInDeclarationOrder = DescriptorUtil.ConvertAndMakeReadOnly(
+            fieldsInDeclarationOrder = DescriptorUtil.ConvertAndMakeReadOnly<FieldDescriptorProto, FieldDescriptor>(
                 proto.Field,
                 (field, index)=>
                     {
                         string prop = null;
                         if (generatedCodeInfo != null)
                             prop = generatedCodeInfo.PropertyNames[index];
-                        new FieldDescriptor(field, file, this, index, prop);
+                        return new FieldDescriptor(field, file, this, index, prop); 
                     });
 
             fieldsInNumberOrder = new ReadOnlyCollection<FieldDescriptor>(fieldsInDeclarationOrder.OrderBy(field => field.FieldNumber).ToArray());
