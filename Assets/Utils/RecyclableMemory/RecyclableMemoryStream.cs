@@ -285,8 +285,9 @@ namespace Microsoft.IO
 
             if (this.dirtyBuffers != null)
             {
-                foreach (var buffer in this.dirtyBuffers)
+                for (int i = 0; i < dirtyBuffers.Count; ++i)
                 {
+                    var buffer = dirtyBuffers[i];
                     this.memoryManager.ReturnLargeBuffer(buffer, this.tag);
                 }
             }

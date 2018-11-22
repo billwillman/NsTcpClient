@@ -286,8 +286,9 @@ namespace Microsoft.IO
                 long free = 0;
                 lock (largePools)
                 {
-                    foreach (var pool in this.largePools)
+                    for (int i = 0; i < largePools.Length; ++i)
                     {
+                        var pool = largePools[i];
                         free += pool.Count;
                     }
                 }
@@ -531,16 +532,21 @@ namespace Microsoft.IO
             var bytesToReturn = blocks.Count * this.BlockSize;
             Interlocked.Add(ref this.smallPoolInUseSize, -bytesToReturn);
 
-            foreach (var block in blocks)
+            var iter = blocks.GetEnumerator();
+            while (iter.MoveNext())
             {
+                var block = iter.Current;
                 if (block == null || block.Length != this.BlockSize)
                 {
                     throw new ArgumentException("blocks contains buffers that are not BlockSize in length");
                 }
             }
+            iter.Dispose();
 
-            foreach (var block in blocks)
+            iter = blocks.GetEnumerator();
+            while (iter.MoveNext())
             {
+                var block = iter.Current;
                 if (this.MaximumFreeSmallPoolBytes == 0 || this.SmallPoolFreeSize < this.MaximumFreeSmallPoolBytes)
                 {
                     Interlocked.Add(ref this.smallPoolFreeSize, this.BlockSize);
@@ -557,6 +563,7 @@ namespace Microsoft.IO
                     break;
                 }
             }
+            iter.Dispose();
 
             ReportUsageReport(this.smallPoolInUseSize, this.smallPoolFreeSize, this.LargePoolInUseSize,
                               this.LargePoolFreeSize);
