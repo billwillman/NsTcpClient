@@ -4,7 +4,22 @@ using NsTcpClient;
 
 public class Test : MonoBehaviour {
 
-	void OnSocketConnect(bool isConnect)
+    void Start() {
+        NetManager.Instance.AddPacketListener(100, OnTestProtoCallBack);
+    }
+
+    void OnTestProtoCallBack(GamePacket packet) {
+        if (packet == null)
+            return;
+        var rep = packet.ProtoBufToObject<C_S_Login_Req>();
+        if (rep != null) {
+            var str = rep.ToString();
+            Debug.Log(str);
+        }
+    }
+
+
+    void OnSocketConnect(bool isConnect)
 	{
 		Debug.LogFormat("连接状态：{0}", isConnect.ToString());
 	}

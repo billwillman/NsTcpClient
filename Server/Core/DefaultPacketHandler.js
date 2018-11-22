@@ -136,7 +136,7 @@ class DefaultPacketHandler extends AbstractPacketHandler
         if (clientSocket == null || packetHandle == null)
             return false;
 
-        var sendBuf = GeneratorSendBuf(packetHandle, buf, null, null, args);
+        var sendBuf = this.GeneratorSendBuf(packetHandle, buf, null, null, args);
         if (sendBuf == null)
             return false;
         
