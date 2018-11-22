@@ -3,6 +3,7 @@ var UserSession = require("./UserSession");
 var AbstractPacketHandler = require ("./AbstractPacketHandler");
 var ITcpServerListener = require("./ITcpServerListener");
 var AbstractMessageMgr = require("./AbstractMessageMgr");
+var ProtoBufMgr = require("./ProtoBufMgr");
 
 class NetManager extends ITcpServerListener
 {
@@ -222,6 +223,28 @@ class NetManager extends ITcpServerListener
             buf = message.m_Buf;
         }
         return this.SendBuf(targetSocket, packetHandle, buf, args);
+    }
+
+    // 发送Proto包
+    SendProtoMessage(packetHandle, message, args, targetSocket)
+    {
+        if (targetSocket == null || packetHandle == null)
+            return false;
+        if (message != null)
+        {
+            var buf = ProtoBufMgr.GetInstance().ProtoMessageToBuf(message);
+            if (buf == null)
+                return false;
+            return this.SendBuf(targetSocket, packetHandle, buf, args);
+        } else
+        {
+            return this.SendBuf(targetSocket, packetHandle);
+        }
+    }
+
+    NewProtoMessageById(packetId)
+    {
+        return ProtoBufMgr.GetInstance().NewProtoMessageByPacketId(packetId);
     }
 }
 

@@ -44,6 +44,16 @@ class ProtoBufMgr
         return pb;
     }
 
+    NewProtoMessageByPacketId(packetId)
+    {
+        if (packetId == null)
+            return null;
+        var messageObj = this._GetMessageObjByPacketId(packetId);
+        if (messageObj == null || messageObj.path == null || messageObj.messageName == null)
+            return null;
+        return this.NewProtoMessage(messageObj.path, messageObj.messageName);
+    }
+
     NewProtoMessage(path, messageName)
     {
         if (path == null || messageName == null)

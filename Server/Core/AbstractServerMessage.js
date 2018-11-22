@@ -153,9 +153,23 @@ class AbstractServerMessage extends IServerMessagListener
 
     SendMessage(packetHandle, message, targetSocket, args)
     {
-        if (this.m_NetMgr == null)
+        if (this.m_NetMgr == null || this.m_NetMgr.SendMessage == null)
             return;
         this.m_NetMgr.SendMessage.call(this.m_NetMgr, packetHandle, message, args, targetSocket);
+    }
+
+    SendProtoMessage(packetHandle, message, targetSocket, args)
+    {
+        if (this.m_NetMgr == null || this.m_NetMgr.SendProtoMessage == null)
+            return;
+        this.m_NetMgr.SendProtoMessage.call(this.m_NetMgr, packetHandle, message, args, targetSocket);
+    }
+
+    NewProtoMessageById(packetId)
+    {
+        if (this.m_NetMgr == null || this.m_NetMgr.NewProtoMessageById == null)
+            return null;
+        return this.m_NetMgr.NewProtoMessageById.call(this.m_NetMgr, packetId);
     }
 
     // 获得ProtoMessage对象
