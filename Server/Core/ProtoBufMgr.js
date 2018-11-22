@@ -1,4 +1,5 @@
 
+var ProtoBuf = require("protobufjs");
 
 class ProtoBufMgr
 {
@@ -24,6 +25,7 @@ class ProtoBufMgr
                     return null;
             } catch (exception)
             {
+                console.error(exception);
                 return null;
             }
             if (this.m_PbMap == null)
@@ -71,7 +73,7 @@ class ProtoBufMgr
         var messageObj = this._GetMessageObjByPacketId(packetId);
         if (messageObj == null || messageObj.path == null || messageObj.messageName == null)
             return null;
-        return BufToProtoMessage(buf, messageObj.path, messageObj.messageName);
+        return this.BufToProtoMessage(buf, messageObj.path, messageObj.messageName);
     }
 
     BufToProtoMessage(buf, path, messageName)

@@ -70,7 +70,8 @@ namespace NsTcpClient
             // 代码已优化
             outSize = bufSize;
             var stream = NetByteArrayPool.GetBuffer(bufSize);
-            Google.Protobuf.CodedOutputStream output = new Google.Protobuf.CodedOutputStream(stream);
+            var buffer = stream.GetBuffer();
+            Google.Protobuf.CodedOutputStream output = new Google.Protobuf.CodedOutputStream(buffer, bufSize);
             message.WriteTo(output);
             output.CheckNoSpaceLeft();
             return stream;

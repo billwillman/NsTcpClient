@@ -31,7 +31,7 @@ class TestProtoServer extends NetManager
 function Main()
 {
 
-    ProtoBufMgr.GetInstance().RegisterPacketId_ProtoJs(100, "../Core/Messages/Proto/c_s_login_req", "C_S_Login_Req");
+    ProtoBufMgr.GetInstance().RegisterPacketId_ProtoJs(100, "./Messages/Proto/c_s_login_req", "C_S_Login_Req");
 
     var server = new TestProtoServer();
     server.SetPacketHandlerClass(DefaultPacketHandler);
