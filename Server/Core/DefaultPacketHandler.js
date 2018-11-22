@@ -88,14 +88,24 @@ class DefaultPacketHandler extends AbstractPacketHandler
 
     GeneratorSendBuf(packetHandle, buf, bufOffset, sendSize, args)
     {
-        if (buf != null && !Buffer.isBuffer(buf))
+        // 支持ArrayBuffer, 因为ProtoBuf使用了ArrayBuffer
+        if (buf != null && !Buffer.isBuffer(buf) && !(buf instanceof ArrayBuffer))
             return null;
-
-        var hasData = buf != null && buf.length > 0;
+        var bufLen = 0;
+        var isArrayBuffer = false;
+        if (buf != null)
+        {
+            isArrayBuffer = buf instanceof ArrayBuffer;
+            if (isArrayBuffer)
+                bufLen = buf.byteLength;
+            else
+                bufLen = buf.length;
+        }
+        var hasData = buf != null && bufLen > 0;
         var packetHead = new GamePacketHander(null, 0, 0);
         packetHead.header = packetHandle;
         if (hasData)
-            packetHead.dataSize = buf.length;
+            packetHead.dataSize = bufLen;
         if (args != null && args instanceof Array && args[0] != null)
         {
             packetHead.headerCrc32 = args[0];
@@ -108,23 +118,31 @@ class DefaultPacketHandler extends AbstractPacketHandler
     
         if (hasData)
         {
-
             if (bufOffset == null && sendSize == null)
             {
+                if (isArrayBuffer)
+                {
+                    buf = Buffer.from(buf);
+                }
+                
                 buf.copy(sendBuf, dataOffset);
             } else
             {
                 if (bufOffset == null)
                     bufOffset = 0;
-                if (bufOffset >= buf.length)
+                if (bufOffset >= bufLen)
                     return null;
-                var maxSendSize = buf.length - bufOffset;
+                var maxSendSize = bufLen - bufOffset;
                 if (sendSize == null || sendSize > maxSendSize)
                 {
                     sendSize = maxSendSize;
                 }
 
                 var dataOffset = GamePacketHander.Size;
+                if (isArrayBuffer)
+                {
+                    buf = Buffer.from(buf);
+                }
                 buf.copy(sendBuf, dataOffset, bufOffset, bufOffset + sendSize);
             }
         }

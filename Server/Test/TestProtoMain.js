@@ -15,8 +15,8 @@ class TestProtoMessage extends AbsractServerMessage
     {
         var message = this.GetProtoMessageObject();
         console.log(message);
-        var userName = message.UserName;
-        var password = message.Password;
+        var userName = message.getUsername();
+        var password = message.getPassword();
 
         // 新发送
         var newMsg = this.NewProtoMessageById(100);

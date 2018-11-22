@@ -235,7 +235,7 @@ class NetManager extends ITcpServerListener
             var buf = ProtoBufMgr.GetInstance().ProtoMessageToBuf(message);
             if (buf == null)
                 return false;
-            return this.SendBuf(targetSocket, packetHandle, buf, args);
+            return this.SendBuf(targetSocket, packetHandle, buf.buffer, args);
         } else
         {
             return this.SendBuf(targetSocket, packetHandle);
