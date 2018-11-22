@@ -20,8 +20,8 @@ class TestProtoMessage extends AbsractServerMessage
 
         // 新发送
         var newMsg = this.NewProtoMessageById(100);
-        newMsg.UserName = userName;
-        newMsg.Password = password;
+        newMsg.setUsername(userName);
+        newMsg.setPassword(password);
         this.SendProtoMessage(100, newMsg, clientSocket);
     }
 }
