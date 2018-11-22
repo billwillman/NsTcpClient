@@ -5,6 +5,7 @@ class ProtoBufMgr
     constructor()
     {
         this.m_PbMap = {};
+        this.m_PbJs = {};
     }
 
     _GetPb(path)
@@ -54,6 +55,25 @@ class ProtoBufMgr
         return buf; 
     }
 
+    _GetMessageObjByPacketId(packetId)
+    {
+        if (packetId == null || this.m_PbJs == null)
+            return null;
+        return this.m_PbJs[packetId];
+    }
+
+    BufToProtoMessageByPacKetId(packetId, buf)
+    {
+        if (packetId == null || buf == null || !Buffer.isBuffer(buf))
+            return null;
+        if (this.m_PbJs == null)
+            return null;
+        var messageObj = this._GetMessageObjByPacketId(packetId);
+        if (messageObj == null || messageObj.path == null || messageObj.messageName == null)
+            return null;
+        return BufToProtoMessage(buf, messageObj.path, messageObj.messageName);
+    }
+
     BufToProtoMessage(buf, path, messageName)
     {
         if (buf == null || !Buffer.isBuffer(buf) || 
@@ -73,14 +93,23 @@ class ProtoBufMgr
     {
         this.m_PbMap = {};
     }
+
+    RegisterPacketId_ProtoJs(packetId, path, messageName)
+    {
+        if (packetId == null || path == null || messageName == null)
+            return false;
+        if (this.m_PbJs == null)
+            this.m_PbJs = {};
+        this.m_PbJs[packetId] = {"path": path, "messageName": messageName};
+    }
 }
 
 ProtoBufMgr.m_Instance = null;
-ProtoBufMgr.Instance = function ()
+ProtoBufMgr.GetInstance = function ()
 {
     if (ProtoBufMgr.m_Instance == null)
         ProtoBufMgr.m_Instance = new ProtoBufMgr();
     return ProtoBufMgr.m_Instance;
 }
 
-model.exports = ProtoBufMgr;
+module.exports = ProtoBufMgr;

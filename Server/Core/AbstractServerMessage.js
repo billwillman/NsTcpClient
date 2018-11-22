@@ -2,8 +2,9 @@
 服务器协议
 */
 var IServerMessagListener = require("./IServerMessageListener");
+var ProtoBufMgr = require("./ProtoBufMgr");
 
-class AbsractServerMessage extends IServerMessagListener
+class AbstractServerMessage extends IServerMessagListener
 {
     constructor()
     {
@@ -156,6 +157,12 @@ class AbsractServerMessage extends IServerMessagListener
             return;
         this.m_NetMgr.SendMessage.call(this.m_NetMgr, packetHandle, message, args, targetSocket);
     }
+
+    // 获得ProtoMessage对象
+    GetProtoMessageObject()
+    {
+        return ProtoBufMgr.GetInstance().BufToProtoMessageByPacKetId(this.m_HeaderId, this.m_Buf);
+    }
 }
 
-module.exports = AbsractServerMessage;
+module.exports = AbstractServerMessage;
