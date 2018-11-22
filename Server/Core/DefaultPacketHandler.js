@@ -125,6 +125,7 @@ class DefaultPacketHandler extends AbstractPacketHandler
                     buf = Buffer.from(buf);
                 }
                 
+                var dataOffset = GamePacketHander.Size;
                 buf.copy(sendBuf, dataOffset);
             } else
             {

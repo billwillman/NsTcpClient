@@ -5,6 +5,7 @@ using NsTcpClient;
 public class Test : MonoBehaviour {
 
     void Start() {
+        ProtoMessageMgr.GetInstance().Register<C_S_Login_Req>(C_S_Login_Req.Parser);
         NetManager.Instance.AddPacketListener(100, OnTestProtoCallBack);
     }
 
