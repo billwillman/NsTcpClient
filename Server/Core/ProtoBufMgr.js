@@ -1,5 +1,14 @@
 
-var ProtoBuf = require("protobufjs");
+require("google-protobuf");
+
+/*
+function CheckGoog()
+{
+    if (typeof(goog) == "undefined")
+        goog = {};
+}
+CheckGoog();
+*/
 
 class ProtoBufMgr
 {
