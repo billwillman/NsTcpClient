@@ -185,8 +185,9 @@ namespace NsTcpClient
             */
 
             // protobuf 3.0接口
-            //  byte[] buf = ProtoMessageMgr.GetInstance().ToBuffer<T>(data);
-
+           //  byte[] buf = ProtoMessageMgr.GetInstance().ToBuffer<T>(data);
+           // Send(buf, packetHandle);
+            
             // 优化后版本使用byte[]池
             int outSize;
             var stream = ProtoMessageMgr.GetInstance().ToStream<T>(data, out outSize);
@@ -207,6 +208,7 @@ namespace NsTcpClient
                     stream = null;
                 }
             }
+            
         }
 #endif
 

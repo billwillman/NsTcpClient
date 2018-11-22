@@ -37,7 +37,7 @@ namespace NsTcpClient
             return Parser(tt, buf);
         }
 
-        /*
+        
         // 无使用池
         public byte[] ToBuffer<T>(Google.Protobuf.IMessage<T> message) where T: class, Google.Protobuf.IMessage<T>
         {
@@ -55,7 +55,7 @@ namespace NsTcpClient
             output.CheckNoSpaceLeft();
             return buf;
         }
-        */
+        
 
         // 使用池
         public MemoryStream ToStream<T>(Google.Protobuf.IMessage<T> message, out int outSize) where T: class, Google.Protobuf.IMessage<T> {
