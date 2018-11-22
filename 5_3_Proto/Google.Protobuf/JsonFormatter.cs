@@ -233,8 +233,10 @@ namespace Google.Protobuf
             var fields = message.Descriptor.Fields;
             bool first = !assumeFirstFieldWritten;
             // First non-oneof fields
-            foreach (var field in fields.InFieldNumberOrder())
+            var list = fields.InFieldNumberOrder();
+            for (int i = 0; i < list.Count; ++i )
             {
+                var field = list[i];
                 var accessor = field.Accessor;
                 if (field.ContainingOneof != null && field.ContainingOneof.Accessor.GetCaseFieldDescriptor(message) != field)
                 {
@@ -268,8 +270,9 @@ namespace Google.Protobuf
         {
             StringBuilder result = new StringBuilder(name.Length);
             bool isNextUpperCase = false;
-            foreach (char ch in name)
+            for (int i = 0; i < name.Length; ++i)
             {
+                var ch = name[i];
                 if (ch == '_')
                 {
                     isNextUpperCase = true;

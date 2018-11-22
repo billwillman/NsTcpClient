@@ -359,10 +359,13 @@ namespace Google.Protobuf.Collections
             // ICollection<T> but not ICollection. (HashSet<T> does, for one...)
 
             // Fall back to a slower path of adding items one at a time.
-            foreach (T item in values)
+            var iter = values.GetEnumerator();
+            while (iter.MoveNext())
             {
+                var item = iter.Current;
                 Add(item);
             }
+            iter.Dispose();
         }
 
         /// <summary>

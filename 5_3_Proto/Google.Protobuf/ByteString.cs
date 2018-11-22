@@ -359,8 +359,9 @@ namespace Google.Protobuf
         public override int GetHashCode()
         {
             int ret = 23;
-            foreach (byte b in bytes)
+            for (int i = 0; i < bytes.Length; ++i)
             {
+                var b = bytes[i];
                 ret = (ret * 31) + b;
             }
             return ret;
