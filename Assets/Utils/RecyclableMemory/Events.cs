@@ -20,6 +20,10 @@
 // THE SOFTWARE.
 // ---------------------------------------------------------------------
 
+#if UNITY_5_3
+    #define NET40
+#endif
+
 namespace Microsoft.IO
 {
     using System;

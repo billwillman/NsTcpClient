@@ -20,10 +20,16 @@
 // THE SOFTWARE.
 // ---------------------------------------------------------------------
 
+#if UNITY_5_3
+    #define NET35
+#endif
+
 namespace Microsoft.IO
 {
     using System;
+#if !NET35
     using System.Collections.Concurrent;
+#endif
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
@@ -85,10 +91,19 @@ namespace Microsoft.IO
         /// pools[1] = 2x largeBufferMultiple buffers
         /// etc., up to maximumBufferSize
         /// </summary>
+        /// 
+#if NET35
+        private readonly Stack<byte[]>[] largePools;
+#else
         private readonly ConcurrentStack<byte[]>[] largePools;
+#endif
 
         private readonly int maximumBufferSize;
+#if NET35
+        private readonly Stack<byte[]> smallPool;
+#else
         private readonly ConcurrentStack<byte[]> smallPool;
+#endif
 
         private long smallPoolFreeSize;
         private long smallPoolInUseSize;
@@ -136,18 +151,30 @@ namespace Microsoft.IO
                                             "maximumBufferSize");
             }
 
+#if NET35
+            this.smallPool = new Stack<byte[]>();
+#else
             this.smallPool = new ConcurrentStack<byte[]>();
+#endif
             var numLargePools = maximumBufferSize / largeBufferMultiple;
 
             // +1 to store size of bytes in use that are too large to be pooled
             this.largeBufferInUseSize = new long[numLargePools + 1];
             this.largeBufferFreeSize = new long[numLargePools];
 
+#if NET35
+            this.largePools = new Stack<byte[]>[numLargePools];
+#else
             this.largePools = new ConcurrentStack<byte[]>[numLargePools];
+#endif
 
             for (var i = 0; i < this.largePools.Length; ++i)
             {
+#if NET35
+                this.largePools[i] = new Stack<byte[]>();
+#else
                 this.largePools[i] = new ConcurrentStack<byte[]>();
+#endif
             }
 
             Events.Writer.MemoryStreamManagerInitialized(blockSize, largeBufferMultiple, maximumBufferSize);
@@ -238,7 +265,14 @@ namespace Microsoft.IO
         {
             get
             {
+#if NET35
+                lock (smallPool)
+                {
+                    return smallPool.Count;
+                }
+#else
                 return this.smallPool.Count;
+#endif
             }
         }
 
@@ -250,9 +284,12 @@ namespace Microsoft.IO
             get
             {
                 long free = 0;
-                foreach (var pool in this.largePools)
+                lock (largePools)
                 {
-                    free += pool.Count;
+                    foreach (var pool in this.largePools)
+                    {
+                        free += pool.Count;
+                    }
                 }
                 return free;
             }
@@ -292,6 +329,21 @@ namespace Microsoft.IO
         /// be valid).
         /// </summary>
         public bool AggressiveBufferReturn { get; set; }
+#if NET35
+        private bool StackTryPop<T>(Stack<T> stack, out T block)
+        {
+            lock (stack)
+            {
+                if (stack == null || stack.Count <= 0)
+                {
+                    block = default(T);
+                    return false;
+                }
+                block = stack.Pop();
+                return true;
+            }
+        }
+#endif
 
         /// <summary>
         /// Removes and returns a single block from the pool.
@@ -300,7 +352,11 @@ namespace Microsoft.IO
         internal byte[] GetBlock()
         {
             byte[] block = null;
+#if NET35
+            if (!StackTryPop(smallPool, out block))
+#else
             if (!this.smallPool.TryPop(out block))
+#endif
             {
                 // We'll add this back to the pool when the stream is disposed
                 // (unless our free pool is too large)
@@ -333,7 +389,11 @@ namespace Microsoft.IO
             byte[] buffer = null;
             if (poolIndex < this.largePools.Length)
             {
+#if NET35
+                if (!StackTryPop(largePools[poolIndex], out buffer))
+#else
                 if (!this.largePools[poolIndex].TryPop(out buffer))
+#endif
                 {
                     buffer = new byte[requiredSize];
 
@@ -405,6 +465,24 @@ namespace Microsoft.IO
 
             if (poolIndex < this.largePools.Length)
             {
+#if NET35
+                var stack = this.largePools[poolIndex];
+                lock (stack)
+                {
+                    if ((stack.Count + 1) * buffer.Length <= this.MaximumFreeLargePoolBytes ||
+                        this.MaximumFreeLargePoolBytes == 0)
+                    {
+                        stack.Push(buffer);
+                        Interlocked.Add(ref this.largeBufferFreeSize[poolIndex], buffer.Length);
+                    }
+                    else
+                    {
+                        Events.Writer.MemoryStreamDiscardBuffer(Events.MemoryStreamBufferType.Large, tag,
+                                                               Events.MemoryStreamDiscardReason.EnoughFree);
+                        ReportLargeBufferDiscarded(Events.MemoryStreamDiscardReason.EnoughFree);
+                    }
+                }
+#else
                 if ((this.largePools[poolIndex].Count + 1) * buffer.Length <= this.MaximumFreeLargePoolBytes ||
                     this.MaximumFreeLargePoolBytes == 0)
                 {
@@ -417,6 +495,7 @@ namespace Microsoft.IO
                                                            Events.MemoryStreamDiscardReason.EnoughFree);
                     ReportLargeBufferDiscarded(Events.MemoryStreamDiscardReason.EnoughFree);
                 }
+#endif
             }
             else
             {
@@ -465,7 +544,10 @@ namespace Microsoft.IO
                 if (this.MaximumFreeSmallPoolBytes == 0 || this.SmallPoolFreeSize < this.MaximumFreeSmallPoolBytes)
                 {
                     Interlocked.Add(ref this.smallPoolFreeSize, this.BlockSize);
-                    this.smallPool.Push(block);
+                    lock (smallPool)
+                    {
+                        this.smallPool.Push(block);
+                    }
                 }
                 else
                 {

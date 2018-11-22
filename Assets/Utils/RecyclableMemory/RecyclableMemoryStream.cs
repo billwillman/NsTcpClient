@@ -530,17 +530,17 @@ namespace Microsoft.IO
             this.CheckDisposed();
             if (buffer == null)
             {
-                throw new ArgumentNullException(nameof(buffer));
+                throw new ArgumentNullException("buffer");
             }
 
             if (offset < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "offset cannot be negative");
+                throw new ArgumentOutOfRangeException("offset", "offset cannot be negative");
             }
 
             if (count < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(count), "count cannot be negative");
+                throw new ArgumentOutOfRangeException("count", "count cannot be negative");
             }
 
             if (offset + count > buffer.Length)
@@ -568,18 +568,18 @@ namespace Microsoft.IO
             this.CheckDisposed();
             if (buffer == null)
             {
-                throw new ArgumentNullException(nameof(buffer));
+                throw new ArgumentNullException("buffer");
             }
 
             if (offset < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), offset,
+                throw new ArgumentOutOfRangeException("offset", offset,
                                                       "Offset must be in the range of 0 - buffer.Length-1");
             }
 
             if (count < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(count), count, "count must be non-negative");
+                throw new ArgumentOutOfRangeException("count", count, "count must be non-negative");
             }
 
             if (count + offset > buffer.Length)
@@ -701,7 +701,7 @@ namespace Microsoft.IO
             this.CheckDisposed();
             if (value < 0 || value > MaxStreamLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(value),
+                throw new ArgumentOutOfRangeException("value",
                                                       "value must be non-negative and at most " + MaxStreamLength);
             }
 
@@ -729,7 +729,7 @@ namespace Microsoft.IO
             this.CheckDisposed();
             if (offset > MaxStreamLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "offset cannot be larger than " + MaxStreamLength);
+                throw new ArgumentOutOfRangeException("offset", "offset cannot be larger than " + MaxStreamLength);
             }
 
             int newPosition;
@@ -745,7 +745,7 @@ namespace Microsoft.IO
                 newPosition = (int)offset + this.length;
                 break;
             default:
-                throw new ArgumentException("Invalid seek origin", nameof(loc));
+                throw new ArgumentException("Invalid seek origin", "loc");
             }
             if (newPosition < 0)
             {
@@ -765,7 +765,7 @@ namespace Microsoft.IO
             this.CheckDisposed();
             if (stream == null)
             {
-                throw new ArgumentNullException(nameof(stream));
+                throw new ArgumentNullException("stream");
             }
 
             if (this.largeBuffer == null)
