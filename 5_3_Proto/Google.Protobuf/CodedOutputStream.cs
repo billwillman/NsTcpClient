@@ -78,8 +78,10 @@ namespace Google.Protobuf
         /// OutOfSpaceException will be thrown.
         /// </summary>
         public CodedOutputStream(byte[] flatArray) : this(flatArray, 0, flatArray.Length)
-        {
-        }
+        {}
+
+        public CodedOutputStream(byte[] flatArray, int size) : this(flatArray, 0, size) 
+        {}
 
         /// <summary>
         /// Creates a new CodedOutputStream that writes directly to the given
@@ -110,8 +112,7 @@ namespace Google.Protobuf
         /// </summary>
         /// <param name="output">The stream to write to. It will be disposed when the returned <c>CodedOutputStream is disposed.</c></param>
         public CodedOutputStream(Stream output) : this(output, DefaultBufferSize, false)
-        {
-        }
+        {}
 
         /// <summary>
         /// Creates a new CodedOutputStream which write to the given stream and uses
