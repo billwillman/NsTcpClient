@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message C_S_Login_Req
+{
+	string userName = 1;
+	string password = 2;
+}
