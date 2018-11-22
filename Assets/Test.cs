@@ -40,11 +40,20 @@ public class Test : MonoBehaviour {
             lastSendTime = currentTime;
             if (NetManager.Instance.ClietnState == eClientState.eClient_STATE_CONNECTED)
             {
-                NetManager.Instance.SendMessage(1000, null);
+                SendProtoMessage();
             }
         }
 
 	}
+
+    void SendProtoMessage()
+    {
+       // NetManager.Instance.SendMessage(1000, null);
+        var req = new C_S_Login_Req();
+        req.UserName = "zengyi";
+        req.Password = "HelloWorld";
+        NetManager.Instance.SendProtoBuf<C_S_Login_Req>(req, 100);
+    }
 
 	void OnApplicationQuit()
 	{

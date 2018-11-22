@@ -172,46 +172,6 @@ namespace NsTcpClient
 			Buffer.BlockCopy (crc, 0, dst, 4, crc.Length);
 		}*/
 
-#if USE_PROTOBUF_NET
-		// 发送ProtoBuf T来自ProtoBuf类申明
-		public void SendProtoBuf<T>(T data, int packetHandle) where T: class, Google.Protobuf.IMessage<T>
-		{
-			if (data == null) {
-				return;
-			}
-
-            // ProtoBuf 2.0接口
-            /*
-			System.IO.MemoryStream stream = new System.IO.MemoryStream ();
-			ProtoBuf.Serializer.Serialize<T> (stream, data);
-			byte[] buf = stream.ToArray ();
-			stream.Close ();
-			stream.Dispose ();
-			Send (buf, packetHandle);
-            */
-
-            // protobuf 3.0接口
-            //  byte[] buf = ProtoMessageMgr.GetInstance().ToBuffer<T>(data);
-
-            // 优化后版本使用byte[]池
-            int outSize;
-            var stream = ProtoMessageMgr.GetInstance().ToStream<T>(data, out outSize);
-            if (stream == null)
-                return;
-            try {
-                if (outSize <= 0)
-                    return;
-                var buf = stream.GetBuffer();
-                Send(buf, packetHandle, outSize);
-            }finally {
-                if (stream != null) {
-                    stream.Dispose();
-                    stream = null;
-                }
-            }
-		}
-#endif
-
 		// 支持发送buf为null
 		public void Send (byte[] buf, int packetHandle, int bufSize = -1)
 		{
