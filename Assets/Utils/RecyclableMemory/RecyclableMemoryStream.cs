@@ -389,22 +389,45 @@ namespace Microsoft.IO
         /// <summary>
         /// Whether the stream can currently read
         /// </summary>
-        public override bool CanRead => !this.Disposed;
+        public override bool CanRead
+        {
+            get{
+                return !this.Disposed;
+            }
+        }
 
         /// <summary>
         /// Whether the stream can currently seek
         /// </summary>
-        public override bool CanSeek => !this.Disposed;
+        public override bool CanSeek
+        {
+            get
+            {
+                return !this.Disposed;
+            }
+        }
 
         /// <summary>
         /// Always false
         /// </summary>
-        public override bool CanTimeout => false;
+        public override bool CanTimeout
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// Whether the stream can currently write
         /// </summary>
-        public override bool CanWrite => !this.Disposed;
+        public override bool CanWrite
+        {
+            get
+            {
+                return !this.Disposed;
+            }
+        }
 
         /// <summary>
         /// Returns a single buffer containing the contents of the stream.
@@ -616,7 +639,7 @@ namespace Microsoft.IO
         /// </summary>
         public override string ToString()
         {
-            return $"Id = {this.Id}, Tag = {this.Tag}, Length = {this.Length:N0} bytes";
+            return string.Format("Id = {0}, Tag = {1}, Length = {2} bytes", this.Id, this.Tag, this.Length);
         }
 
         /// <summary>
@@ -768,13 +791,19 @@ namespace Microsoft.IO
         #endregion
 
         #region Helper Methods
-        private bool Disposed => Interlocked.Read(ref this.disposedState) != 0;
+        private bool Disposed
+        {
+            get
+            {
+                return Interlocked.Read(ref this.disposedState) != 0;
+            }
+        }
 
         private void CheckDisposed()
         {
             if (this.Disposed)
             {
-                throw new ObjectDisposedException($"The stream with Id {this.id} and Tag {this.tag} is disposed.");
+                throw new ObjectDisposedException(string.Format("The stream with Id {0} and Tag {1} is disposed.", this.id, this.tag));
             }
         }
 
