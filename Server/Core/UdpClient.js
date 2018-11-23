@@ -1,5 +1,6 @@
 const dgram = require('dgram');
 var AbstractMessageMgr = require("./AbstractMessageMgr");
+var ProtoBufMgr = require("./ProtoBufMgr");
 
 class UdpClient
 {
@@ -204,6 +205,28 @@ class UdpClient
             });
         
         return true;
+    }
+
+    /* ProtoBuf 相关 */
+    SendProtoMessage(ip, port, packetHandle, message)
+    {
+        if (ip == null || port == null || packetHandle == null)
+            return false;
+        if (message != null)
+        {
+            var buf = ProtoBufMgr.GetInstance().ProtoMessageToBuf(message);
+            if (buf == null)
+                return false;
+            return this.Send(ip, port, packetHandle, buf.buffer);
+        } else
+        {
+            return this.Send(ip, port, packetHandle);
+        }
+    }
+
+    NewProtoMessageById(packetId)
+    {
+        return ProtoBufMgr.GetInstance().NewProtoMessageByPacketId(packetId);
     }
 }
 

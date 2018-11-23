@@ -1,5 +1,6 @@
 
 const dgram = require('dgram');
+var ProtoBufMgr = require("./ProtoBufMgr");
 
 class UdpServer
 {
@@ -192,9 +193,11 @@ class UdpServer
     Send(ip, port, packetHandle, buf, bufOffset, sendSize)
     {
         if (ip == null || this.m_PacketHandle == null || packetHandle == null || 
-            port == null || buf == null || !Buffer.isBuffer(buf))
+            port == null || buf == null || (!Buffer.isBuffer(buf) && (!buf instanceof ArrayBuffer)))
             return false;
-    
+        
+        if (buf instanceof ArrayBuffer)
+            buf = Buffer.from(buf)
         var sendBuf = this.m_PacketHandle.GeneratorSendBuf(packetHandle, buf, bufOffset, sendSize);
         if (sendBuf == null)
             return false;
@@ -215,8 +218,36 @@ class UdpServer
     {
         if (ip == null || port == null || packetHandle == null)
             return false;
+
+        var buf = null;
+        if (message != null)
+        {
+            message.DoSend();
+            buf = message.m_Buf;
+        }
         
-        return true;
+        return this.Send(ip, port, packetHandle, buf);
+    }
+
+    SendProtoMessage(ip, port, packetHandle, message)
+    {
+        if (ip == null || port == null || packetHandle == null)
+            return false;
+        if (message != null)
+        {
+            var buf = ProtoBufMgr.GetInstance().ProtoMessageToBuf(message);
+            if (buf == null)
+                return false;
+            return this.Send(ip, port, packetHandle, buf.buffer);
+        } else
+        {
+            return this.Send(ip, port, packetHandle);
+        }
+    }
+
+    NewProtoMessageById(packetId)
+    {
+        return ProtoBufMgr.GetInstance().NewProtoMessageByPacketId(packetId);
     }
 }
 
