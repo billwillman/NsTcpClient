@@ -238,7 +238,7 @@ class NetManager extends ITcpServerListener
             return this.SendBuf(targetSocket, packetHandle, buf.buffer, args);
         } else
         {
-            return this.SendBuf(targetSocket, packetHandle);
+            return this.SendBuf(targetSocket, packetHandle, null, args);
         }
     }
 

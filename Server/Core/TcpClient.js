@@ -3,6 +3,7 @@ TCP客户端连接
 */
 var net = require("net");
 var AbstractMessageMgr = require("./AbstractMessageMgr");
+var ProtoBufMgr = require("./ProtoBufMgr");
 
 TcpClientStatus = {
     None: 0,
@@ -14,6 +15,7 @@ TcpClientStatus = {
 
 class TcpClient
 {
+    /* --------------------------------外部可调用接口------------------------------ */
     constructor(packetHandleClass, listener, recvBufSize)
     {
         this.m_ServerIp = null;
@@ -80,38 +82,6 @@ class TcpClient
         this.m_Socket.destroy();
         this.m_Socket = null;
         this.m_Status = TcpClientStatus.None;
-    }
-
-    _OnError(error)
-    {
-        var isConnecting = this.m_Status == TcpClientStatus.Connecting;
-        this.DisConnect();
-        if (isConnecting)
-        {
-            this.m_Status = TcpClientStatus.ConnectFailed;
-            if (this.m_Listener != null && this.m_Listener.OnConnectEvent != null)
-                this.m_Listener.OnConnectEvent.call(this.m_Listener, false, this);
-        }
-        else
-        {
-            this.m_Status = TcpClientStatus.ConnectAbort;
-            if (this.m_Listener != null && this.m_Listener.OnAbortEvent != null)
-                this.m_Listener.OnAbortEvent.call(this.m_Listener, this);
-        }
-    }
-
-    _OnPacketRead(data)
-    {
-        if (this.m_PacketHandle == null || this.m_PacketHandle.OnPacketRead == null)
-            return;
-        this.m_PacketHandle.OnPacketRead.call(this.m_PacketHandle, data, this.m_Socket);
-    }
-
-    _OnConnect()
-    {
-        this.m_Status = TcpClientStatus.Connected;
-        if (this.m_Listener != null && this.m_Listener.OnConnectEvent != null)
-            this.m_Listener.OnConnectEvent.call(this.m_Listener, true, this);
     }
 
     ConnectServer(serverIp, serverPort, heartTimeout)
@@ -188,6 +158,74 @@ class TcpClient
         return this.SendBuf(packetHandle, buf, args);
     }
 
+    RegisterServerMessage(headerId, serverMsgListener)
+    {
+        if (headerId == null || serverMsgListener == null)
+            return;
+        if (this.m_ServerListener == null)
+            this.m_ServerListener = {};
+        this.m_ServerListener[headerId] = serverMsgListener;
+    }
+
+    /* ProtoBuf 相关*/
+
+    SendProtoMessage(packetHandle, message, args)
+    {
+        if (packetHandle == null)
+            return false;
+        if (message != null)
+        {
+            var buf = ProtoBufMgr.GetInstance().ProtoMessageToBuf(message);
+            if (buf == null)
+                return false;
+            return this.SendBuf(packetHandle, buf.buffer, args);
+        } else
+        {
+            return this.SendBuf(packetHandle, null, args);
+        }
+    }
+
+    NewProtoMessageById(packetId)
+    {
+        return ProtoBufMgr.GetInstance().NewProtoMessageByPacketId(packetId);
+    }
+
+    /*----------------------------------------------------------------------------------*/
+
+    _OnError(error)
+    {
+        var isConnecting = this.m_Status == TcpClientStatus.Connecting;
+        this.DisConnect();
+        if (isConnecting)
+        {
+            this.m_Status = TcpClientStatus.ConnectFailed;
+            if (this.m_Listener != null && this.m_Listener.OnConnectEvent != null)
+                this.m_Listener.OnConnectEvent.call(this.m_Listener, false, this);
+        }
+        else
+        {
+            this.m_Status = TcpClientStatus.ConnectAbort;
+            if (this.m_Listener != null && this.m_Listener.OnAbortEvent != null)
+                this.m_Listener.OnAbortEvent.call(this.m_Listener, this);
+        }
+    }
+
+    _OnPacketRead(data)
+    {
+        if (this.m_PacketHandle == null || this.m_PacketHandle.OnPacketRead == null)
+            return;
+        this.m_PacketHandle.OnPacketRead.call(this.m_PacketHandle, data, this.m_Socket);
+    }
+
+    _OnConnect()
+    {
+        this.m_Status = TcpClientStatus.Connected;
+        if (this.m_Listener != null && this.m_Listener.OnConnectEvent != null)
+            this.m_Listener.OnConnectEvent.call(this.m_Listener, true, this);
+    }
+
+    
+
     CloseClientSocket(clientSocket, result)
     {
         /*
@@ -221,15 +259,6 @@ class TcpClient
         }
 
         this._OnDefaultMessageHandle(packet, clientSocket);
-    }
-
-    RegisterServerMessage(headerId, serverMsgListener)
-    {
-        if (headerId == null || serverMsgListener == null)
-            return;
-        if (this.m_ServerListener == null)
-            this.m_ServerListener = {};
-        this.m_ServerListener[headerId] = serverMsgListener;
     }
 }
 
