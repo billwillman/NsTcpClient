@@ -4,6 +4,7 @@ var AbstractPacketHandler = require ("./AbstractPacketHandler");
 var ITcpServerListener = require("./ITcpServerListener");
 var AbstractMessageMgr = require("./AbstractMessageMgr");
 var ProtoBufMgr = require("./ProtoBufMgr");
+var LinkedList = require("./struct/LinkedList");
 
 class NetManager extends ITcpServerListener
 {
@@ -20,6 +21,42 @@ class NetManager extends ITcpServerListener
         this.m_PacketHandlerClass = null;
         this.m_ServerListener = null;
         this.m_DefaultServerMsgListener = null;
+        this.m_LinkedList = null;
+        this.m_IsEnableUserSessionUpdate = false;
+    }
+
+    _SetUserSessionUpdate(isEnable)
+    {
+        if (isEnable == null)
+            isEnable = false;
+        this.m_IsEnableUserSessionUpdate = isEnable;
+    }
+
+    _UpdateUserSession(netMgr)
+    {
+        if (netMgr == null || netMgr.m_IsEnableUserSessionUpdate == null || !netMgr.m_IsEnableUserSessionUpdate)
+            return;
+        var list = netMgr.m_LinkedList;
+        if (list != null)
+        {
+            var listCount = list.GetCount();
+            var loopCount = UserSession.MaxUpdateCount;
+            if (loopCount > listCount)
+                loopCount = listCount;
+            var index = 0;
+            var firstNode = list.GetFirstNode();
+            while (firstNode != null)
+            {
+                var userSession = firstNode.GetValue();
+                if (userSession != null)
+                    userSession.Update();
+                list.AddLastNode(firstNode);
+                ++index;
+                if (index >= loopCount)
+                    break;
+            }
+        }
+        process.nextTick(netMgr._UpdateUserSession, netMgr);
     }
 
     RegisterDefaultServerMsgListener(listener)
@@ -85,11 +122,20 @@ class NetManager extends ITcpServerListener
 
         this.m_TcpServer.SetListener.call(this.m_TcpServer, this);
 
-        return this.m_TcpServer.Accept(heartTimeout);
+        var ret = this.m_TcpServer.Accept(heartTimeout);
+
+        if (ret)
+        {
+            this.m_IsEnableUserSessionUpdate = true;
+            process.nextTick(this._UpdateUserSession, this);
+        }
+
+        return ret;
     }
 
     Close()
     {   
+        this.m_IsEnableUserSessionUpdate = false;
         if (this.m_TcpServer != null)
         {
             this.m_TcpServer.Close();
@@ -97,6 +143,10 @@ class NetManager extends ITcpServerListener
         }
 
         this.m_SessionMap = null;
+        if (this.m_LinkedList != null)
+        {
+            this.m_LinkedList.Clear();
+        }
     }
 
     // 关闭所有客户端， 但服务器不停
@@ -110,6 +160,10 @@ class NetManager extends ITcpServerListener
             }
         }
         this.m_SessionMap = null;
+        if (this.m_LinkedList != null)
+        {
+            this.m_LinkedList.Clear();
+        }
     }
 
     OnTimeOut(clientSocket)
@@ -139,6 +193,10 @@ class NetManager extends ITcpServerListener
             {
                 this.OnRemoveSessionEvent(userSession);
                 userSession.Close();
+                if (this.m_LinkedList != null)
+                {
+                    this.m_LinkedList.RemoveNode(userSession.GetLinkedListNode());
+                }
                 this.m_SessionMap[clientSocket] = null;
                 delete this.m_SessionMap[clientSocket];
             }
@@ -195,7 +253,12 @@ class NetManager extends ITcpServerListener
         var handlerClass = this._GetPacketHandlerClass();
         var newHandler = new handlerClass(this);
         var session = new UserSession(clientSocket, newHandler);
+        // 增加
         this.m_SessionMap[clientSocket] = session;
+        if (this.m_LinkedList == null)
+            this.m_LinkedList = new LinkedList();
+        this.m_LinkedList.AddLastNode(session.GetLinkedListNode());
+        //-------------
         this.OnAddSessionEvent(session);
     }
 

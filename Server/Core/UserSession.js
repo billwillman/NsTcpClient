@@ -1,11 +1,21 @@
 
+var LinkedList = require("./struct/LinkedListNode");
+
+class IUserListener
+{
+    Update()
+    {}
+}
+
 // 用户Session数据
 class UserSession
 {
-    constructor(socket, packetHandler)
+    constructor(socket, packetHandler, listener)
     {
         this.m_Socket = socket;
         this.m_packetHandler = packetHandler;
+        this.m_LinkedListNode = new LinkedListNode(this);
+        this.m_Listener = listener;
     }
 
     Close()
@@ -36,6 +46,20 @@ class UserSession
             return false;
         return this.m_packetHandler.SendBuf.call(this.m_packetHandler, this.m_Socket, packetHandle, buf, args);
     }
+
+    GetLinkedListNode()
+    {
+        return this.m_LinkedListNode;
+    }
+
+    // 更新
+    Update()
+    {
+        if (this.m_Listener != null)
+            this.m_Listener.Update.call(this.m_Listener);
+    }
 }
+
+UserSession.MaxUpdateCount = 100;
 
 module.exports = UserSession;
