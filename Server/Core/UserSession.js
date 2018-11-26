@@ -18,6 +18,11 @@ class UserSession
         this.m_Listener = listener;
     }
 
+    SetListener(listener)
+    {
+        this.m_Listener = listener;
+    }
+
     Close()
     {
         if (this.m_Socket != null)
