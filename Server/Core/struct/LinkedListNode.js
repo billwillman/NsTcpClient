@@ -34,3 +34,5 @@ class LinkedListNode
         return this.m_Next == null && this.m_Prev == null;
     }
 }
+
+module.exports = LinkedListNode;

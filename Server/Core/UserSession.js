@@ -1,5 +1,5 @@
 
-var LinkedList = require("./struct/LinkedListNode");
+var LinkedListNode = require("./struct/LinkedListNode");
 
 class IUserListener
 {

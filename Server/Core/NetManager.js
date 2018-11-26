@@ -34,6 +34,7 @@ class NetManager extends ITcpServerListener
 
     _UpdateUserSession(netMgr)
     {
+        
         if (netMgr == null || netMgr.m_IsEnableUserSessionUpdate == null || !netMgr.m_IsEnableUserSessionUpdate)
             return;
         var list = netMgr.m_LinkedList;
@@ -56,7 +57,8 @@ class NetManager extends ITcpServerListener
                     break;
             }
         }
-        process.nextTick(netMgr._UpdateUserSession, netMgr);
+        setImmediate(netMgr._UpdateUserSession, netMgr);
+     //   process.nextTick();
     }
 
     RegisterDefaultServerMsgListener(listener)
@@ -127,7 +129,8 @@ class NetManager extends ITcpServerListener
         if (ret)
         {
             this.m_IsEnableUserSessionUpdate = true;
-            process.nextTick(this._UpdateUserSession, this);
+            //process.nextTick(this._UpdateUserSession, this);
+            setImmediate(this._UpdateUserSession, this);
         }
 
         return ret;

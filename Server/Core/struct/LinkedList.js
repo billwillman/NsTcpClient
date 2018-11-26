@@ -40,6 +40,9 @@ class LinkedList
         if (node == null)
             return;
 
+        if (this.m_First == node)
+            return;
+
         if (!node.IsReset())
         {
             RemoveNode(node);
@@ -67,10 +70,15 @@ class LinkedList
         if (node == null)
             return;
 
+        if (this.m_Last == node)
+            return;
+
         if (!node.IsReset())
         {
             RemoveNode(node);
         }
+
+        
 
         node.m_Prev = this.m_Last;
         if (this.m_Last != null)

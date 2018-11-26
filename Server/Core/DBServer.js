@@ -79,7 +79,7 @@ class DBServer extends NetManager
             }
         }
 
-        process.nextTick(
+         setImmediate(
           ()=>
           {
             this._Run();
@@ -207,7 +207,8 @@ class DBServer extends NetManager
            this.m_IsConnectDB = false;
            this.KickGSAndLS();
            // 重连数据库
-           process.nextTick(()=>
+          // process.nextTick(()=>
+           setImmediate(()=>
            {
               this.Start();
            });
