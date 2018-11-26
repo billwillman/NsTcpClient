@@ -191,7 +191,8 @@ class NetManager extends ITcpServerListener
             return;
         if (this.m_SessionMap != null)
         {
-            var userSession = this.m_SessionMap[clientSocket];
+            var id = clientSocket.id;
+            var userSession = this.m_SessionMap[id];
             if (userSession != null)
             {
                 this.OnRemoveSessionEvent(userSession);
@@ -200,8 +201,8 @@ class NetManager extends ITcpServerListener
                 {
                     this.m_LinkedList.RemoveNode(userSession.GetLinkedListNode());
                 }
-                this.m_SessionMap[clientSocket] = null;
-                delete this.m_SessionMap[clientSocket];
+                this.m_SessionMap[id] = null;
+                delete this.m_SessionMap[id];
             }
         }
     }
@@ -218,7 +219,8 @@ class NetManager extends ITcpServerListener
             return;
         if (this.m_SessionMap == null)
             return;
-        var userSession = this.m_SessionMap[socket];
+        var id = socket.id;
+        var userSession = this.m_SessionMap[id];
         if (userSession == null)
             return;
         userSession.HandleMessage.call(userSession, data);
@@ -228,7 +230,8 @@ class NetManager extends ITcpServerListener
     {
         if (clientSocket == null || this.m_SessionMap == null)
             return null;
-        var ret = this.m_SessionMap[clientSocket];
+        var id = clientSocket.id;
+        var ret = this.m_SessionMap[id];
         return ret;
     }
 
@@ -257,7 +260,9 @@ class NetManager extends ITcpServerListener
         var newHandler = new handlerClass(this);
         var session = new UserSession(clientSocket, newHandler);
         // 增加
-        this.m_SessionMap[clientSocket] = session;
+        var id = ++NetManager.GlobalSocketId;
+        clientSocket.id = id;
+        this.m_SessionMap[id] = session;
         if (this.m_LinkedList == null)
             this.m_LinkedList = new LinkedList();
         this.m_LinkedList.AddLastNode(session.GetLinkedListNode());
@@ -272,7 +277,8 @@ class NetManager extends ITcpServerListener
             return false;
         if (this.m_SessionMap == null)
             return false;
-        var session = this.m_SessionMap[clientSocket];
+        var id = clientSocket.id;
+        var session = this.m_SessionMap[id];
         if (session == null)
             return false;
         return session.SendBuf.call(session, packetHandle, buf, args);
@@ -313,5 +319,7 @@ class NetManager extends ITcpServerListener
         return ProtoBufMgr.GetInstance().NewProtoMessageByPacketId(packetId);
     }
 }
+
+NetManager.GlobalSocketId = -1;
 
 module.exports = NetManager;

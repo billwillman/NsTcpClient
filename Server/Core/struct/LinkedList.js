@@ -45,7 +45,7 @@ class LinkedList
 
         if (!node.IsReset())
         {
-            RemoveNode(node);
+            this.RemoveNode(node);
         }
         
         node.m_Next = this.m_First;
@@ -61,7 +61,7 @@ class LinkedList
     {
         var node = new LinkedListNode();
         node.m_Value = value;
-        AddFirstNode(node);
+        this.AddFirstNode(node);
         return node;
     }
 
@@ -75,7 +75,7 @@ class LinkedList
 
         if (!node.IsReset())
         {
-            RemoveNode(node);
+            this.RemoveNode(node);
         }
 
         
@@ -93,7 +93,7 @@ class LinkedList
     {
         var node = new LinkedListNode();
         node.m_Value = value;
-        AddLastNode(node);
+        this.AddLastNode(node);
         return node;
     }
 
@@ -104,7 +104,7 @@ class LinkedList
 
         if (!node.IsReset())
         {
-            RemoveNode(node);
+            this.RemoveNode(node);
         }
 
         if (currentNode == null)
@@ -123,7 +123,7 @@ class LinkedList
     {
         var node = new LinkedListNode();
         node.m_Value = value;
-        AddNode(node, currentNode);
+        this.AddNode(node, currentNode);
         return node;
     }
 
@@ -163,13 +163,13 @@ class LinkedList
     RemoveFirstNode()
     {
         var node = this.GetFirstNode();
-        RemoveNode(node);
+        this.RemoveNode(node);
     }
 
     RemoveLastNode()
     {
         var node = this.GetLastNode();
-        RemoveNode(node);
+        this.RemoveNode(node);
     }
 
     FindNode(value)
