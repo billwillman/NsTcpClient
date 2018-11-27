@@ -102,6 +102,9 @@ class LinkedList
         if (node == null)
             return;
 
+        if (node == currenNode)
+            return;
+
         if (!node.IsReset())
         {
             this.RemoveNode(node);
