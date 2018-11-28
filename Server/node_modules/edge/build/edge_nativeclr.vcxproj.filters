@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dotnet">
+      <UniqueIdentifier>{9756C2CA-3EEF-F5E4-8056-5D4256C3DF9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dotnet">
+      <UniqueIdentifier>{9756C2CA-3EEF-F5E4-8056-5D4256C3DF9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dotnet">
+      <UniqueIdentifier>{9756C2CA-3EEF-F5E4-8056-5D4256C3DF9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dotnet">
+      <UniqueIdentifier>{9756C2CA-3EEF-F5E4-8056-5D4256C3DF9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dotnet">
+      <UniqueIdentifier>{9756C2CA-3EEF-F5E4-8056-5D4256C3DF9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dotnet">
+      <UniqueIdentifier>{9756C2CA-3EEF-F5E4-8056-5D4256C3DF9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dotnet">
+      <UniqueIdentifier>{9756C2CA-3EEF-F5E4-8056-5D4256C3DF9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dotnet">
+      <UniqueIdentifier>{9756C2CA-3EEF-F5E4-8056-5D4256C3DF9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\common">
+      <UniqueIdentifier>{2F5FD094-EF52-77F7-7AA8-4327A01BF747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\common">
+      <UniqueIdentifier>{2F5FD094-EF52-77F7-7AA8-4327A01BF747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\common">
+      <UniqueIdentifier>{2F5FD094-EF52-77F7-7AA8-4327A01BF747}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\dotnet\utils.cpp">
+      <Filter>src\dotnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dotnet\clrfunc.cpp">
+      <Filter>src\dotnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dotnet\clrfuncinvokecontext.cpp">
+      <Filter>src\dotnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dotnet\nodejsfunc.cpp">
+      <Filter>src\dotnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dotnet\nodejsfuncinvokecontext.cpp">
+      <Filter>src\dotnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dotnet\persistentdisposecontext.cpp">
+      <Filter>src\dotnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dotnet\clrfuncreflectionwrap.cpp">
+      <Filter>src\dotnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dotnet\clractioncontext.cpp">
+      <Filter>src\dotnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\v8synchronizationcontext.cpp">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\callbackhelper.cpp">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\edge.cpp">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <None Include="..\binding.gyp"/>
+  </ItemGroup>
+</Project>
