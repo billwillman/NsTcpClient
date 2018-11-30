@@ -12,7 +12,10 @@
 	  ],
 	  "include_dirs+": [
 		"Recast/Include",
-		"Detour/Include"],
+		"Detour/Include",
+		"DetourCrowd/Include",
+		"DetourTileCache/Include"
+		],
 	  "sources+": [
 		"Recast/Source/Recast.cpp",
 		"Recast/Source/RecastAlloc.cpp",
@@ -32,7 +35,17 @@
 		"Detour/Source/DetourNavMesh.cpp",
 		"Detour/Source/DetourNavMeshBuilder.cpp",
 		"Detour/Source/DetourNavMeshQuery.cpp",
-		"Detour/Source/DetourNode.cpp"
+		"Detour/Source/DetourNode.cpp",
+		
+		"DetourTileCache/Source/DetourTileCache.cpp",
+		"DetourTileCache/Source/DetourTileCacheBuilder.cpp",
+		
+		"DetourCrowd/Source/DetourCrowd.cpp",
+		"DetourCrowd/Source/DetourLocalBoundary.cpp",
+		"DetourCrowd/Source/DetourObstacleAvoidance.cpp",
+		"DetourCrowd/Source/DetourPathCorridor.cpp",
+		"DetourCrowd/Source/DetourPathQueue.cpp",
+		"DetourCrowd/Source/DetourProximityGrid.cpp"
 		]
     }
   ]
