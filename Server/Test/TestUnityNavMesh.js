@@ -1,18 +1,21 @@
 var NetManager = require("../Core/NetManager");
 var DefaultPacketHandler = require("../Core/DefaultPacketHandler");
-var edge = require("edge");
+var recast = require("../recast/build/Release/recast")
 
 class TestUnityNavMeshServer extends NetManager
 {
     constructor()
     {
         super();
-        this._LoadUnityDll();
+        this.m_Recast = new recast.recastObj()
     }
 
-    _LoadUnityDll()
+    // 加载地图
+    LoadMapObj(fileName)
     {
-
+        if (this.m_Recast == null)
+            return false;
+        return this.m_Recast.LoadMapObj(fileName);
     }
 }
 
