@@ -30,6 +30,21 @@ namespace recast
 	using Nan::Set;
 	using Nan::To;
 
+	const long RCN_NAVMESH_VERSION = 1;
+
+	struct rcnNavMeshSetHeader
+	{
+		long version;
+		int tileCount;
+		dtNavMeshParams params;
+	};
+
+	struct rcnNavMeshTileHeader
+	{
+		dtTileRef tileRef;
+		int dataSize;
+	};
+
 	Persistent<Function> recastObj::constructor;
 
 	NAN_MODULE_INIT(recastObj::Init)
@@ -77,33 +92,28 @@ namespace recast
 		recastObj* obj = ObjectWrap::Unwrap<recastObj>(info.Holder());
 		// ×Ö·û´®
 		Local<Value> arg0 = info[0];
-		if (arg0->IsString())
+		bool ret = false;
+		if (node::Buffer::HasInstance(arg0))
 		{
-			char* buf = NULL;
-			// ±ØÐëÊÇ×Ö·û´®
-			String::Value fileName(arg0);
-			int len = fileName.length();
-			if (len == 0)
-				return;
-			if (!(buf = (char*)malloc(len))) {
-				Nan::ThrowError("malloc error");
-				return;
+			auto len = node::Buffer::Length(arg0->ToObject());
+			if (len > 0)
+			{
+				char* buf = node::Buffer::Data(arg0->ToObject());
+				ret = obj->_LoadMapObj(buf, (int)len);
 			}
-			string2char(fileName, len, buf);
-			bool ret = obj->_LoadMapObj(buf);
-			free(buf);
-			Local<v8::Boolean> result = Nan::New(ret);
-			info.GetReturnValue().Set(result);
 		}
+		Local<v8::Boolean> result = Nan::New(ret);
+		info.GetReturnValue().Set(result);
 	}
 
 
 
 
-	bool recastObj::_LoadMapObj(const char* fileName)
+	bool recastObj::_LoadMapObj(const char* data, int dataSize)
 	{
 		// ¼ÓÔØOBJÍø¸ñ
-		return false;
+		auto state = dtnmBuildDTNavMeshFromRaw((const unsigned char*)data, dataSize, false, &m_NavMesh);
+		return (state == DT_SUCCESS) && m_NavMesh;
 	}
 
 
@@ -111,5 +121,100 @@ namespace recast
 	{}
 
 	recastObj::~recastObj()
-	{}
+	{
+		if (m_NavMesh)
+		{
+			dtFreeNavMesh(m_NavMesh);
+			m_NavMesh = nullptr;
+		}
+	}
+
+	dtStatus recastObj::dtnmBuildDTNavMeshFromRaw(const unsigned char* data
+		, int dataSize
+		, bool safeStorage
+		, dtNavMesh** ppNavMesh)
+	{
+		if (!data || dataSize < sizeof(rcnNavMeshSetHeader) || !ppNavMesh)
+			return DT_FAILURE + DT_INVALID_PARAM;
+
+		int pos = 0;
+		int size = sizeof(rcnNavMeshSetHeader);
+
+		rcnNavMeshSetHeader header;
+		memcpy(&header, data, size);
+		pos += size;
+
+		if (header.version != RCN_NAVMESH_VERSION)
+		{
+			*ppNavMesh = 0;
+			return DT_FAILURE + DT_WRONG_VERSION;
+		}
+
+		dtNavMesh* mesh = dtAllocNavMesh();
+		if (!mesh)
+		{
+			*ppNavMesh = 0;
+			return DT_FAILURE + DT_OUT_OF_MEMORY;
+		}
+
+		dtStatus status = mesh->init(&header.params);
+		if (dtStatusFailed(status))
+		{
+			*ppNavMesh = 0;
+			return status;
+		}
+
+		// Read tiles.
+		bool success = true;
+		for (int i = 0; i < header.tileCount; ++i)
+		{
+			rcnNavMeshTileHeader tileHeader;
+			size = sizeof(rcnNavMeshTileHeader);
+			memcpy(&tileHeader, &data[pos], size);
+			pos += size;
+
+			size = tileHeader.dataSize;
+			if (!tileHeader.tileRef || !tileHeader.dataSize)
+			{
+				success = false;
+				status = DT_FAILURE + DT_INVALID_PARAM;
+				break;
+			}
+
+			unsigned char* tileData =
+				(unsigned char*)dtAlloc(size, DT_ALLOC_PERM);
+			if (!tileData)
+			{
+				success = false;
+				status = DT_FAILURE + DT_OUT_OF_MEMORY;
+				break;
+			}
+			memcpy(tileData, &data[pos], size);
+			pos += size;
+
+			status = mesh->addTile(tileData
+				, size
+				, (safeStorage ? DT_TILE_FREE_DATA : 0)
+				, tileHeader.tileRef
+				, 0);
+
+			if (dtStatusFailed(status))
+			{
+				success = false;
+				break;
+			}
+		}
+
+		if (!success)
+		{
+			dtFreeNavMesh(mesh);
+			*ppNavMesh = 0;
+			return status;
+		}
+
+		*ppNavMesh = mesh;
+
+		return DT_SUCCESS;
+
+	}
 }
