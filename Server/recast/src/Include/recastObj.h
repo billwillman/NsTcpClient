@@ -3,6 +3,7 @@
 #include <nan.h>
 #include <nan_object_wrap.h>
 #include "DetourNavMesh.h"
+#include "DetourNavMeshQuery.h"
 
 namespace recast
 {
@@ -19,6 +20,7 @@ namespace recast
 			, int dataSize
 			, bool safeStorage
 			, dtNavMesh** ppNavMesh);
+		void Clear();
 	private:
 		explicit recastObj();
 		~recastObj();
@@ -30,6 +32,7 @@ namespace recast
 		static NAN_METHOD(LoadMapObj);
 		/*----------*/
 		dtNavMesh* m_NavMesh;
+		dtNavMeshQuery* m_Query;
 
 		static Nan::Persistent<v8::Function> constructor;
 	};

@@ -111,22 +111,47 @@ namespace recast
 
 	bool recastObj::_LoadMapObj(const char* data, int dataSize)
 	{
+		Clear();
 		// ¼ÓÔØOBJÍø¸ñ
 		auto state = dtnmBuildDTNavMeshFromRaw((const unsigned char*)data, dataSize, false, &m_NavMesh);
-		return (state == DT_SUCCESS) && m_NavMesh;
+		bool ret = (!dtStatusFailed(state)) && m_NavMesh;
+		if (ret)
+		{
+			m_Query = dtAllocNavMeshQuery();
+			state = m_Query->init(m_NavMesh, 2048);
+			ret = (!dtStatusFailed(state)) && m_Query;
+		}
+
+		if (!ret)
+			Clear();
+
+		return ret;
 	}
 
 
 	recastObj::recastObj()
-	{}
-
-	recastObj::~recastObj()
 	{
+		m_NavMesh = nullptr;
+		m_Query = nullptr;
+	}
+
+	void recastObj::Clear()
+	{
+		if (m_Query)
+		{
+			dtFreeNavMeshQuery(m_Query);
+			m_Query = nullptr;
+		}
 		if (m_NavMesh)
 		{
 			dtFreeNavMesh(m_NavMesh);
 			m_NavMesh = nullptr;
 		}
+	}
+
+	recastObj::~recastObj()
+	{
+		Clear();
 	}
 
 	dtStatus recastObj::dtnmBuildDTNavMeshFromRaw(const unsigned char* data
