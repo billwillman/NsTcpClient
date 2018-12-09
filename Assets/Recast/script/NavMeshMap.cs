@@ -7,11 +7,41 @@ namespace Recast
     public class NavMeshMap : MonoBehaviour
     {
         private Navmesh m_NavMesh = null;
+        private NavmeshQuery m_Query = null;
         private static NavMeshMap m_Map = null;
+
+        public int m_MaxQueryNodeCount = 2048;
 
         void OnDestroy()
         {
             Clear();
+        }
+
+        public Navmesh GetNavmesh()
+        {
+            return m_NavMesh;
+        }
+
+        public NavmeshQuery Query
+        {
+            get
+            {
+                if (m_NavMesh == null || m_MaxQueryNodeCount <= 0)
+                    return null;
+                if (m_Query == null)
+                {
+                    var state = NavmeshQuery.Create(m_NavMesh, m_MaxQueryNodeCount, out m_Query);
+                    if (!NavUtil.Succeeded(state))
+                    {
+                        if (m_Query != null)
+                        {
+                            m_Query.RequestDisposal();
+                            m_Query = null;
+                        }
+                    }
+                }
+                return m_Query;
+            }
         }
 
         public static bool LoadMap(byte[] buffer)
@@ -32,6 +62,11 @@ namespace Recast
 
         private void Clear()
         {
+            if (m_Query != null)
+            {
+                m_Query.RequestDisposal();
+                m_Query = null;
+            }
             if (m_NavMesh != null)
             {
                 m_NavMesh.RequestDisposal();
