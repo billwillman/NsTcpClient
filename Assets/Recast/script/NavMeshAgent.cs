@@ -139,6 +139,11 @@ namespace Recast
 
         }
 
+        void Update()
+        {
+            UpdateAutoMoving();
+        }
+
 #if UNITY_EDITOR
 
         [System.NonSerialized]
