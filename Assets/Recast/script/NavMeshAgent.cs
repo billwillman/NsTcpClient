@@ -20,6 +20,10 @@ namespace Recast
         public int m_MaxCorners = 50;
         // 是否在自動寻路
         private bool m_IsAutoMoving = false;
+        private int m_PathIndex = -1;
+
+        // 速度
+        public float m_Vec = 1f;
 
         public bool IsAutoMoving
         {
@@ -47,6 +51,7 @@ namespace Recast
             }
 
             m_IsAutoMoving = false;
+            m_PathIndex = -1;
         }
         
         void FreeAgent()
@@ -128,15 +133,39 @@ namespace Recast
                 return false;
 
             m_IsAutoMoving = true;
+            m_PathIndex = 0;
 
             return true;
         }
-
+        
         void UpdateAutoMoving()
         {
-            if (!m_IsAutoMoving)
+            if (!m_IsAutoMoving || m_Agent == null)
                 return;
+            var data = m_Agent.Corners;
+            if (data == null)
+                return;
+            if (m_PathIndex >= data.cornerCount)
+            {
+                StopAutoMove();
+#if UNITY_EDITOR
+                Debug.Log("寻路结束");
+#endif
+                return;
+            }
 
+            NavmeshPoint pt = data[m_PathIndex];
+            Vector3 target = pt.point;
+            var trans = CacheTransform;
+            Vector3 source = trans.position;
+            Vector3 dist = target - source;
+            if (dist.sqrMagnitude <= float.Epsilon)
+            {
+                ++m_PathIndex;
+                return;
+            }
+            var targetPt = m_Agent.MovePosition(target);
+            trans.position = targetPt.point;
         }
 
         void Update()
@@ -181,6 +210,13 @@ namespace Recast
             if (NavMeshMap.GetGroudPt(source, m_Extends, out result, m_Filter))
             {
                 CacheTransform.position = result;
+            }
+
+            if (m_Agent != null)
+            {
+                NavmeshPoint pt;
+                if (NavMeshMap.GetNavmeshPoint(source, m_Extends, out pt, m_Filter))
+                    m_Agent.Reset(pt);
             }
         }
     }
