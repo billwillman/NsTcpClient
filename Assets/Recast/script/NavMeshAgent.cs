@@ -23,9 +23,23 @@ namespace Recast
         // 是否朝向根据移动方向移动
         public bool m_IsUseMoveForward = true;
       
-        // 速度
+        // 初始速度
         public float m_Vec = 10f;
+        // 最大速度
+        public float m_MaxVec = 10f;
+        // 加速度
+        public float m_Acc = 0f;
+        // 当前速度
+        private float m_CurrVec = 0f;
         private Vector3 m_MoveDir = Vector3.zero;
+
+        public float CurrVec
+        {
+            get
+            {
+                return m_CurrVec;
+            }
+        }
 
         public bool IsAutoMoving
         {
@@ -54,6 +68,7 @@ namespace Recast
 
             m_IsAutoMoving = false;
             m_MoveDir = Vector3.zero;
+            m_CurrVec = m_Vec;
         }
         
         void FreeAgent()
@@ -134,6 +149,7 @@ namespace Recast
             if (data == null)
                 return false;
 
+            m_CurrVec = m_Vec;
             m_IsAutoMoving = true;
 
             return true;
@@ -175,8 +191,14 @@ namespace Recast
                     trans.forward = m_MoveDir;
             }
 
+            // 计算速度
+            float t = 0.033f;
+            m_CurrVec = m_CurrVec + m_Acc * t;
+            if (m_CurrVec > m_MaxVec)
+                m_CurrVec = m_MaxVec;
+
             int oldCount = data.cornerCount;
-            var currentTarget = source + m_MoveDir * m_Vec * 0.033f;
+            var currentTarget = source + m_MoveDir * m_CurrVec * t;
 
             // 判断是否超过
             var a1 = currentTarget - target;

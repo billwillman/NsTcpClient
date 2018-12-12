@@ -31,7 +31,11 @@ public class NavMeshAgentEditor : Editor {
                 agent.StopAutoMove();
 
             if (agent.IsAutoMoving)
+            {
                 GUILayout.Label("正在自动寻路中...");
+                float vec = agent.CurrVec;
+                GUILayout.Label("当前速度: " + vec.ToString("f2"));
+            }
         }
     }
 }
