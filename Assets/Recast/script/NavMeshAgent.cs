@@ -20,10 +20,10 @@ namespace Recast
         public int m_MaxCorners = 50;
         // 是否在自動寻路
         private bool m_IsAutoMoving = false;
-        private int m_PathIndex = -1;
-
+      
         // 速度
-        public float m_Vec = 1f;
+        public float m_Vec = 10f;
+        private Vector3 m_MoveDir = Vector3.zero;
 
         public bool IsAutoMoving
         {
@@ -51,7 +51,7 @@ namespace Recast
             }
 
             m_IsAutoMoving = false;
-            m_PathIndex = -1;
+            m_MoveDir = Vector3.zero;
         }
         
         void FreeAgent()
@@ -133,7 +133,6 @@ namespace Recast
                 return false;
 
             m_IsAutoMoving = true;
-            m_PathIndex = 0;
 
             return true;
         }
@@ -145,7 +144,7 @@ namespace Recast
             var data = m_Agent.Corners;
             if (data == null)
                 return;
-            if (m_PathIndex >= data.cornerCount)
+            if (data.cornerCount <= 0)
             {
                 StopAutoMove();
 #if UNITY_EDITOR
@@ -154,18 +153,39 @@ namespace Recast
                 return;
             }
 
-            NavmeshPoint pt = data[m_PathIndex];
+            NavmeshPoint pt = data[0];
             Vector3 target = pt.point;
             var trans = CacheTransform;
             Vector3 source = trans.position;
             Vector3 dist = target - source;
-            if (dist.sqrMagnitude <= float.Epsilon)
+
+            // 移动速度
+            if (m_MoveDir.sqrMagnitude <= float.Epsilon)
             {
-                ++m_PathIndex;
-                return;
+                // 初始化
+                m_MoveDir = dist;
+                m_MoveDir.Normalize();
             }
-            var targetPt = m_Agent.MovePosition(target);
+
+            int oldCount = data.cornerCount;
+            var currentTarget = source + m_MoveDir * m_Vec * 0.033f;
+
+            // 判断是否超过
+            var a1 = currentTarget - target;
+            float detlaAngle = Vector3.Dot(a1, m_MoveDir);
+         //   Debug.LogErrorFormat("Angle: {0}", detlaAngle.ToString());
+            if (detlaAngle > 0)
+            {
+                currentTarget = target;
+            }
+
+            var targetPt = m_Agent.MovePosition(currentTarget);
             trans.position = targetPt.point;
+            if (data.cornerCount != oldCount)
+            {
+                // 需要重新初始化一次
+                m_MoveDir = Vector3.zero;
+            }
         }
 
         void Update()
