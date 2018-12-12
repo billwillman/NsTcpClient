@@ -20,6 +20,8 @@ namespace Recast
         public int m_MaxCorners = 50;
         // 是否在自動寻路
         private bool m_IsAutoMoving = false;
+        // 是否朝向根据移动方向移动
+        public bool m_IsUseMoveForward = true;
       
         // 速度
         public float m_Vec = 10f;
@@ -163,8 +165,14 @@ namespace Recast
             if (m_MoveDir.sqrMagnitude <= float.Epsilon)
             {
                 // 初始化
+
+                // 方向
                 m_MoveDir = dist;
                 m_MoveDir.Normalize();
+
+                // 角度
+                if (m_IsUseMoveForward)
+                    trans.forward = m_MoveDir;
             }
 
             int oldCount = data.cornerCount;
