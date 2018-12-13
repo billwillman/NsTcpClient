@@ -18,6 +18,8 @@ namespace Recast
         private NavmeshQueryFilter m_Filter = null;
         private Transform m_CacheTransform = null;
 
+        public NavMeshAgent m_Target = null;
+
         public Vector3 GetCurrVec()
         {
             if (!IsInited)
@@ -67,21 +69,6 @@ namespace Recast
             {
                 return new Vector3(m_Radius, m_Height, m_Radius);
             }
-        }
-
-        public bool SetPosition(Vector3 pos)
-        {
-            if (!this.IsInited)
-                return false;
-            var trans = this.CacheTransform;
-            NavmeshPoint pt;
-            if (!NavMeshMap.GetNavmeshPoint(pos, this.Extends, out pt, GetFilter()))
-                return false;
-            
-            bool ret = m_Agent.AdjustMoveTarget(pt);
-            if (ret)
-                trans.position = pt.point;
-            return ret;
         }
 
         internal void _SetId(int id)
@@ -176,31 +163,32 @@ namespace Recast
             }
         }
 
-        public bool StopMove()
-        {
-            if (!IsInited)
-                return false;
-            return this.SetPosition(CacheTransform.position);
 
-        }
-
-
-        public bool StartMove(NavmeshPoint pt)
+        private bool Follow(NavmeshPoint pt)
         {
             if (!IsInited || !NavMeshMap.IsVaild)
                 return false;
-            StopMove();
             return m_Agent.RequestMoveTarget(pt);
         }
 
-        public bool StartMove(Vector3 pos)
+        private bool Follow(Vector3 pos)
         {
             if (!IsInited || !NavMeshMap.IsVaild)
                 return false;
             NavmeshPoint pt;
             if (!NavMeshMap.GetNavmeshPoint(pos, this.Extends, out pt, GetFilter()))
                 return false;
-            return StartMove(pt);
+            return Follow(pt);
+        }
+
+        void UpdateFollow()
+        {
+            if (!IsInited)
+                return;
+            if (m_Target != null)
+            {
+                Follow(m_Target.transform.position);
+            }
         }
 
         void UpdatePosition()
@@ -214,6 +202,7 @@ namespace Recast
         void Update()
         {
             CheckID();
+            UpdateFollow();
             UpdatePosition();
         }
 
@@ -254,38 +243,5 @@ namespace Recast
         {
             ClearAgent();
         }
-
-#if UNITY_EDITOR
-
-        [System.NonSerialized]
-        public bool m_IsDebugAutoPath = false;
-
-        void OnGUI()
-        {
-            if (m_IsDebugAutoPath)
-            {
-                if (Input.GetMouseButton(0))
-                {
-                    var mainCam = Camera.main;
-                    if (mainCam != null)
-                    {
-                        Vector3 mousePt = Input.mousePosition;
-                        Ray ray = mainCam.ScreenPointToRay(mousePt);
-                        var mask = LayerMask.GetMask("NavMesh");
-                        RaycastHit hit;
-                        if (Physics.Raycast(ray, out hit, 1000f, mask) && hit.collider != null)
-                        {
-                            Vector3 endPt = hit.point;
-                            if (!this.StartMove(endPt))
-                            {
-                                Debug.LogError("自动寻路失败");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-#endif
     }
 }
