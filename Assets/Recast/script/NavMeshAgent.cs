@@ -263,17 +263,14 @@ namespace Recast
         public void AttachNavMesh()
         {
             Vector3 source = CacheTransform.position;
-            Vector3 result;
-            if (NavMeshMap.GetGroudPt(source, m_Extends, out result, m_Filter))
+            NavmeshPoint pt;
+            if (NavMeshMap.GetNavmeshPoint(source, m_Extends, out pt, m_Filter))
             {
-                CacheTransform.position = result;
-            }
-
-            if (m_Agent != null)
-            {
-                NavmeshPoint pt;
-                if (NavMeshMap.GetNavmeshPoint(source, m_Extends, out pt, m_Filter))
+                CacheTransform.position = pt.point;
+                if (m_Agent != null)
+                {
                     m_Agent.Reset(pt);
+                }
             }
         }
     }
