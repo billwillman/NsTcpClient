@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 using org.critterai.nav;
@@ -62,6 +63,22 @@ namespace Recast
         public static readonly Vector3 _cDefaultExtends = new Vector3(1f, 1f, 1f);
 
         public TextAsset m_MapAsset = null;
+        
+
+        public static bool IsVaild
+        {
+            get
+            {
+                return m_Map != null && m_Map.m_NavMesh != null;
+            }
+        }
+
+        public static Navmesh GetNavMesh()
+        {
+            if (m_Map != null)
+                return m_Map.GetNavmesh();
+            return null;
+        }
 
         void Awake()
         {

@@ -33,6 +33,8 @@ namespace Recast
         private float m_CurrVec = 0f;
         private Vector3 m_MoveDir = Vector3.zero;
 
+        public bool m_IsFixedXZ = false;
+
         public float CurrVec
         {
             get
@@ -188,7 +190,12 @@ namespace Recast
 
                 // 角度
                 if (m_IsUseMoveForward)
-                    trans.forward = m_MoveDir;
+                {
+                    var forward = m_MoveDir;
+                    if (m_IsFixedXZ)
+                        forward.y = trans.forward.y;
+                    trans.forward = forward;
+                }
             }
 
             // 计算速度

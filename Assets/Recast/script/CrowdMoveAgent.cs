@@ -1,16 +1,234 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using System.Collections;
 using org.critterai.nav;
 using org.critterai.u3d;
 
 namespace Recast
 {
+
     // 跟随对象
     public class CrowdMoveAgent : MonoBehaviour
     {
         private CrowdAgent m_Agent = null;
+        private int m_ID = -1;
+        private CrowdMoveMgr m_Mgr = null;
+        private CrowdAgentParams m_Params;
+        private LinkedListNode<CrowdAgent> m_Node = null;
+        private NavmeshQueryFilter m_Filter = null;
+        private Transform m_CacheTransform = null;
 
-        public CrowdMoveMgr m_Mgr = null;
+        public Vector3 GetCurrVec()
+        {
+            if (!IsInited)
+                return Vector3.zero;
+            return m_Agent.Velocity;
+        }
+
+        protected Transform CacheTransform
+        {
+            get
+            {
+                if (m_CacheTransform == null)
+                    m_CacheTransform = this.transform;
+                return m_CacheTransform;
+            }
+        }
+
+        internal NavmeshQueryFilter GetFilter()
+        {
+            return m_Filter;
+        }
+
+        public float m_MaxSpeed = 10f;
+        public float m_Radius = 1f;
+        public float m_Height = 1f;
+        public float m_MaxAcc = 0f;
+        public float m_SeparationWeight = 1f;
+
+        // 自动转向
+        public bool m_IsAnticipateTurns = true;
+        // 避开障碍物
+        public bool m_IsObstacleAvoidance = true;
+        // 隔离人群
+        public bool m_IsCrowdSeparation = true;
+        // 是否开启优化显示
+        public bool m_IsOptimizeVis = true;
+        // 是否优化拓扑
+        public bool m_IsOptimizeTopo = true;
+        // 对应CrowdMoveMgr的Param
+        public byte m_AvoidanceType = 0;
+
+        public float m_CollisionQueryRange = 1f;
+
+        public Vector3 Extends
+        {
+            get
+            {
+                return new Vector3(m_Radius, m_Height, m_Radius);
+            }
+        }
+
+        public bool SetPosition(Vector3 pos)
+        {
+            if (!this.IsInited)
+                return false;
+            var trans = this.CacheTransform;
+            NavmeshPoint pt;
+            if (!NavMeshMap.GetNavmeshPoint(pos, this.Extends, out pt, GetFilter()))
+                return false;
+            
+            bool ret = m_Agent.AdjustMoveTarget(pt);
+            if (ret)
+                trans.position = pt.point;
+            return ret;
+        }
+
+        internal void _SetId(int id)
+        {
+            m_ID = id;
+        }
+
+        internal void _SetAgent(CrowdAgent agent)
+        {
+            m_Agent = agent;
+        }
+
+        private void InitCrowdMoveMgr()
+        {
+            var trans = this.transform;
+            if (m_Mgr == null && trans.parent != null)
+            {
+                m_Mgr = trans.parent.GetComponent<CrowdMoveMgr>();
+            }
+        }
+
+        private void InitParams()
+        {
+            m_Params = new CrowdAgentParams();
+            m_Params.maxSpeed = m_MaxSpeed;
+            m_Params.radius = m_Radius;
+            m_Params.height = m_Height;
+            m_Params.maxAcceleration = m_MaxAcc;
+            m_Params.separationWeight = m_SeparationWeight;
+            m_Params.avoidanceType = m_AvoidanceType;
+            m_Params.collisionQueryRange = m_CollisionQueryRange;
+            
+            int flags = 0;
+            if (m_IsAnticipateTurns)
+                flags |= (int)CrowdUpdateFlags.AnticipateTurns;
+            if (m_IsObstacleAvoidance)
+                flags |= (int)CrowdUpdateFlags.CrowdSeparation;
+            if (m_IsOptimizeVis)
+                flags |= (int)CrowdUpdateFlags.ObstacleAvoidance;
+            if (m_IsOptimizeTopo)
+                flags |= (int)CrowdUpdateFlags.OptimizeTopo;
+
+            m_Params.updateFlags = (CrowdUpdateFlags)flags;
+        }
+
+        internal bool HasListNode
+        {
+            get
+            {
+                return m_Node != null;
+            }
+        }
+
+        internal LinkedListNode<CrowdAgent> ListNode
+        {
+            get
+            {
+                if (m_Node == null && m_Agent != null)
+                    m_Node = new LinkedListNode<CrowdAgent>(m_Agent);
+                return m_Node;
+            }
+        }
+
+        internal CrowdAgentParams GetParams()
+        {
+            return m_Params;
+        }
+
+        private bool AddAgent()
+        {
+            if (m_Mgr != null)
+            {
+                return m_Mgr.AddAgent(this);
+            }
+            return false;
+        }
+
+        private void CheckID()
+        {
+            if (m_ID == -1)
+            {
+                if (!AddAgent())
+                    m_ID = -1;
+            }
+        }
+
+        public bool IsInited
+        {
+            get
+            {
+                return m_ID != -1 && m_Agent != null;
+            }
+        }
+
+        public bool StopMove()
+        {
+            if (!IsInited)
+                return false;
+            return this.SetPosition(CacheTransform.position);
+
+        }
+
+
+        public bool StartMove(NavmeshPoint pt)
+        {
+            if (!IsInited || !NavMeshMap.IsVaild)
+                return false;
+            StopMove();
+            return m_Agent.RequestMoveTarget(pt);
+        }
+
+        public bool StartMove(Vector3 pos)
+        {
+            if (!IsInited || !NavMeshMap.IsVaild)
+                return false;
+            NavmeshPoint pt;
+            if (!NavMeshMap.GetNavmeshPoint(pos, this.Extends, out pt, GetFilter()))
+                return false;
+            return StartMove(pt);
+        }
+
+        void UpdatePosition()
+        {
+            if (!IsInited)
+                return;
+            var trans = this.CacheTransform;
+            trans.position = m_Agent.Position;
+        }
+
+        void Update()
+        {
+            CheckID();
+            UpdatePosition();
+        }
+
+        // 初始化
+        private void Init()
+        {
+            InitParams();
+            InitCrowdMoveMgr();
+            
+        }
+
+        void Start()
+        {
+            Init();
+        }
 
         internal CrowdAgent Agent
         {
@@ -36,5 +254,38 @@ namespace Recast
         {
             ClearAgent();
         }
+
+#if UNITY_EDITOR
+
+        [System.NonSerialized]
+        public bool m_IsDebugAutoPath = false;
+
+        void OnGUI()
+        {
+            if (m_IsDebugAutoPath)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    var mainCam = Camera.main;
+                    if (mainCam != null)
+                    {
+                        Vector3 mousePt = Input.mousePosition;
+                        Ray ray = mainCam.ScreenPointToRay(mousePt);
+                        var mask = LayerMask.GetMask("NavMesh");
+                        RaycastHit hit;
+                        if (Physics.Raycast(ray, out hit, 1000f, mask) && hit.collider != null)
+                        {
+                            Vector3 endPt = hit.point;
+                            if (!this.StartMove(endPt))
+                            {
+                                Debug.LogError("自动寻路失败");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+#endif
     }
 }
