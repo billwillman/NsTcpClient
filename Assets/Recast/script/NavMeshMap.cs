@@ -170,6 +170,17 @@ namespace Recast
             m_Map = null;
         }
 
+        public static bool GetConnection(uint polyRef, out NavmeshConnection conn)
+        {
+            if (m_Map == null || m_Map.m_NavMesh == null)
+            {
+                conn = new NavmeshConnection();
+                return false;
+            }
+            conn = m_Map.m_NavMesh.GetConnectionByRef(polyRef);
+            return true;
+        }
+
         public static PathCorridor CreateAgent(int maxPathSize = 10, int maxCorners = 10, NavmeshQueryFilter filter = null)
         {
             if (m_Map == null)

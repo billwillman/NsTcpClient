@@ -20,6 +20,7 @@ namespace Recast
         public int m_MaxCorners = 50;
         // 是否在自動寻路
         private bool m_IsAutoMoving = false;
+        private byte m_Flags = 0;
         // 是否朝向根据移动方向移动
         public bool m_IsUseMoveForward = true;
       
@@ -122,7 +123,12 @@ namespace Recast
             if (m_PathBuffer != null)
             {
                 FreePathBuffer();
-                AttachNavMesh();
+                NavmeshPoint pt;
+                // 检查
+                if (AttachNavMesh(out pt))
+                {
+                   
+                }
             }
         }
 
@@ -170,6 +176,7 @@ namespace Recast
 #if UNITY_EDITOR
                 Debug.Log("寻路结束");
 #endif
+                // 檢測OffLink
                 return;
             }
 
@@ -260,18 +267,25 @@ namespace Recast
 
 #endif
 
-        public void AttachNavMesh()
+        public bool AttachNavMesh(out NavmeshPoint pt)
         {
             Vector3 source = CacheTransform.position;
-            NavmeshPoint pt;
             if (NavMeshMap.GetNavmeshPoint(source, m_Extends, out pt, m_Filter))
             {
                 CacheTransform.position = pt.point;
                 if (m_Agent != null)
                 {
                     m_Agent.Reset(pt);
+                    return true;
                 }
             }
+            return false;
+        }
+
+        public void AttachNavMesh()
+        {
+            NavmeshPoint pt;
+            AttachNavMesh(out pt);
         }
     }
 }
