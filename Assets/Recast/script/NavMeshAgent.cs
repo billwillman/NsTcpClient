@@ -127,7 +127,11 @@ namespace Recast
                 // 检查
                 if (AttachNavMesh(out pt))
                 {
-                   
+                    NavmeshConnection conn;
+                    if (NavMeshMap.GetConnection(pt.polyRef, out conn))
+                    {
+
+                    }
                 }
             }
         }
