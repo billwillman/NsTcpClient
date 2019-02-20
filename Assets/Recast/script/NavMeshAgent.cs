@@ -8,10 +8,20 @@ using org.critterai.u3d;
 
 namespace Recast
 {
+
+    public class CrowdAgentAnimation
+    {
+        public bool active;
+	    public Vector3 initPos, startPos, endPos;
+	    public uint polyRef;
+	    public float t, tmax;
+    }
+
     public class NavMeshAgent: MonoBehaviour
     {
 
         public Vector3 m_Extends = new Vector3(1f, 1f, 1f);
+        public float m_Radius = 1f;
         public NavmeshQueryFilter m_Filter = null;
         private Transform m_Trans = null;
         private PathCorridor m_Agent = null;
@@ -23,7 +33,11 @@ namespace Recast
         private byte m_Flags = 0;
         // 是否朝向根据移动方向移动
         public bool m_IsUseMoveForward = true;
-      
+
+
+        public CrowdAgentState m_State = CrowdAgentState.Invalid;
+        private CrowdAgentAnimation m_AgentAnim = new CrowdAgentAnimation();
+
         // 初始速度
         public float m_Vec = 10f;
         // 最大速度
@@ -72,6 +86,7 @@ namespace Recast
             m_IsAutoMoving = false;
             m_MoveDir = Vector3.zero;
             m_CurrVec = m_Vec;
+            m_State = CrowdAgentState.Invalid;
         }
         
         void FreeAgent()
@@ -130,10 +145,39 @@ namespace Recast
                     NavmeshConnection conn;
                     if (NavMeshMap.GetConnection(pt.polyRef, out conn))
                     {
-
+                        
                     }
                 }
             }
+        }
+
+        // 判斷是否到了OffMesh连接点
+        public bool overOffmeshConnection()
+        {
+            return overOffmeshConnection(m_Radius);
+        }
+
+        private bool overOffmeshConnection(float radius)
+        {
+            if (m_Agent == null || m_Agent.Corners == null ||
+                m_Agent.Corners.cornerCount <= 0 || m_Agent.Corners.flags == null ||
+                 m_Agent.Corners.flags.Length <= 0)
+                return false;
+
+            WaypointFlag flag = m_Agent.Corners.flags[m_Agent.Corners.flags.Length - 1];
+            if ((flag & WaypointFlag.OffMesh) != 0)
+            {
+                var endData = m_Agent.Corners[m_Agent.Corners.cornerCount - 1];
+                if (endData == null)
+                    return false;
+                Vector3 vv = m_Agent.Position.point - endData.point;
+
+                float dist2 = vv.x * vv.x + vv.y * vv.y + vv.z * vv.z;
+                if (dist2 <= radius * radius)
+                    return true;
+            }
+
+            return false;
         }
 
         public bool MoveToTarget(Vector3 targetPt)
@@ -163,11 +207,12 @@ namespace Recast
 
             m_CurrVec = m_Vec;
             m_IsAutoMoving = true;
+            m_State = CrowdAgentState.OnMesh;
 
             return true;
         }
         
-        void UpdateAutoMoving()
+        void UpdateAutoMoving(float delta)
         {
             if (!m_IsAutoMoving || m_Agent == null)
                 return;
@@ -210,13 +255,13 @@ namespace Recast
             }
 
             // 计算速度
-            float t = 0.033f;
-            m_CurrVec = m_CurrVec + m_Acc * t;
+           // float t = 0.033f;
+            m_CurrVec = m_CurrVec + m_Acc * delta;
             if (m_CurrVec > m_MaxVec)
                 m_CurrVec = m_MaxVec;
 
             int oldCount = data.cornerCount;
-            var currentTarget = source + m_MoveDir * m_CurrVec * t;
+            var currentTarget = source + m_MoveDir * m_CurrVec * delta;
 
             // 判断是否超过
             var a1 = currentTarget - target;
@@ -236,9 +281,80 @@ namespace Recast
             }
         }
 
+        private uint[] m_TmpRefs = new uint[2];
+        void CheckOffMeshConnection()
+        {
+            if (m_Agent == null)
+                return;
+
+            if (overOffmeshConnection())
+            {
+                uint refId = m_Agent.Corners.polyRefs[m_Agent.Corners.cornerCount - 1];
+               // m_Agent.MoveOverConnection(refId, m_TmpRefs, )
+                UnityEngine.Vector3 startPos = new Vector3();
+                UnityEngine.Vector3 endPos = new Vector3();
+                if (m_Agent.MoveOverConnection(refId, m_TmpRefs, startPos, endPos))
+                {
+                    if (NavMeshMap.GetConnectionEndpoints(m_TmpRefs[0], m_TmpRefs[1], out startPos, out endPos))
+                    {
+                        NavmeshPoint pt;
+                        if (AttachNavMesh(out pt))
+                        {
+                            m_AgentAnim.initPos = m_Agent.Position.point;
+                            m_AgentAnim.startPos = startPos;
+                            m_AgentAnim.endPos = endPos;
+                            m_AgentAnim.polyRef = m_TmpRefs[1];
+                            m_AgentAnim.active = true;
+                            m_AgentAnim.t = 0f;
+                            m_AgentAnim.tmax = ((m_AgentAnim.endPos - m_AgentAnim.startPos).magnitude / m_MaxVec) * 0.5f;
+
+                            FreePathBuffer();
+
+                            m_State = CrowdAgentState.OffMesh;
+                        }
+                    }
+                }
+            }
+        }
+
+        void UpdateAgentAnim(float delta)
+        {
+            if (m_AgentAnim == null)
+                return;
+            if (!m_AgentAnim.active)
+                return;
+            m_AgentAnim.t += delta;
+            if (m_AgentAnim.t > m_AgentAnim.tmax)
+            {
+                m_AgentAnim.active = false;
+                m_State = CrowdAgentState.OnMesh;
+                return;
+            }
+
+            float ta = m_AgentAnim.tmax * 0.15f;
+            float tb = m_AgentAnim.tmax;
+            if (m_AgentAnim.t < ta)
+            {
+                float u = tween(m_AgentAnim.t, ta, tb);
+                CacheTransform.position = Vector3.Lerp(m_AgentAnim.initPos, m_AgentAnim.startPos, u);
+            } else
+            {
+                float u = tween(m_AgentAnim.t, ta, tb);
+                CacheTransform.position = Vector3.Lerp(m_AgentAnim.startPos, m_AgentAnim.endPos, u);
+            }
+        }
+
+        private static float tween(float t, float t0, float t1)
+        {
+            return Mathf.Clamp((t - t0) / (t1 - t0), 0.0f, 1.0f);
+        }
+
         void Update()
         {
-            UpdateAutoMoving();
+            float timeDelta = 0.033f;
+            UpdateAutoMoving(timeDelta);
+            CheckOffMeshConnection();
+            UpdateAgentAnim(timeDelta);
         }
 
 #if UNITY_EDITOR

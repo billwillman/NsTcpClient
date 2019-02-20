@@ -181,6 +181,18 @@ namespace Recast
             return true;
         }
 
+        public static bool GetConnectionEndpoints(uint startRef, uint endRef, out Vector3 startPos, out Vector3 endPos)
+        {
+            if (m_Map == null || m_Map.m_NavMesh == null)
+            {
+                startPos = Vector3.zero;
+                endPos = Vector3.zero;
+                return false;
+            }
+            var status = m_Map.m_NavMesh.GetConnectionEndpoints(startRef, endRef, out startPos, out endPos);
+            return NavUtil.Succeeded(status);
+        }
+
         public static PathCorridor CreateAgent(int maxPathSize = 10, int maxCorners = 10, NavmeshQueryFilter filter = null)
         {
             if (m_Map == null)
