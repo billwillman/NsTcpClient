@@ -173,20 +173,24 @@ namespace Utils
         }
 
         ///   <summary>   
-        ///   写入Single,尽量游戏内部减少使用这个函数，原因
-        ///   会new byte[]，编辑器中无所谓
+        ///   写入Single
         ///   </summary> 
         ///   <param name="stream">写入的流</param>
         ///   <param name="value">需要写入的值</param> 
         /// <returns>是否写入</returns>
-        public bool WriteSingle(Stream stream, float value) {
+        public unsafe bool WriteSingle(Stream stream, float value) {
             if (stream == null)
                 return false;
-            byte[] buffer = BitConverter.GetBytes(value);
-            if (buffer == null || buffer.Length <= 0)
-                return false;
-            for (int i = 0; i < buffer.Length; ++i) {
-                stream.WriteByte(buffer[i]);
+            //byte[] buffer = BitConverter.GetBytes(value);
+            //if (buffer == null || buffer.Length <= 0)
+            //    return false;
+            //for (int i = 0; i < buffer.Length; ++i) {
+            //     stream.WriteByte(buffer[i]);
+            // }
+            byte* src = (byte*)(&value);
+            for (int i = 0; i < 4; ++i) {
+                stream.WriteByte(*src);
+                ++src;
             }
             return true;
         }
@@ -211,20 +215,24 @@ namespace Utils
         }
 
         ///   <summary>   
-        ///   写入Double,尽量游戏内部减少使用这个函数，原因
-        ///   会new byte[]，编辑器中无所谓
+        ///   写入Double
         ///   </summary> 
         ///   <param name="stream">写入的流</param>
         ///   <param name="value">需要写入的值</param> 
         /// <returns>是否写入</returns>
-        public bool WriteDouble(Stream stream, double value) {
+        public unsafe bool WriteDouble(Stream stream, double value) {
             if (stream == null)
                 return false;
-            byte[] buffer = BitConverter.GetBytes(value);
-            if (buffer == null || buffer.Length <= 0)
-                return false;
-            for (int i = 0; i < buffer.Length; ++i) {
-                stream.WriteByte(buffer[i]);
+             //byte[] buffer = BitConverter.GetBytes(value);
+            // if (buffer == null || buffer.Length <= 0)
+            //    return false;
+            //for (int i = 0; i < buffer.Length; ++i) {
+            //    stream.WriteByte(buffer[i]);
+            // }
+            byte* src = (byte*)(&value);
+            for (int i = 0; i < 8; ++i) {
+                stream.WriteByte(*src);
+                ++src;
             }
             return true;
         }
