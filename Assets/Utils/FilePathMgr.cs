@@ -158,16 +158,21 @@ namespace Utils
 			return b != 0;
 		}
 
-        public float ReadSingle(Stream stream) {
+        public unsafe float ReadSingle(Stream stream) {
             if (stream == null)
                 return 0f;
             float ret;
-            lock (m_Lock) {
-                m_TempStrBuf[0] = (byte)stream.ReadByte();
-                m_TempStrBuf[1] = (byte)stream.ReadByte();
-                m_TempStrBuf[2] = (byte)stream.ReadByte();
-                m_TempStrBuf[3] = (byte)stream.ReadByte();
-                ret = BitConverter.ToSingle(m_TempStrBuf, 0);
+            // lock (m_Lock) {
+            //     m_TempStrBuf[0] = (byte)stream.ReadByte();
+            //     m_TempStrBuf[1] = (byte)stream.ReadByte();
+            //     m_TempStrBuf[2] = (byte)stream.ReadByte();
+            //      m_TempStrBuf[3] = (byte)stream.ReadByte();
+            //      ret = BitConverter.ToSingle(m_TempStrBuf, 0);
+            //  }
+            byte* dst = (byte*)(&ret);
+            for (int i = 0; i < 4; ++i) {
+                *dst = (byte)stream.ReadByte();
+                ++dst;
             }
             return ret;
         }
@@ -195,22 +200,29 @@ namespace Utils
             return true;
         }
 
-        public Double ReadDouble(Stream stream) {
+        public unsafe Double ReadDouble(Stream stream) {
             if (stream == null)
                 return 0f;
             double ret;
-            lock (m_Lock) {
-                m_TempStrBuf[0] = (byte)stream.ReadByte();
-                m_TempStrBuf[1] = (byte)stream.ReadByte();
-                m_TempStrBuf[2] = (byte)stream.ReadByte();
-                m_TempStrBuf[3] = (byte)stream.ReadByte();
-                m_TempStrBuf[4] = (byte)stream.ReadByte();
-                m_TempStrBuf[5] = (byte)stream.ReadByte();
-                m_TempStrBuf[6] = (byte)stream.ReadByte();
-                m_TempStrBuf[7] = (byte)stream.ReadByte();
+            // lock (m_Lock) {
+            //      m_TempStrBuf[0] = (byte)stream.ReadByte();
+            //      m_TempStrBuf[1] = (byte)stream.ReadByte();
+            //     m_TempStrBuf[2] = (byte)stream.ReadByte();
+            //     m_TempStrBuf[3] = (byte)stream.ReadByte();
+            //     m_TempStrBuf[4] = (byte)stream.ReadByte();
+            //      m_TempStrBuf[5] = (byte)stream.ReadByte();
+            //     m_TempStrBuf[6] = (byte)stream.ReadByte();
+            //     m_TempStrBuf[7] = (byte)stream.ReadByte();
 
-                ret = BitConverter.ToDouble(m_TempStrBuf, 0);
+            //     ret = BitConverter.ToDouble(m_TempStrBuf, 0);
+            // }
+
+            byte* dst = (byte*)(&ret);
+            for (int i = 0; i < 8; ++i) {
+                *dst = (byte)stream.ReadByte();
+                ++dst;
             }
+
             return ret;
         }
 
