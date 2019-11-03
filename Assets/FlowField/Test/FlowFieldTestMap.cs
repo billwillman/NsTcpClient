@@ -5,15 +5,19 @@ using System.Collections.Generic;
 namespace FlowFieldTest
 {
 
+	//[ExecuteInEditMode]
 	public class FlowFieldTestMap : MonoBehaviour {
 		//private List<List<FlowFieldCell>> m_Cells = null;
-		public int m_W = 0;
-		public int m_H = 0;
+		[SerializeField]
+		private int m_W = 0;
+		[SerializeField]
+		private int m_H = 0;
 
 		public int m_CellWidth = 1;
 		public int m_CellHeight = 1;
 
-		public FlowFieldCell[] m_Cells = null;
+		[SerializeField]
+		private FlowFieldCell[] m_Cells = null;
 
 		public FlowFieldCell m_InstanceCell = null;
 

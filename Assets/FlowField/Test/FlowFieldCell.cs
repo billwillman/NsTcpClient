@@ -14,14 +14,20 @@ namespace FlowFieldTest
 		public int H = 0;
 		public int ID = 0;
 
+		private void UpdateTextMesh()
+		{
+		}
+
 		public void StayActor()
 		{
 			Cost += m_ActorStayCost;
+			UpdateTextMesh ();
 		}
 
 		public void UnStayActor()
 		{
 			Cost -= m_ActorStayCost;
+			UpdateTextMesh ();
 		}
 	}
 

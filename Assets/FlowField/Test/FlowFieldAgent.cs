@@ -8,6 +8,9 @@ namespace FlowFieldTest
 		public int m_InitCellX = -1;
 		public int m_InitCellY = -1;
 
+		public int m_MovedCellX = -1;
+		public int m_MovedCellY = -1;
+
 		public void Awake()
 		{
 			RaycastHit hit;
