@@ -63,7 +63,7 @@ namespace FlowFields
 			if (map == null || x < 0 || y < 0)
 				return;
 			int maxX, maxY;
-			map.GetCellCount (maxX, maxY);
+			map.GetCellCount(out maxX, out maxY);
 			if (maxX <= 0 || maxY <= 0 || x >= maxX || y >= maxY)
 				return;
 			var cell = map.GetCellAtXY (x, y);
