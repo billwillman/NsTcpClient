@@ -41,7 +41,7 @@ namespace FlowFields
 		}
 
 		// 代价
-		int CCost {
+		ushort CCost {
 			get;
 			set;
 		}
@@ -55,7 +55,7 @@ namespace FlowFields
 
 	public static class FlowFiledHelper
 	{
-		public static readonly int cINFI = 0xFFFFFFF;
+		public static readonly ushort cINFI = 0xFFFF;
 
 		// 设置阻挡
 		public static void SetObstocle(IFlowFieldMap map, int x, int y)
