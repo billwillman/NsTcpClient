@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace FlowFields
 {
@@ -45,7 +46,23 @@ namespace FlowFields
 			get;
 			set;
 		}
+
+        // 格子的X
+        uint TileX {
+            get;
+            set;
+        }
+
+        // 格子的Y
+        uint TileY {
+            get;
+            set;
+        }
 	}
+
+    // 接口代理Agent
+    public interface IFlowFieldAgent {
+    }
 
 	public interface IFlowFieldMap
 	{
@@ -73,5 +90,11 @@ namespace FlowFields
 			cell.Dir = EDirection.ED_NULL;
 			cell.GType = EGridType.EGT_OBSTOCLE;
 		}
+
+        // 查找路徑
+        public static void FindPath(IFlowFieldCell target, IList<IFlowFieldAgent> agents) {
+            if (target == null || agents == null || agents.Count <= 0)
+                return;
+        }
 	}
 }
