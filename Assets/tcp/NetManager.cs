@@ -1,8 +1,12 @@
 ﻿#define USE_PROTOBUF_NET
+#define USE_CapnProto
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+#if USE_CapnProto
+using Capnp;
+#endif
 
 namespace NsTcpClient
 {
@@ -166,6 +170,12 @@ namespace NsTcpClient
 			Send(null, packetHandle);
 		}
 
+#if USE_CapnProto
+        public void SendCapnProto<T>(T data, int packHandle) where T: class {
+           
+        }
+#endif
+
 #if USE_PROTOBUF_NET
         public void SendProtoBuf<T>(T data, int packetHandle) where T: class, Google.Protobuf.IMessage<T>
         {
@@ -293,5 +303,16 @@ namespace NsTcpClient
 		private int m_Port = 0;
 		private ClientSocket m_Client = null;
 		private ITimer m_Timer = null;
-	}
+#if USE_CapnProto
+        
+        private MessageBuilder InitCapnMsgBuilder() {
+            if (m_CapnMsgBuider != null)
+                return m_CapnMsgBuider;
+            m_CapnMsgBuider = MessageBuilder.Create(TcpClient.MAX_TCP_CLIENT_BUFF_SIZE);
+            return m_CapnMsgBuider;
+        }
+
+        private MessageBuilder m_CapnMsgBuider = null;
+#endif
+    }
 }
