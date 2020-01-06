@@ -68,7 +68,7 @@ public class Test : MonoBehaviour {
         var req = new C_S_Login_Req();
         req.UserName = "zengyi";
         req.Password = "HelloWorld";
-        NetManager.Instance.SendProtoBuf<C_S_Login_Req>(req, 100);
+        NetManager.Instance.SendProtoBuf<C_S_Login_Req>(req, 1);
     }
 
 	void OnApplicationQuit()
