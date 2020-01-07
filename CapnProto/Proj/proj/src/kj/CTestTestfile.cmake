@@ -1,0 +1,36 @@
+# CMake generated Testfile for 
+# Source directory: D:/capnproto/c++/src/kj
+# Build directory: D:/capnproto/proj/src/kj
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+if("${CTEST_CONFIGURATION_TYPE}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+  add_test(kj-tests-run "D:/capnproto/proj/src/kj/Debug/kj-tests.exe")
+  set_tests_properties(kj-tests-run PROPERTIES  _BACKTRACE_TRIPLES "D:/capnproto/c++/src/kj/CMakeLists.txt;213;add_test;D:/capnproto/c++/src/kj/CMakeLists.txt;0;")
+elseif("${CTEST_CONFIGURATION_TYPE}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+  add_test(kj-tests-run "D:/capnproto/proj/src/kj/Release/kj-tests.exe")
+  set_tests_properties(kj-tests-run PROPERTIES  _BACKTRACE_TRIPLES "D:/capnproto/c++/src/kj/CMakeLists.txt;213;add_test;D:/capnproto/c++/src/kj/CMakeLists.txt;0;")
+elseif("${CTEST_CONFIGURATION_TYPE}" MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
+  add_test(kj-tests-run "D:/capnproto/proj/src/kj/MinSizeRel/kj-tests.exe")
+  set_tests_properties(kj-tests-run PROPERTIES  _BACKTRACE_TRIPLES "D:/capnproto/c++/src/kj/CMakeLists.txt;213;add_test;D:/capnproto/c++/src/kj/CMakeLists.txt;0;")
+elseif("${CTEST_CONFIGURATION_TYPE}" MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
+  add_test(kj-tests-run "D:/capnproto/proj/src/kj/RelWithDebInfo/kj-tests.exe")
+  set_tests_properties(kj-tests-run PROPERTIES  _BACKTRACE_TRIPLES "D:/capnproto/c++/src/kj/CMakeLists.txt;213;add_test;D:/capnproto/c++/src/kj/CMakeLists.txt;0;")
+else()
+  add_test(kj-tests-run NOT_AVAILABLE)
+endif()
+if("${CTEST_CONFIGURATION_TYPE}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+  add_test(kj-heavy-tests-run "D:/capnproto/proj/src/kj/Debug/kj-heavy-tests.exe")
+  set_tests_properties(kj-heavy-tests-run PROPERTIES  _BACKTRACE_TRIPLES "D:/capnproto/c++/src/kj/CMakeLists.txt;243;add_test;D:/capnproto/c++/src/kj/CMakeLists.txt;0;")
+elseif("${CTEST_CONFIGURATION_TYPE}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+  add_test(kj-heavy-tests-run "D:/capnproto/proj/src/kj/Release/kj-heavy-tests.exe")
+  set_tests_properties(kj-heavy-tests-run PROPERTIES  _BACKTRACE_TRIPLES "D:/capnproto/c++/src/kj/CMakeLists.txt;243;add_test;D:/capnproto/c++/src/kj/CMakeLists.txt;0;")
+elseif("${CTEST_CONFIGURATION_TYPE}" MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
+  add_test(kj-heavy-tests-run "D:/capnproto/proj/src/kj/MinSizeRel/kj-heavy-tests.exe")
+  set_tests_properties(kj-heavy-tests-run PROPERTIES  _BACKTRACE_TRIPLES "D:/capnproto/c++/src/kj/CMakeLists.txt;243;add_test;D:/capnproto/c++/src/kj/CMakeLists.txt;0;")
+elseif("${CTEST_CONFIGURATION_TYPE}" MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
+  add_test(kj-heavy-tests-run "D:/capnproto/proj/src/kj/RelWithDebInfo/kj-heavy-tests.exe")
+  set_tests_properties(kj-heavy-tests-run PROPERTIES  _BACKTRACE_TRIPLES "D:/capnproto/c++/src/kj/CMakeLists.txt;243;add_test;D:/capnproto/c++/src/kj/CMakeLists.txt;0;")
+else()
+  add_test(kj-heavy-tests-run NOT_AVAILABLE)
+endif()

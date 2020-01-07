@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\capnproto\c++\src\kj\common-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\memory-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\array-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\string-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\table-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\map-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\exception-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\debug-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\io-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\mutex-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\time-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\threadlocal-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\test-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\kj\std\iostream-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\capnproto\c++\src\kj\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{EF1F3907-EB50-3DCD-9AFE-00A925979D7F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

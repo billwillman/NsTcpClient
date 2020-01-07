@@ -1,0 +1,454 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{696F4529-D294-3AB8-893E-4483F8080AAA}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>Win32</Platform>
+    <ProjectName>test_capnp</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>D:\capnproto\proj\src\capnp\test_capnp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>D:\capnproto\proj\src\capnp\test_capnp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>D:\capnproto\proj\src\capnp\test_capnp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>D:\capnproto\proj\src\capnp\test_capnp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\capnproto\proj\CMakeFiles\d52cd9f074bdf2dbcea3839db6cb37b6\test.capnp.c++.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling Cap'n Proto schema test.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+Debug\capnp.exe compile -o D:/capnproto/proj/src/capnp/Debug/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\capnproto\c++\src\capnp\test.capnp;D:\capnproto\proj\src\capnp\Debug\capnp.exe;D:\capnproto\proj\src\capnp\Debug\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling Cap'n Proto schema test.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+Release\capnp.exe compile -o D:/capnproto/proj/src/capnp/Release/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\capnproto\c++\src\capnp\test.capnp;D:\capnproto\proj\src\capnp\Release\capnp.exe;D:\capnproto\proj\src\capnp\Release\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Compiling Cap'n Proto schema test.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+MinSizeRel\capnp.exe compile -o D:/capnproto/proj/src/capnp/MinSizeRel/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\capnproto\c++\src\capnp\test.capnp;D:\capnproto\proj\src\capnp\MinSizeRel\capnp.exe;D:\capnproto\proj\src\capnp\MinSizeRel\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Compiling Cap'n Proto schema test.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+RelWithDebInfo\capnp.exe compile -o D:/capnproto/proj/src/capnp/RelWithDebInfo/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\capnproto\c++\src\capnp\test.capnp;D:\capnproto\proj\src\capnp\RelWithDebInfo\capnp.exe;D:\capnproto\proj\src\capnp\RelWithDebInfo\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\capnproto\proj\CMakeFiles\d52cd9f074bdf2dbcea3839db6cb37b6\test-import.capnp.c++.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling Cap'n Proto schema test-import.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+Debug\capnp.exe compile -o D:/capnproto/proj/src/capnp/Debug/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test-import.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\capnproto\c++\src\capnp\test-import.capnp;D:\capnproto\proj\src\capnp\Debug\capnp.exe;D:\capnproto\proj\src\capnp\Debug\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling Cap'n Proto schema test-import.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+Release\capnp.exe compile -o D:/capnproto/proj/src/capnp/Release/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test-import.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\capnproto\c++\src\capnp\test-import.capnp;D:\capnproto\proj\src\capnp\Release\capnp.exe;D:\capnproto\proj\src\capnp\Release\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Compiling Cap'n Proto schema test-import.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+MinSizeRel\capnp.exe compile -o D:/capnproto/proj/src/capnp/MinSizeRel/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test-import.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\capnproto\c++\src\capnp\test-import.capnp;D:\capnproto\proj\src\capnp\MinSizeRel\capnp.exe;D:\capnproto\proj\src\capnp\MinSizeRel\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Compiling Cap'n Proto schema test-import.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+RelWithDebInfo\capnp.exe compile -o D:/capnproto/proj/src/capnp/RelWithDebInfo/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test-import.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\capnproto\c++\src\capnp\test-import.capnp;D:\capnproto\proj\src\capnp\RelWithDebInfo\capnp.exe;D:\capnproto\proj\src\capnp\RelWithDebInfo\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\capnproto\proj\CMakeFiles\d52cd9f074bdf2dbcea3839db6cb37b6\test-import2.capnp.c++.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling Cap'n Proto schema test-import2.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+Debug\capnp.exe compile -o D:/capnproto/proj/src/capnp/Debug/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test-import2.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\capnproto\c++\src\capnp\test-import2.capnp;D:\capnproto\proj\src\capnp\Debug\capnp.exe;D:\capnproto\proj\src\capnp\Debug\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling Cap'n Proto schema test-import2.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+Release\capnp.exe compile -o D:/capnproto/proj/src/capnp/Release/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test-import2.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\capnproto\c++\src\capnp\test-import2.capnp;D:\capnproto\proj\src\capnp\Release\capnp.exe;D:\capnproto\proj\src\capnp\Release\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Compiling Cap'n Proto schema test-import2.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+MinSizeRel\capnp.exe compile -o D:/capnproto/proj/src/capnp/MinSizeRel/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test-import2.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\capnproto\c++\src\capnp\test-import2.capnp;D:\capnproto\proj\src\capnp\MinSizeRel\capnp.exe;D:\capnproto\proj\src\capnp\MinSizeRel\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Compiling Cap'n Proto schema test-import2.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+RelWithDebInfo\capnp.exe compile -o D:/capnproto/proj/src/capnp/RelWithDebInfo/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/test-import2.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\capnproto\c++\src\capnp\test-import2.capnp;D:\capnproto\proj\src\capnp\RelWithDebInfo\capnp.exe;D:\capnproto\proj\src\capnp\RelWithDebInfo\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\capnproto\proj\CMakeFiles\c2da5ceb7cff47c4ca3fd6ae307e8489\json-test.capnp.c++.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling Cap'n Proto schema compat/json-test.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+Debug\capnp.exe compile -o D:/capnproto/proj/src/capnp/Debug/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/compat/json-test.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\capnproto\c++\src\capnp\compat\json-test.capnp;D:\capnproto\proj\src\capnp\Debug\capnp.exe;D:\capnproto\proj\src\capnp\Debug\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling Cap'n Proto schema compat/json-test.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+Release\capnp.exe compile -o D:/capnproto/proj/src/capnp/Release/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/compat/json-test.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\capnproto\c++\src\capnp\compat\json-test.capnp;D:\capnproto\proj\src\capnp\Release\capnp.exe;D:\capnproto\proj\src\capnp\Release\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Compiling Cap'n Proto schema compat/json-test.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+MinSizeRel\capnp.exe compile -o D:/capnproto/proj/src/capnp/MinSizeRel/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/compat/json-test.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\capnproto\c++\src\capnp\compat\json-test.capnp;D:\capnproto\proj\src\capnp\MinSizeRel\capnp.exe;D:\capnproto\proj\src\capnp\MinSizeRel\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Compiling Cap'n Proto schema compat/json-test.capnp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+RelWithDebInfo\capnp.exe compile -o D:/capnproto/proj/src/capnp/RelWithDebInfo/capnpc-c++.exe:D:/capnproto/proj/src/capnp/test_capnp --src-prefix D:/capnproto/c++/src -I D:/capnproto/c++/src -I D:/capnproto/c++/src/capnp/.. D:/capnproto/c++/src/capnp/compat/json-test.capnp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\capnproto\c++\src\capnp\compat\json-test.capnp;D:\capnproto\proj\src\capnp\RelWithDebInfo\capnp.exe;D:\capnproto\proj\src\capnp\RelWithDebInfo\capnpc-c++.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\capnproto\proj\CMakeFiles\7aaaa23695318969781ef93017051f73\test_capnp.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\capnproto\proj\src\capnp\CMakeFiles\test_capnp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\capnproto\proj\src\capnp\CMakeFiles\test_capnp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\capnproto\proj\src\capnp\CMakeFiles\test_capnp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.c++;D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.h;D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\capnproto\proj\src\capnp\CMakeFiles\test_capnp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\capnproto\c++\src\capnp\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule D:/capnproto/c++/src/capnp/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/capnproto/c++ -BD:/capnproto/proj --check-stamp-file D:/capnproto/proj/src/capnp/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\capnproto\proj\src\capnp\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule D:/capnproto/c++/src/capnp/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/capnproto/c++ -BD:/capnproto/proj --check-stamp-file D:/capnproto/proj/src/capnp/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\capnproto\proj\src\capnp\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule D:/capnproto/c++/src/capnp/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/capnproto/c++ -BD:/capnproto/proj --check-stamp-file D:/capnproto/proj/src/capnp/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\capnproto\proj\src\capnp\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule D:/capnproto/c++/src/capnp/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/capnproto/c++ -BD:/capnproto/proj --check-stamp-file D:/capnproto/proj/src/capnp/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\capnproto\proj\src\capnp\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\capnproto\proj\src\capnp\CMakeFiles\test_capnp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="D:\capnproto\proj\ZERO_CHECK.vcxproj">
+      <Project>{E60B99E3-4323-34DA-BDEE-112F73B0CFC8}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\capnproto\proj\src\capnp\capnp_tool.vcxproj">
+      <Project>{F8FF1CF1-478D-39F2-8673-1516ED48DA73}</Project>
+      <Name>capnp_tool</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\capnproto\proj\src\capnp\capnpc_cpp.vcxproj">
+      <Project>{B4B76B43-C195-3A9B-98C3-D333FEB94AB5}</Project>
+      <Name>capnpc_cpp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

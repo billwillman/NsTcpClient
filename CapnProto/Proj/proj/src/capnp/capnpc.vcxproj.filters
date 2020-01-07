@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\compiler\type-id.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\compiler\error-reporter.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\compiler\lexer.capnp.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\compiler\lexer.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\compiler\grammar.capnp.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\compiler\parser.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\compiler\node-translator.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\compiler\compiler.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\schema-parser.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\serialize-text.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\capnproto\c++\src\capnp\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{EF1F3907-EB50-3DCD-9AFE-00A925979D7F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

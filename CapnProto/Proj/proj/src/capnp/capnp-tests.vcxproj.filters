@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\common-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\blob-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\endian-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\endian-fallback-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\layout-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\any-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\message-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\encoding-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\orphan-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\serialize-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\serialize-packed-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\canonicalize-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\fuzz-test.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\c++\src\capnp\test-util.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.c++">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\capnproto\proj\src\capnp\test_capnp\capnp\test.capnp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import.capnp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\capnproto\proj\src\capnp\test_capnp\capnp\test-import2.capnp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\capnproto\proj\src\capnp\test_capnp\capnp\compat\json-test.capnp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\capnproto\c++\src\capnp\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{1C97E09C-C00F-33BC-939C-A9EA92CB57C1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{DD1B729C-BC2A-30A9-92CB-9489AD2904CE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{EF1F3907-EB50-3DCD-9AFE-00A925979D7F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

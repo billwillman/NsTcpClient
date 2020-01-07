@@ -1,0 +1,6 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.16/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-3.16/Modules/FindPackageMessage.cmake
+C:/Program Files/CMake/share/cmake-3.16/Modules/FindZLIB.cmake
+C:/Program Files/CMake/share/cmake-3.16/Modules/SelectLibraryConfigurations.cmake
+D:/capnproto/c++/src/kj/CMakeLists.txt

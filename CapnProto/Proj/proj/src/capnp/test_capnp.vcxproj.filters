@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\capnproto\proj\CMakeFiles\d52cd9f074bdf2dbcea3839db6cb37b6\test.capnp.c++.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\capnproto\proj\CMakeFiles\d52cd9f074bdf2dbcea3839db6cb37b6\test-import.capnp.c++.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\capnproto\proj\CMakeFiles\d52cd9f074bdf2dbcea3839db6cb37b6\test-import2.capnp.c++.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\capnproto\proj\CMakeFiles\c2da5ceb7cff47c4ca3fd6ae307e8489\json-test.capnp.c++.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\capnproto\proj\CMakeFiles\7aaaa23695318969781ef93017051f73\test_capnp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\capnproto\c++\src\capnp\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\capnproto\proj\src\capnp\CMakeFiles\test_capnp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{1C97E09C-C00F-33BC-939C-A9EA92CB57C1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
