@@ -1,0 +1,8 @@
+@0xc4e1f0f33078c4cf;
+
+const cLoginMsg : Int32 = 1;
+
+struct LoginMsg {
+  userName @0 : Text;
+  passWord @1 : Text;
+}
