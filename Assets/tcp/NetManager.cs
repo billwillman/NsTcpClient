@@ -5,7 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 #if USE_CapnProto
-using Capnp;
+using CapnProto;
 #endif
 
 namespace NsTcpClient
@@ -305,14 +305,7 @@ namespace NsTcpClient
 		private ITimer m_Timer = null;
 #if USE_CapnProto
         
-        private MessageBuilder InitCapnMsgBuilder() {
-            if (m_CapnMsgBuider != null)
-                return m_CapnMsgBuider;
-            m_CapnMsgBuider = MessageBuilder.Create(TcpClient.MAX_TCP_CLIENT_BUFF_SIZE);
-            return m_CapnMsgBuider;
-        }
-
-        private MessageBuilder m_CapnMsgBuider = null;
+       
 #endif
     }
 }
