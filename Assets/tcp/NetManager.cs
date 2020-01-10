@@ -171,17 +171,22 @@ namespace NsTcpClient
 		}
 
 #if USE_CapnProto
-        public void SendCapnProto<T>(T data, int packHandle) where T : struct, global::CapnProto.IPointer {
-            int byteLen = data.ByteLength();
-            if (byteLen <= 0)
+        public void SendCapnProto<T>(T data, int packetHandle) where T : struct, global::CapnProto.IPointer {
+            int outSize;
+            var stream = ProtoMessageMgr.GetInstance().ToStream<T>(data, out outSize);
+            if (stream == null || outSize <= 0) {
+                if (stream != null) {
+                    stream.Dispose();
+                    stream = null;
+                }
                 return;
-            var stream = NetByteArrayPool.GetBuffer(byteLen);
-            if (stream != null) {
-                try {
-                    byte[] buffer = stream.GetBuffer();
-                    data.CopyTo(buffer);
-                    Send(buffer, packHandle, byteLen);
-                } finally {
+            }
+
+            try {
+                var buf = stream.GetBuffer();
+                Send(buf, packetHandle, outSize);
+            } finally {
+                if (stream != null) {
                     stream.Dispose();
                     stream = null;
                 }
