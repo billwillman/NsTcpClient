@@ -62,11 +62,26 @@ public class Test : MonoBehaviour {
             }
         }
 
-        UnityEngine.Profiling.Profiler.BeginSample("CapnProto");
+        UnityEngine.Profiling.Profiler.BeginSample("CapnProto Create");
         var msg = ProtoMessageMgr.CreateCapnProtoMsg<LoginMsg>();
-   //     print(msg.data.userName.ToString());
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        int destSize = msg.data.ByteLength();
+        var destNode = NetByteArrayPool.GetByteBufferNode(destSize);
+        System.Array.Copy(msg.allocator1.Buffer, destNode.Buffer, destSize);
+
+        UnityEngine.Profiling.Profiler.BeginSample("CapnProto Serial");
+        LoginMsg destMsg;
+        if (ProtoMessageMgr.Parser<LoginMsg>(destNode.Buffer, out destMsg, destNode.DataSize)) {
+        }
+        destNode.Dispose();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+
+        UnityEngine.Profiling.Profiler.BeginSample("CapnProto Dispose");
         msg.Dispose();
         UnityEngine.Profiling.Profiler.EndSample();
+
         /*
         UnityEngine.Profiling.Profiler.BeginSample("MemoryStream");
         System.IO.MemoryStream ss = new System.IO.MemoryStream();
