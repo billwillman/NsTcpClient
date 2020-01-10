@@ -14,6 +14,8 @@ using System.Net;
 #if USE_CapnProto
 using CapnProto;
 #endif
+using Utils;
+using System.IO;
 
 namespace NsTcpClient
 {
@@ -36,10 +38,79 @@ namespace NsTcpClient
 	// 2. data is json
 	public class GamePacket
 	{
-		public GamePackHeader header;
-		public byte[] data = null;
+        public GamePackHeader header;
+        //public byte[] data = null;
+        public MemoryStream data = null;
 
-		public bool hasData()
+        private bool m_IsDisposed = false;
+        private LinkedListNode<GamePacket> m_LinkedNode = null;
+
+        public LinkedListNode<GamePacket> LinkedNode {
+           get {
+                if (m_LinkedNode == null)
+                    m_LinkedNode = new LinkedListNode<GamePacket>(this);
+                return m_LinkedNode;
+            }
+                
+        }
+
+        private static System.Object m_PoolLock = new object();
+        private static ObjectPool<GamePacket> m_PacketPool = null;
+        
+        private static void InitPool() {
+            if (m_PacketPool == null) {
+                m_PacketPool = new ObjectPool<GamePacket>();
+                m_PacketPool.Init(0);
+            }
+        }
+
+        private void UnInit() {
+            status = GamePacketStatus.GPNone;
+            if (data != null) {
+                data.Dispose();
+                data = null;
+            }
+        }
+
+        private void Init() {
+            UnInit();
+            m_IsDisposed = false;
+        }
+
+        public static GamePacket CreateFromPool() {
+            GamePacket ret;
+            lock (m_PoolLock) {
+                InitPool();
+                ret = m_PacketPool.GetObject();
+            }
+            ret.Init();
+            return ret;
+        }
+
+        private static void FreeToPool(GamePacket packet) {
+            if (packet != null) {
+                packet.UnInit();
+
+                lock (m_PoolLock) {
+                    InitPool();
+                    m_PacketPool.Store(packet);
+                }
+            }
+        }
+
+        public void Dispose() {
+            if (m_IsDisposed)
+                return;
+            m_IsDisposed = true;
+
+            OnFree();
+        }
+
+        protected void OnFree() {
+            FreeToPool(this);
+        }
+
+        public bool hasData()
 		{
 			if ((header.dataSize <= 0) || (data == null))
 				return false;
@@ -49,7 +120,7 @@ namespace NsTcpClient
 		public string dataToString()
 		{
 			if (data == null)
-				return "";
+				return string.Empty;
 			return data.ToString ();
 		}
 		
@@ -90,7 +161,10 @@ namespace NsTcpClient
             // 更新为3.0 ProtoBuf
 
             // 统一接口
-            T ret = ProtoMessageMgr.GetInstance().Parser<T>(data) as T;
+            var buf = data.GetBuffer();
+            if (buf == null)
+                return null;
+            T ret = ProtoMessageMgr.GetInstance().Parser<T>(buf, header.dataSize) as T;
             return ret;
 		}
 #endif
@@ -424,17 +498,22 @@ namespace NsTcpClient
                         #endif
                         if ((recvBufSz - i) < (header.dataSize + headerSize))
                             break;
-                        GamePacket packet = new GamePacket();
+                        // GamePacket packet = new GamePacket();
+                        GamePacket packet = GamePacket.CreateFromPool();
                         packet.header = header;
                         if (packet.header.dataSize <= 0) {
                             packet.header.dataSize = 0;
                             packet.data = null;
                         } else {
-                            packet.data = new byte[packet.header.dataSize];
-                            Buffer.BlockCopy(mRecvBuffer, i + headerSize, packet.data, 0, packet.header.dataSize);
+                            // packet.data = new byte[packet.header.dataSize];
+                            packet.data = NetByteArrayPool.GetBuffer(packet.header.dataSize);
+                            var buf = packet.data.GetBuffer();
+                            Buffer.BlockCopy(mRecvBuffer, i + headerSize, buf, 0, packet.header.dataSize);
                         }
 
-                        LinkedListNode<GamePacket> node = new LinkedListNode<GamePacket>(packet);
+                        // 优化掉
+                        // LinkedListNode<GamePacket> node = new LinkedListNode<GamePacket>(packet);
+                        var node = packet.LinkedNode;
                         lock (this)
                         {
                             mPacketList.AddLast(node);
@@ -534,12 +613,16 @@ namespace NsTcpClient
                                 mPacketList.AddFirst(node);
                             }
 							break;
+                        } else {
+                            packet.Dispose();
                         }
                     } else if (packet.status == GamePacketStatus.GPProcessing) {
                         lock (this) {
                             mPacketList.AddFirst(node);
                         }
                         break;
+                    } else {
+                        packet.Dispose();
                     }
                 }
             }

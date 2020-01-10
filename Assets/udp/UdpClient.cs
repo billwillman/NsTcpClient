@@ -526,6 +526,8 @@ namespace NsUdpClient
                                 mPacketList.AddFirst(node);
                             }
                             break;
+                        } else {
+                            packet.Dispose();
                         }
                     }
                     else if (packet.status == GamePacketStatus.GPProcessing)
@@ -535,6 +537,8 @@ namespace NsUdpClient
                             mPacketList.AddFirst(node);
                         }
                         break;
+                    } else {
+                        packet.Dispose();
                     }
                 }
             }
@@ -620,7 +624,7 @@ namespace NsUdpClient
                     if (recvBufSz < (header.dataSize + headerSize))
                         return;
 
-                    GamePacket packet = new GamePacket();
+                    GamePacket packet = GamePacket.CreateFromPool();
                     packet.header = header;
                     if (packet.header.dataSize <= 0)
                     {
@@ -629,11 +633,13 @@ namespace NsUdpClient
                     }
                     else
                     {
-                        packet.data = new byte[packet.header.dataSize];
-                        Buffer.BlockCopy(recvBuffer, headerSize, packet.data, 0, packet.header.dataSize);
+                        packet.data = NetByteArrayPool.GetBuffer(packet.header.dataSize);
+                        var buf = packet.data.GetBuffer();
+                        Buffer.BlockCopy(recvBuffer, headerSize, buf, 0, packet.header.dataSize);
                     }
 
-                    LinkedListNode<GamePacket> node = new LinkedListNode<GamePacket>(packet);
+                    //LinkedListNode<GamePacket> node = new LinkedListNode<GamePacket>(packet);
+                    var node = packet.LinkedNode;
                     lock (this)
                     {
                         mPacketList.AddLast(node);
