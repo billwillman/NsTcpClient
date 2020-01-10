@@ -173,7 +173,7 @@ namespace NsTcpClient
 		}*/
 
 		// 支持发送buf为null
-		public void Send (byte[] buf, int packetHandle, int bufSize = -1)
+		unsafe public void Send (byte[] buf, int packetHandle, int bufSize = -1)
 		{
 			if (mConnecting || (mTcpClient == null))
 				return;
@@ -216,10 +216,14 @@ namespace NsTcpClient
                 byte[] dstBuffer = dstStream.GetBuffer();
 
                 // 此处可优化，可以考虑后续使用RINGBUF优化，RINGBUF用完可以自动关闭掉连接
-                IntPtr pStruct = Marshal.AllocHGlobal(headerSize);
+              //  IntPtr pStruct = Marshal.AllocHGlobal(headerSize);
                 try {
-                    Marshal.StructureToPtr(header, pStruct, false);
-                    Marshal.Copy(pStruct, dstBuffer, 0, headerSize);
+                    //   Marshal.StructureToPtr(header, pStruct, false);
+                    //    Marshal.Copy(pStruct, dstBuffer, 0, headerSize);
+
+                    // 此处是上面优化代码
+                    byte* pHeader = (byte*)&header;
+                    Marshal.Copy((IntPtr)pHeader, dstBuffer, 0, headerSize);
 
 #if USE_NETORDER
 				// Calc header Crc
@@ -235,7 +239,7 @@ namespace NsTcpClient
 				Marshal.Copy(pStruct, dstBuffer, 0, headerSize);
 #endif
                 } finally {
-                    Marshal.FreeHGlobal(pStruct);
+                //    Marshal.FreeHGlobal(pStruct);
                 }
 
 #if USE_NETORDER

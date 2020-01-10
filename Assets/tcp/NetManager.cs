@@ -171,8 +171,21 @@ namespace NsTcpClient
 		}
 
 #if USE_CapnProto
-        public void SendCapnProto<T>(T data, int packHandle) where T: class {
-           
+        public void SendCapnProto<T>(T data, int packHandle) where T : struct, global::CapnProto.IPointer {
+            int byteLen = data.ByteLength();
+            if (byteLen <= 0)
+                return;
+            var stream = NetByteArrayPool.GetBuffer(byteLen);
+            if (stream != null) {
+                try {
+                    byte[] buffer = stream.GetBuffer();
+                    data.CopyTo(buffer);
+                    Send(buffer, packHandle, byteLen);
+                } finally {
+                    stream.Dispose();
+                    stream = null;
+                }
+            }
         }
 #endif
 
