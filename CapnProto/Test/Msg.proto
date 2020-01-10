@@ -3,6 +3,6 @@
 const cLoginMsg : Int32 = 1;
 
 struct LoginMsg {
-  userName @0 : Text;
-  passWord @1 : Text;
+  userName @0 : Text = "zengyi";
+  passWord @1 : Text = "111";
 }

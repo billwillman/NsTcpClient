@@ -20,6 +20,7 @@ namespace CapnProto_Msg
         public global::CapnProto_Msg.LoginMsg Dereference() { return (global::CapnProto_Msg.LoginMsg)this.ѧ_.Dereference(); }
         public static global::CapnProto_Msg.LoginMsg Create(global::CapnProto.Pointer parent) { return (global::CapnProto_Msg.LoginMsg)parent.Allocate(0, 2); }
         [global::CapnProto.FieldAttribute(0, pointer: 0)]
+        [global::System.ComponentModel.DefaultValueAttribute(@"zengyi")]
         public global::CapnProto.Text userName
         {
             get
@@ -32,6 +33,7 @@ namespace CapnProto_Msg
             }
         }
         [global::CapnProto.FieldAttribute(1, pointer: 1)]
+        [global::System.ComponentModel.DefaultValueAttribute(@"111")]
         public global::CapnProto.Text passWord
         {
             get
