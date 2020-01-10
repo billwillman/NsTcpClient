@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using NsTcpClient;
+using CapnProto;
+using CapnProto_Msg;
 
 public class Test : MonoBehaviour {
 
@@ -51,7 +53,7 @@ public class Test : MonoBehaviour {
 		TimerMgr.Instance.UnScaleTick(Time.unscaledDeltaTime);
 		TimerMgr.Instance.ScaleTick(Time.deltaTime);
         float currentTime = Time.realtimeSinceStartup;
-        if (currentTime - lastSendTime >= 3f)
+        if (currentTime - lastSendTime >= 0f)
         {
             lastSendTime = currentTime;
             if (NetManager.Instance.ClietnState == eClientState.eClient_STATE_CONNECTED)
@@ -60,7 +62,10 @@ public class Test : MonoBehaviour {
             }
         }
 
-	}
+       
+        
+
+    }
 
     void SendProtoMessage()
     {

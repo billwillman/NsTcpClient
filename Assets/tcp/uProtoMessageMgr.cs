@@ -45,7 +45,7 @@ namespace NsTcpClient
 
         
         // 无使用池
-        public byte[] ToBuffer<T>(Google.Protobuf.IMessage<T> message) where T: class, Google.Protobuf.IMessage<T>
+        public static byte[] ToBuffer<T>(Google.Protobuf.IMessage<T> message) where T: class, Google.Protobuf.IMessage<T>
         {
             if (message == null)
                 return null;
@@ -64,7 +64,7 @@ namespace NsTcpClient
         
 
         // 使用池
-        public MemoryStream ToStream<T>(Google.Protobuf.IMessage<T> message, out int outSize) where T: class, Google.Protobuf.IMessage<T> {
+        public static MemoryStream ToStream<T>(Google.Protobuf.IMessage<T> message, out int outSize) where T: class, Google.Protobuf.IMessage<T> {
             outSize = 0;
             if (message == null)
                 return null;
@@ -101,7 +101,7 @@ namespace NsTcpClient
 #endif
 
 #if USE_CapnProto
-        public bool Parser<T>(byte[] buffer, out T data, int bufSize = -1) where T: struct, CapnProto.IPointer {
+        public static bool Parser<T>(byte[] buffer, out T data, int bufSize = -1) where T: struct, CapnProto.IPointer {
             if (buffer == null || buffer.Length <= 0) {
                 data = default(T);
                 return false;
@@ -123,7 +123,7 @@ namespace NsTcpClient
         }
 
         // 使用池的版本
-        public MemoryStream ToStream<T>(T message, out int outSize) where T : struct, CapnProto.IPointer {
+        public static MemoryStream ToStream<T>(T message, out int outSize) where T : struct, CapnProto.IPointer {
             int byteLen = message.ByteLength();
             if (byteLen <= 0) {
                 outSize = 0;
@@ -135,8 +135,14 @@ namespace NsTcpClient
             outSize = byteLen;
             return stream;
         }
-#endif
+
+        public static T CreateCapnProtoMsg<T>() where T : struct, CapnProto.IPointer {
+            CapnProto.Message msg = null;
+            T ret = msg.Allocate<T>();
+            return ret;
         }
+#endif
+    }
 }
 
 

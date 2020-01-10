@@ -19,7 +19,10 @@ namespace NsTcpClient
 			m_Client.AddStateEvent(OnSocketStateEvent);
 			m_Timer = TimerMgr.Instance.CreateTimer(0, true);
 			m_Timer.AddListener(OnTimerEvent);
-		}
+
+            NetByteArrayPool.InitMgr();
+
+        }
 
 		public string Ip
 		{
@@ -173,7 +176,7 @@ namespace NsTcpClient
 #if USE_CapnProto
         public void SendCapnProto<T>(T data, int packetHandle) where T : struct, global::CapnProto.IPointer {
             int outSize;
-            var stream = ProtoMessageMgr.GetInstance().ToStream<T>(data, out outSize);
+            var stream = ProtoMessageMgr.ToStream<T>(data, out outSize);
             if (stream == null || outSize <= 0) {
                 if (stream != null) {
                     stream.Dispose();
@@ -218,7 +221,7 @@ namespace NsTcpClient
             
             // 优化后版本使用byte[]池
             int outSize;
-            var stream = ProtoMessageMgr.GetInstance().ToStream<T>(data, out outSize);
+            var stream = ProtoMessageMgr.ToStream<T>(data, out outSize);
             if (stream == null)
                 return;
             try
