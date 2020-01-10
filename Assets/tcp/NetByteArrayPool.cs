@@ -4,17 +4,109 @@ using System.IO;
 using Microsoft.IO;
 
 namespace NsTcpClient {
+
+    public sealed class ByteBufferNode {
+        private LinkedListNode<ByteBufferNode> m_LinkedListNode = null;
+        private byte[] m_Buffer = new byte[NetByteArrayPool._cSmallBufferSize];
+        private int m_DataSize = NetByteArrayPool._cSmallBufferSize;
+
+        public ByteBufferNode(int dataSize) {
+            _InitDataSize(dataSize);
+        }
+
+        public int DataSize {
+            get {
+                return m_DataSize;
+            }
+        }
+
+        internal void _InitDataSize(int dataSize) {
+            m_DataSize = dataSize;
+            if (dataSize > NetByteArrayPool._cSmallBufferSize)
+                throw (new Exception());
+        }
+
+        public LinkedListNode<ByteBufferNode> LinkedListNode {
+            get {
+                if (m_LinkedListNode == null)
+                    m_LinkedListNode = new LinkedListNode<ByteBufferNode>(this);
+                return m_LinkedListNode;
+            }
+        }
+
+        public byte[] Buffer {
+            get {
+                return m_Buffer;
+            }
+        }
+
+        public void Dispose() {
+            if (IsDisposed)
+                return;
+            NetByteArrayPool._DestroyBuffer(this);
+        }
+
+        public bool IsDisposed {
+            get {
+                if (m_LinkedListNode == null)
+                    return false;
+                return NetByteArrayPool.IsInByteNodePool(m_LinkedListNode);
+            }
+        }
+
+    }
     
     // 网路数据池
     public static class NetByteArrayPool {
         private static RecyclableMemoryStreamManager m_Mgr = null;
         private static string _cRcyclableTag = "NetByteArrayPool";
-        private static int _cSmallBufferSize = 1 * 1024;
+        public static readonly int _cSmallBufferSize = 1 * 1024;
         private static int _cLargeBufSize = 64 * 1024;
         public static void InitMgr() {
             if (m_Mgr != null)
                 return;
             m_Mgr = new RecyclableMemoryStreamManager(_cSmallBufferSize, _cLargeBufSize, _cLargeBufSize);
+        }
+
+        // 自己的池
+        private static LinkedList<ByteBufferNode> m_ByteNodePool = new LinkedList<ByteBufferNode>();
+        private static System.Object m_ByteNodePoolLock = new object();
+
+        internal static bool IsInByteNodePool(LinkedListNode<ByteBufferNode> node) {
+            return m_ByteNodePool == node.List;
+        }
+
+        public static ByteBufferNode GetByteBufferNode(int dataSize = -1) {
+            if (dataSize <= 0)
+                dataSize = NetByteArrayPool._cSmallBufferSize;
+            ByteBufferNode ret;
+            if (m_ByteNodePool.Count > 0) {
+                LinkedListNode<ByteBufferNode> n;
+                lock (m_ByteNodePoolLock) {
+                    n = m_ByteNodePool.First;
+                    m_ByteNodePool.Remove(n);
+                }
+                ret = n.Value;
+                ret._InitDataSize(dataSize);
+                return ret;
+            }
+
+            ret = new ByteBufferNode(dataSize);
+            return ret;
+        }
+
+        internal static void _DestroyBuffer(ByteBufferNode node) {
+            if (node != null) {
+                var n = node.LinkedListNode;
+                var list = n.List;
+               if (list != m_ByteNodePool) {
+                    lock (m_ByteNodePoolLock) {
+                        if (list != null)
+                            list.Remove(n);
+                        m_ByteNodePool.AddLast(n);
+                    }
+                }
+            }
         }
 
         public static MemoryStream GetBuffer(int bufSize) {

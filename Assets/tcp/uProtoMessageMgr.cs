@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 #if USE_CapnProto
 using CapnProto;
@@ -12,6 +10,26 @@ using CapnProto;
 
 namespace NsTcpClient
 {
+
+#if USE_CapnProto
+    public struct CapnProtoMsg<T> where T: struct, CapnProto.IPointer {
+        public T data;
+        public Stream allocator;
+        public ByteBufferNode allocator1;
+
+        public void Dispose() {
+            if (allocator != null) {
+                allocator.Dispose();
+                allocator = null;
+            }
+            if (allocator1 != null) {
+                allocator1.Dispose();
+                allocator1 = null;
+            }
+        }
+    }
+#endif
+
     public class ProtoMessageMgr: Singleton<ProtoMessageMgr>
     {
 #if USE_PROTOBUF_NET
@@ -101,6 +119,7 @@ namespace NsTcpClient
 #endif
 
 #if USE_CapnProto
+
         public static bool Parser<T>(byte[] buffer, out T data, int bufSize = -1) where T: struct, CapnProto.IPointer {
             if (buffer == null || buffer.Length <= 0) {
                 data = default(T);
@@ -114,7 +133,11 @@ namespace NsTcpClient
                 return false;
             }
             try {
-                data = msg.Allocate<T>();
+                //data = msg.Allocate<T>();
+                if (!msg.ReadNext())
+                    throw new EndOfStreamException();
+                IPointer ptr = msg.Root;
+                data = (T)ptr;
                 return true;
             } finally {
                 msg.Dispose();
@@ -136,9 +159,26 @@ namespace NsTcpClient
             return stream;
         }
 
-        public static T CreateCapnProtoMsg<T>() where T : struct, CapnProto.IPointer {
-            CapnProto.Message msg = null;
-            T ret = msg.Allocate<T>();
+        public static CapnProtoMsg<T> CreateCapnProtoMsg<T>(bool isUseStream = false) where T : struct, CapnProto.IPointer {
+
+            MemoryStream stream = null;
+            byte[] buffer = null;
+            ByteBufferNode byteNode = null;
+            if (isUseStream) {
+                stream = NetByteArrayPool.GetBuffer(NetByteArrayPool._cSmallBufferSize);
+                if (stream == null)
+                    return default(CapnProtoMsg<T>);
+                buffer = stream.GetBuffer();
+            } else {
+                byteNode = NetByteArrayPool.GetByteBufferNode(NetByteArrayPool._cSmallBufferSize);
+                buffer = byteNode.Buffer;
+            }
+
+            CapnProtoMsg<T> ret = new CapnProtoMsg<T>();
+            CapnProto.Message allocator = CapnProto.Message.Load(buffer, 0, buffer.Length);
+            ret.data = allocator.Allocate<T>();
+            ret.allocator = stream;
+            ret.allocator1 = byteNode;
             return ret;
         }
 #endif

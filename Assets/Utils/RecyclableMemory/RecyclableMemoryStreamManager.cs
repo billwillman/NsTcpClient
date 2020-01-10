@@ -33,7 +33,6 @@ namespace Microsoft.IO
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
-    using System.Linq;
     using System.Threading;
 
     /// <summary>
@@ -236,6 +235,17 @@ namespace Microsoft.IO
             }
         }
 
+        private static long LongSum(long[] list) {
+            if (list != null) {
+                long ret = 0;
+                for (int i = 0; i < list.Length; ++i) {
+                    ret += list[i];
+                }
+                return ret;
+            } else
+                return 0;
+        }
+
         /// <summary>
         /// Number of bytes in large pool not currently in use
         /// </summary>
@@ -243,7 +253,7 @@ namespace Microsoft.IO
         {
             get
             {
-                return this.largeBufferFreeSize.Sum();
+                return LongSum(this.largeBufferFreeSize);
             }
         }
 
@@ -254,7 +264,7 @@ namespace Microsoft.IO
         {
             get
             {
-                return this.largeBufferInUseSize.Sum();
+                return LongSum(this.largeBufferInUseSize);
             }
         }
 

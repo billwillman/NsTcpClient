@@ -195,10 +195,14 @@ namespace NsTcpClient
                 }
             }
         }
+
+        public void SendCapnProto<T>(CapnProtoMsg<T> msg, int packetHandle) where T : struct, global::CapnProto.IPointer {
+            SendCapnProto<T>(msg.data, packetHandle);
+        }
 #endif
 
 #if USE_PROTOBUF_NET
-        public void SendProtoBuf<T>(T data, int packetHandle) where T: class, Google.Protobuf.IMessage<T>
+            public void SendProtoBuf<T>(T data, int packetHandle) where T: class, Google.Protobuf.IMessage<T>
         {
             if (data == null)
             {

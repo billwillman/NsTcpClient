@@ -62,9 +62,17 @@ public class Test : MonoBehaviour {
             }
         }
 
-       
-        
-
+        UnityEngine.Profiling.Profiler.BeginSample("CapnProto");
+        var msg = ProtoMessageMgr.CreateCapnProtoMsg<LoginMsg>();
+   //     print(msg.data.userName.ToString());
+        msg.Dispose();
+        UnityEngine.Profiling.Profiler.EndSample();
+        /*
+        UnityEngine.Profiling.Profiler.BeginSample("MemoryStream");
+        System.IO.MemoryStream ss = new System.IO.MemoryStream();
+        ss.Dispose();
+        UnityEngine.Profiling.Profiler.EndSample();
+        */
     }
 
     void SendProtoMessage()
