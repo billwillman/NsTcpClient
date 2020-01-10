@@ -1,5 +1,6 @@
 ﻿//#define USE_NETORDER
 #define USE_PROTOBUF_NET
+#define USE_CapnProto
 
 using System;
 using System.Collections;
@@ -9,6 +10,9 @@ using System.Threading;
 using System.Runtime.CompilerServices;
 #if USE_NETORDER
 using System.Net;
+#endif
+#if USE_CapnProto
+using CapnProto;
 #endif
 
 namespace NsTcpClient
@@ -389,7 +393,7 @@ namespace NsTcpClient
 		}
 
         // 子线程调用
-        private void OnThreadBufferProcess(TcpClient tcp)
+        private unsafe void OnThreadBufferProcess(TcpClient tcp)
         {
             if (tcp == null)
                 return;
@@ -402,11 +406,15 @@ namespace NsTcpClient
                 GamePackHeader header = new GamePackHeader();
 
                 int headerSize = Marshal.SizeOf(header);
-                IntPtr headerBuffer = Marshal.AllocHGlobal(headerSize);
+
+                // 优化掉了
+              //  IntPtr headerBuffer = Marshal.AllocHGlobal(headerSize);
                 try {
                     while (recvBufSz - i >= headerSize) {
-                        Marshal.Copy(mRecvBuffer, i, headerBuffer, headerSize);
-                        header = (GamePackHeader)Marshal.PtrToStructure(headerBuffer, typeof(GamePackHeader));
+                        byte* headerBuffer = (byte*)&header;
+                        Marshal.Copy(mRecvBuffer, i, (IntPtr)headerBuffer, headerSize);
+                       // 优化掉了
+                       // header = (GamePackHeader)Marshal.PtrToStructure(headerBuffer, typeof(GamePackHeader));
                         #if USE_NETORDER
                         // used Net
                         header.headerCrc32 = (uint)IPAddress.NetworkToHostOrder(header.headerCrc32);
@@ -435,7 +443,8 @@ namespace NsTcpClient
                         i += headerSize + header.dataSize;
                     }
                 } finally {
-                    Marshal.FreeHGlobal(headerBuffer);
+                    // 优化掉了
+                 //   Marshal.FreeHGlobal(headerBuffer);
                 }
 
                 recvBufSz -= i;
