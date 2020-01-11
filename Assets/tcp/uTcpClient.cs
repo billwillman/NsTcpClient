@@ -36,13 +36,12 @@ namespace NsTcpClient
 
 	// 1. data is ProtoBuf
 	// 2. data is json
-	public class GamePacket
+	public class GamePacket: PoolNode<GamePacket>
 	{
         public GamePackHeader header;
         //public byte[] data = null;
         public MemoryStream data = null;
 
-        private bool m_IsDisposed = false;
         private LinkedListNode<GamePacket> m_LinkedNode = null;
 
         public LinkedListNode<GamePacket> LinkedNode {
@@ -52,16 +51,6 @@ namespace NsTcpClient
                 return m_LinkedNode;
             }
                 
-        }
-
-        private static System.Object m_PoolLock = new object();
-        private static ObjectPool<GamePacket> m_PacketPool = null;
-        
-        private static void InitPool() {
-            if (m_PacketPool == null) {
-                m_PacketPool = new ObjectPool<GamePacket>();
-                m_PacketPool.Init(0);
-            }
         }
 
         private void UnInit() {
@@ -74,40 +63,16 @@ namespace NsTcpClient
 
         private void Init() {
             UnInit();
-            m_IsDisposed = false;
         }
 
         public static GamePacket CreateFromPool() {
-            GamePacket ret;
-            lock (m_PoolLock) {
-                InitPool();
-                ret = m_PacketPool.GetObject();
-            }
+			GamePacket ret = (GamePacket)AbstractPool<GamePacket>.GetNode ();
             ret.Init();
             return ret;
         }
 
-        private static void FreeToPool(GamePacket packet) {
-            if (packet != null) {
-                packet.UnInit();
-
-                lock (m_PoolLock) {
-                    InitPool();
-                    m_PacketPool.Store(packet);
-                }
-            }
-        }
-
-        public void Dispose() {
-            if (m_IsDisposed)
-                return;
-            m_IsDisposed = true;
-
-            OnFree();
-        }
-
-        protected void OnFree() {
-            FreeToPool(this);
+		protected override void OnFree() {
+			UnInit();
         }
 
         public bool hasData()

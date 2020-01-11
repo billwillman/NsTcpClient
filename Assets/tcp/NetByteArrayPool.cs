@@ -70,7 +70,6 @@ namespace NsTcpClient {
 
         // 自己的池
         private static LinkedList<ByteBufferNode> m_ByteNodePool = new LinkedList<ByteBufferNode>();
-        private static System.Object m_ByteNodePoolLock = new object();
 
         internal static bool IsInByteNodePool(LinkedListNode<ByteBufferNode> node) {
             return m_ByteNodePool == node.List;
@@ -79,17 +78,19 @@ namespace NsTcpClient {
         public static ByteBufferNode GetByteBufferNode(int dataSize = -1) {
             if (dataSize <= 0)
                 dataSize = NetByteArrayPool._cSmallBufferSize;
-            ByteBufferNode ret;
-            if (m_ByteNodePool.Count > 0) {
-                LinkedListNode<ByteBufferNode> n;
-                lock (m_ByteNodePoolLock) {
-                    n = m_ByteNodePool.First;
-                    m_ByteNodePool.Remove(n);
-                }
-                ret = n.Value;
-                ret._InitDataSize(dataSize);
-                return ret;
-            }
+			
+			ByteBufferNode ret = null;
+			lock (m_ByteNodePool) {
+				LinkedListNode<ByteBufferNode> n = m_ByteNodePool.First;
+				if (n != null) {
+					m_ByteNodePool.Remove (n);
+					ret = n.Value;
+				}
+			}
+			if (ret != null) {
+				ret._InitDataSize (dataSize);
+				return ret;
+			}
 
             ret = new ByteBufferNode(dataSize);
             return ret;
@@ -98,12 +99,14 @@ namespace NsTcpClient {
         internal static void _DestroyBuffer(ByteBufferNode node) {
             if (node != null) {
                 var n = node.LinkedListNode;
-                var list = n.List;
-               if (list != m_ByteNodePool) {
-                    lock (m_ByteNodePoolLock) {
-                        if (list != null)
-                            list.Remove(n);
-                        m_ByteNodePool.AddLast(n);
+				if (n.List != m_ByteNodePool) {
+					lock (m_ByteNodePool) {
+						var list = n.List;
+						if (list != m_ByteNodePool) {
+							if (list != null)
+								list.Remove (n);
+							m_ByteNodePool.AddLast (n);
+						}
                     }
                 }
             }
