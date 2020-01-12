@@ -572,7 +572,10 @@ namespace NsUdpClient
                         if (mPacketAbstractServerMessageMap.TryGetValue(packet.header.header, out abstractMessageClass)
                             && abstractMessageClass != null)
                         {
-                            var obj = Activator.CreateInstance(abstractMessageClass, packet.data);
+                            byte[] buffer = null;
+                            if (packet.data != null)
+                                buffer = packet.data.GetBuffer();
+                            var obj = Activator.CreateInstance(abstractMessageClass, buffer, packet.header.dataSize);
                             if (obj != null)
                             {
                                 AbstractServerMessage message = obj as AbstractServerMessage;
