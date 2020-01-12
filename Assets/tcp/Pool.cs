@@ -13,17 +13,8 @@ namespace Utils
 		}
 
 		public void Dispose() {
-			if (IsDisposed)
-				return;
-			OnFree ();
-			AbstractPool<T>._DestroyNode(this);
-		}
-
-		public bool IsDisposed {
-			get {
-				if (m_PoolNode == null)
-					return false;
-				return AbstractPool<T>.IsInNodePool(m_PoolNode);
+			if (AbstractPool<T>._DestroyNode (this)) {
+				OnFree ();
 			}
 		}
 
@@ -44,7 +35,7 @@ namespace Utils
 			return m_NodePool == node.List;
 		}
 
-		internal static void _DestroyNode(PoolNode<T> node)
+		internal static bool _DestroyNode(PoolNode<T> node)
 		{
 			if (node != null) {
 				var n = node.PPoolNode;
@@ -55,10 +46,12 @@ namespace Utils
 							if (list != null)
 								list.Remove (n);
 							m_NodePool.AddLast (n);
+							return true;
 						}
 					}
 				}
 			}
+			return false;
 		}
 
 		public static PoolNode<T> GetNode()

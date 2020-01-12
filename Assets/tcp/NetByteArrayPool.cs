@@ -41,17 +41,7 @@ namespace NsTcpClient {
         }
 
         public void Dispose() {
-            if (IsDisposed)
-                return;
             NetByteArrayPool._DestroyBuffer(this);
-        }
-
-        public bool IsDisposed {
-            get {
-                if (m_LinkedListNode == null)
-                    return false;
-                return NetByteArrayPool.IsInByteNodePool(m_LinkedListNode);
-            }
         }
 
     }
@@ -96,7 +86,7 @@ namespace NsTcpClient {
             return ret;
         }
 
-        internal static void _DestroyBuffer(ByteBufferNode node) {
+        internal static bool _DestroyBuffer(ByteBufferNode node) {
             if (node != null) {
                 var n = node.LinkedListNode;
 				if (n.List != m_ByteNodePool) {
@@ -106,10 +96,12 @@ namespace NsTcpClient {
 							if (list != null)
 								list.Remove (n);
 							m_ByteNodePool.AddLast (n);
+							return true;
 						}
                     }
                 }
             }
+			return false;
         }
 
         public static MemoryStream GetBuffer(int bufSize) {
