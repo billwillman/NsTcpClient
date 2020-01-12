@@ -77,6 +77,7 @@ namespace NsTcpClient
             Google.Protobuf.CodedOutputStream output = new Google.Protobuf.CodedOutputStream(buf);
             message.WriteTo(output);
             output.CheckNoSpaceLeft();
+			output.Dispose ();
             return buf;
         }
 
@@ -97,6 +98,7 @@ namespace NsTcpClient
             Google.Protobuf.CodedOutputStream output = new Google.Protobuf.CodedOutputStream(buffer, bufSize);
             message.WriteTo(output);
             output.CheckNoSpaceLeft();
+			output.Dispose ();
             return stream;
         }
 
@@ -118,6 +120,7 @@ namespace NsTcpClient
             Google.Protobuf.CodedOutputStream output = new Google.Protobuf.CodedOutputStream(buffer, bufSize);
             message.WriteTo(output);
             output.CheckNoSpaceLeft();
+			output.Dispose ();
             return stream;
         }
 
