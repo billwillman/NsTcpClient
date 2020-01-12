@@ -602,7 +602,7 @@ namespace NsUdpClient
         }
 
         // 处理格式
-        protected virtual void OnThreadBufferProcess(byte[] recvBuffer, int recvBufSz)
+        protected unsafe virtual void OnThreadBufferProcess(byte[] recvBuffer, int recvBufSz)
         {
             if (recvBuffer == null || recvBuffer.Length <= 0 || recvBufSz <= 0)
                 return;
@@ -611,12 +611,13 @@ namespace NsUdpClient
 
             GamePackHeader header = new GamePackHeader();
             int headerSize = Marshal.SizeOf(header);
-            IntPtr headerBuffer = Marshal.AllocHGlobal(headerSize);
+        //    IntPtr headerBuffer = Marshal.AllocHGlobal(headerSize);
             try {
                 if (recvBufSz >= headerSize)
                 {
-                    Marshal.Copy(recvBuffer, 0, headerBuffer, headerSize);
-                    header = (GamePackHeader)Marshal.PtrToStructure(headerBuffer, typeof(GamePackHeader));
+                    byte* headerBuffer = (byte*)&header;
+                    Marshal.Copy(recvBuffer, 0, (IntPtr)headerBuffer, headerSize);
+                  //  header = (GamePackHeader)Marshal.PtrToStructure(headerBuffer, typeof(GamePackHeader));
 #if USE_NETORDER
                         // used Net
                         header.headerCrc32 = (uint)IPAddress.NetworkToHostOrder(header.headerCrc32);
@@ -651,7 +652,7 @@ namespace NsUdpClient
                 } 
             } finally
             {
-                Marshal.FreeHGlobal(headerBuffer);
+             //   Marshal.FreeHGlobal(headerBuffer);
             }
         }
 
