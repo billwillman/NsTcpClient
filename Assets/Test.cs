@@ -48,20 +48,7 @@ public class Test : MonoBehaviour {
 
     float lastSendTime = 0;
 
-	void Update()
-	{
-		TimerMgr.Instance.UnScaleTick(Time.unscaledDeltaTime);
-		TimerMgr.Instance.ScaleTick(Time.deltaTime);
-        float currentTime = Time.realtimeSinceStartup;
-        if (currentTime - lastSendTime >= 0f)
-        {
-            lastSendTime = currentTime;
-            if (NetManager.Instance.ClietnState == eClientState.eClient_STATE_CONNECTED)
-            {
-                SendProtoMessage();
-            }
-        }
-
+    void TestCapnProto() {
         UnityEngine.Profiling.Profiler.BeginSample("CapnProto Create");
         var msg = ProtoMessageMgr.CreateCapnProtoMsg<LoginMsg>();
         UnityEngine.Profiling.Profiler.EndSample();
@@ -81,13 +68,40 @@ public class Test : MonoBehaviour {
         UnityEngine.Profiling.Profiler.BeginSample("CapnProto Dispose");
         msg.Dispose();
         UnityEngine.Profiling.Profiler.EndSample();
+    }
 
-        /*
-        UnityEngine.Profiling.Profiler.BeginSample("MemoryStream");
-        System.IO.MemoryStream ss = new System.IO.MemoryStream();
-        ss.Dispose();
+	void Update()
+	{
+		TimerMgr.Instance.UnScaleTick(Time.unscaledDeltaTime);
+		TimerMgr.Instance.ScaleTick(Time.deltaTime);
+        float currentTime = Time.realtimeSinceStartup;
+        if (currentTime - lastSendTime >= 0f)
+        {
+            lastSendTime = currentTime;
+            if (NetManager.Instance.ClietnState == eClientState.eClient_STATE_CONNECTED)
+            {
+              //  SendProtoMessage();
+            }
+        }
+
+        TestProtoMessage();
+    }
+
+    void TestProtoMessage() {
+        var req = new C_S_Login_Req();
+        req.UserName = "zengyi";
+        req.Password = "HelloWorld";
+        int dataSize;
+
+        UnityEngine.Profiling.Profiler.BeginSample("ProtoToBuf");
+        var stream = ProtoMessageMgr.ToBufferNode<C_S_Login_Req>(req, out dataSize);
         UnityEngine.Profiling.Profiler.EndSample();
-        */
+
+        UnityEngine.Profiling.Profiler.BeginSample("BufToProto");
+        var rep = ProtoMessageMgr.Instance.Parser<C_S_Login_Req>(stream.GetBuffer(), stream.DataSize);
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        stream.Dispose();
     }
 
     void SendProtoMessage()
