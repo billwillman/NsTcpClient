@@ -9,7 +9,12 @@ namespace NsTcpClient
         protected long m_DataSize = 0;
         public AbstractServerMessage(byte[] buffer, long dataSize): base()
         {
-            m_Buf = new MemoryStream(buffer);
+            if ((buffer != null) && (buffer.Length > 0)) {
+                m_Buf = new MemoryStream(buffer);
+                if ((dataSize <= 0) || (dataSize > buffer.Length))
+                    dataSize = buffer.Length;
+            } else
+                dataSize = 0;
             m_DataSize = dataSize;
         }
 
