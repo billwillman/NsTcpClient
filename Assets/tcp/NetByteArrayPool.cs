@@ -40,6 +40,11 @@ namespace NsTcpClient {
             }
         }
 
+		public byte[] GetBuffer()
+		{
+			return m_Buffer;
+		}
+
         public void Dispose() {
             NetByteArrayPool._DestroyBuffer(this);
         }

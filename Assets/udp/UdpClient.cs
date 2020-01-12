@@ -296,7 +296,7 @@ namespace NsUdpClient
             // 下面注释是未优化代码
             //byte[] dstBuffer = new byte[dstSize];
             // 此处已优化
-            var dstStream = NetByteArrayPool.GetBuffer(dstSize);
+			var dstStream = NetByteArrayPool.GetByteBufferNode(dstSize);
             try
             {
                 byte[] dstBuffer = dstStream.GetBuffer();
@@ -633,7 +633,7 @@ namespace NsUdpClient
                     }
                     else
                     {
-                        packet.data = NetByteArrayPool.GetBuffer(packet.header.dataSize);
+						packet.data = NetByteArrayPool.GetByteBufferNode(packet.header.dataSize);
                         var buf = packet.data.GetBuffer();
                         Buffer.BlockCopy(recvBuffer, headerSize, buf, 0, packet.header.dataSize);
                     }

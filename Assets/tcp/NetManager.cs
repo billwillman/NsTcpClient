@@ -176,7 +176,7 @@ namespace NsTcpClient
 #if USE_CapnProto
         public void SendCapnProto<T>(T data, int packetHandle) where T : struct, global::CapnProto.IPointer {
             int outSize;
-            var stream = ProtoMessageMgr.ToStream<T>(data, out outSize);
+			var stream = ProtoMessageMgr.ToBufferNode<T>(data, out outSize);
             if (stream == null || outSize <= 0) {
                 if (stream != null) {
                     stream.Dispose();
@@ -186,7 +186,7 @@ namespace NsTcpClient
             }
 
             try {
-                var buf = stream.GetBuffer();
+				var buf = stream.GetBuffer();
                 Send(buf, packetHandle, outSize);
             } finally {
                 if (stream != null) {

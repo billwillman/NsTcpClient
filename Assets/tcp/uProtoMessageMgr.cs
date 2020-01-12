@@ -159,6 +159,19 @@ namespace NsTcpClient
             return stream;
         }
 
+		public static ByteBufferNode ToBufferNode<T>(T message, out int outSize) where T : struct, CapnProto.IPointer {
+			int byteLen = message.ByteLength();
+			if (byteLen <= 0) {
+				outSize = 0;
+				return null;
+			}
+			ByteBufferNode ret = NetByteArrayPool.GetByteBufferNode (byteLen);
+			byte[] buffer = ret.Buffer;
+			message.CopyTo(buffer);
+			outSize = byteLen;
+			return ret;
+		}
+
         public static CapnProtoMsg<T> CreateCapnProtoMsg<T>(bool isUseStream = false) where T : struct, CapnProto.IPointer {
 
             MemoryStream stream = null;
