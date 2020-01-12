@@ -66,10 +66,6 @@ namespace NsTcpClient {
         // 自己的池
         private static LinkedList<ByteBufferNode> m_ByteNodePool = new LinkedList<ByteBufferNode>();
 
-        internal static bool IsInByteNodePool(LinkedListNode<ByteBufferNode> node) {
-            return m_ByteNodePool == node.List;
-        }
-
         public static ByteBufferNode GetByteBufferNode(int dataSize = -1) {
             if (dataSize <= 0)
                 dataSize = NetByteArrayPool._cSmallBufferSize;

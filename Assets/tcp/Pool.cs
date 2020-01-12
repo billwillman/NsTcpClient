@@ -24,6 +24,7 @@ namespace Utils
 			get {
 				if (m_PoolNode == null)
 					return false;
+				// 这里不需要锁
 				return AbstractPool<T>.IsInNodePool (m_PoolNode);
 			}
 		}
@@ -42,9 +43,10 @@ namespace Utils
 		private static LinkedList<T> m_NodePool = new LinkedList<T>();
 
 		internal static bool IsInNodePool(LinkedListNode<T> node) {
-			lock (m_NodePool) {
+			// 这里不需要锁
+			//lock (m_NodePool) {
 				return (node != null) && (m_NodePool == node.List);
-			}
+			//}
 		}
 
 		internal static void _DestroyNode(PoolNode<T> node)
