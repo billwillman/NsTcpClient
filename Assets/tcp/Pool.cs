@@ -4,9 +4,8 @@ using System.Collections.Generic;
 namespace Utils
 {
 
-	public class PoolNode<T>
-	{
-		private LinkedListNode<T> m_PoolNode = null;
+	public class PoolNode<T> where T : PoolNode<T>, new() {
+		private LinkedListNode<PoolNode<T>> m_PoolNode = null;
 
 		protected virtual void OnFree()
 		{
@@ -29,20 +28,20 @@ namespace Utils
 			}
 		}
 
-		public LinkedListNode<T> PPoolNode {
+		public LinkedListNode<PoolNode<T>> PPoolNode {
 			get {
 				if (m_PoolNode == null)
-					m_PoolNode = new LinkedListNode<T>(this);
+					m_PoolNode = new LinkedListNode<PoolNode<T>>(this);
 				return m_PoolNode;
 			}
 		}
 	}
 
-	public sealed class AbstractPool<T> where T: new()
+	public sealed class AbstractPool<T> where T: PoolNode<T>, new()
 	{
-		private static LinkedList<T> m_NodePool = new LinkedList<T>();
+		private static LinkedList<PoolNode<T>> m_NodePool = new LinkedList<PoolNode<T>>();
 
-		internal static bool IsInNodePool(LinkedListNode<T> node) {
+		internal static bool IsInNodePool(LinkedListNode<PoolNode<T>> node) {
 			// 这里不需要锁
 			//lock (m_NodePool) {
 				return (node != null) && (m_NodePool == node.List);
@@ -70,7 +69,7 @@ namespace Utils
 		{
 			PoolNode<T> ret = null;
 			lock (m_NodePool) {
-				LinkedListNode<T> n = m_NodePool.First;
+				LinkedListNode<PoolNode<T>> n = m_NodePool.First;
 				if (n != null) {
 					m_NodePool.Remove (n);
 					ret = n.Value;

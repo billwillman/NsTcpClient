@@ -45,6 +45,14 @@ namespace NsTcpClient {
 			return m_Buffer;
 		}
 
+        public int Length {
+            get {
+                if (m_Buffer != null)
+                    return m_Buffer.Length;
+                return 0;
+            }
+        }
+
         public void Dispose() {
             NetByteArrayPool._DestroyBuffer(this);
         }
