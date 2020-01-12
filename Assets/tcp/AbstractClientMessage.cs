@@ -32,8 +32,10 @@ namespace NsTcpClient
 
         protected override void OnFree(bool isManual)
         {
-            NetByteArrayPool.FreeBuffer(m_Buf);
-            m_Buf = null;
+            if (m_Buf != null) {
+                m_Buf.Dispose();
+                m_Buf = null;
+            }
         }
 
         internal abstract void DoSend();

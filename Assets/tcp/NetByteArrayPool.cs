@@ -118,6 +118,7 @@ namespace NsTcpClient {
             return m_Mgr.GetStream(_cRcyclableTag, bufSize);
         }
 
+        /*
         public static void FreeBuffer(MemoryStream stream) {
             if (stream == null || stream.Length <= 0)
                 return;
@@ -125,5 +126,6 @@ namespace NsTcpClient {
             stream.Dispose();
             stream = null;
         }
+        */
     }
 }
