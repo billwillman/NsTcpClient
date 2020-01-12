@@ -81,7 +81,7 @@ namespace NsTcpClient
         }
 
         // 使用池
-        public static ByteBufferNode ToByteBufferNode<T>(Google.Protobuf.IMessage<T> message, out int outSize) where T : class, Google.Protobuf.IMessage<T> {
+        public static ByteBufferNode ToBufferNode<T>(Google.Protobuf.IMessage<T> message, out int outSize) where T : class, Google.Protobuf.IMessage<T> {
             outSize = 0;
             if (message == null)
                 return null;

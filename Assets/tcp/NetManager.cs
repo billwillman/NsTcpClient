@@ -225,7 +225,7 @@ namespace NsTcpClient
             
             // 优化后版本使用byte[]池
             int outSize;
-            var stream = ProtoMessageMgr.ToByteBufferNode<T>(data, out outSize);
+            var stream = ProtoMessageMgr.ToBufferNode<T>(data, out outSize);
             if (stream == null)
                 return;
             try
