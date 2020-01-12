@@ -6,9 +6,11 @@ namespace NsTcpClient
     public abstract class AbstractServerMessage : DisposeObject
     {
         protected MemoryStream m_Buf = null;
-        public AbstractServerMessage(byte[] buffer): base()
+        protected long m_DataSize = 0;
+        public AbstractServerMessage(byte[] buffer, long dataSize): base()
         {
             m_Buf = new MemoryStream(buffer);
+            m_DataSize = dataSize;
         }
 
         public bool IsBufEnd(uint size)
@@ -16,7 +18,8 @@ namespace NsTcpClient
             if (m_Buf == null)
                 return true;
             long pos = m_Buf.Position;
-            if (pos + size > m_Buf.Length)
+            long newPos = pos + size;
+            if ((newPos > m_Buf.Length) || (newPos > m_DataSize))
                 return true;
             return false;
         }
