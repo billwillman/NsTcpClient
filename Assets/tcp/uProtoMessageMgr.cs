@@ -79,10 +79,30 @@ namespace NsTcpClient
             output.CheckNoSpaceLeft();
             return buf;
         }
-        
 
         // 使用池
-        public static MemoryStream ToStream<T>(Google.Protobuf.IMessage<T> message, out int outSize) where T: class, Google.Protobuf.IMessage<T> {
+        public static ByteBufferNode ToByteBufferNode<T>(Google.Protobuf.IMessage<T> message, out int outSize) where T : class, Google.Protobuf.IMessage<T> {
+            outSize = 0;
+            if (message == null)
+                return null;
+            // 检查
+            Google.Protobuf.ProtoPreconditions.CheckNotNull(message, "message");
+            int bufSize = message.CalculateSize();
+            if (bufSize <= 0)
+                return null;
+            // 代码已优化
+            outSize = bufSize;
+            var stream = NetByteArrayPool.GetByteBufferNode(bufSize);
+            var buffer = stream.GetBuffer();
+            Google.Protobuf.CodedOutputStream output = new Google.Protobuf.CodedOutputStream(buffer, bufSize);
+            message.WriteTo(output);
+            output.CheckNoSpaceLeft();
+            return stream;
+        }
+
+
+        // 使用池
+        private static MemoryStream ToStream<T>(Google.Protobuf.IMessage<T> message, out int outSize) where T: class, Google.Protobuf.IMessage<T> {
             outSize = 0;
             if (message == null)
                 return null;
@@ -146,19 +166,6 @@ namespace NsTcpClient
         }
 
         // 使用池的版本
-        public static MemoryStream ToStream<T>(T message, out int outSize) where T : struct, CapnProto.IPointer {
-            int byteLen = message.ByteLength();
-            if (byteLen <= 0) {
-                outSize = 0;
-                return null;
-            }
-            MemoryStream stream = NetByteArrayPool.GetBuffer(byteLen);
-            byte[] buffer = stream.GetBuffer();
-            message.CopyTo(buffer);
-            outSize = byteLen;
-            return stream;
-        }
-
 		public static ByteBufferNode ToBufferNode<T>(T message, out int outSize) where T : struct, CapnProto.IPointer {
 			int byteLen = message.ByteLength();
 			if (byteLen <= 0) {
