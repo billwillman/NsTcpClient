@@ -49,6 +49,15 @@ public class Test : MonoBehaviour {
     float lastSendTime = 0;
 
     void TestCapnProto() {
+        var node = NetByteArrayPool.GetByteBufferNode();
+        Message mm = Message.Load(node.GetBuffer(), 0, node.Length);
+        var req = mm.Root;
+        var loginMsg = LoginMsg.Create(req);
+        loginMsg.IsValid();
+        node.Dispose();
+        mm.Dispose();
+        return;
+
         UnityEngine.Profiling.Profiler.BeginSample("CapnProto Create");
         var msg = ProtoMessageMgr.CreateCapnProtoMsg<LoginMsg>();
         UnityEngine.Profiling.Profiler.EndSample();
