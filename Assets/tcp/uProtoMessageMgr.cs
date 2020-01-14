@@ -202,6 +202,8 @@ namespace NsTcpClient
             ret.data = allocator.Allocate<T>();
             ret.allocator = stream;
             ret.allocator1 = byteNode;
+
+            allocator.Dispose();
             return ret;
         }
 #endif
