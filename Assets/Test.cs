@@ -55,7 +55,7 @@ public class Test : MonoBehaviour {
 
         int destSize = msg.data.ByteLength();
         var destNode = NetByteArrayPool.GetByteBufferNode(destSize);
-        System.Array.Copy(msg.allocator1.Buffer, destNode.Buffer, destSize);
+        System.Array.Copy(msg.allocator.Buffer, destNode.Buffer, destSize);
 
         UnityEngine.Profiling.Profiler.BeginSample("CapnProto Serial");
         LoginMsg destMsg;
@@ -84,7 +84,8 @@ public class Test : MonoBehaviour {
             }
         }
 
-        TestProtoMessage();
+        // TestProtoMessage();
+        TestCapnProto();
     }
 
     void TestProtoMessage() {

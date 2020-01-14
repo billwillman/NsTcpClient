@@ -14,17 +14,12 @@ namespace NsTcpClient
 #if USE_CapnProto
     public struct CapnProtoMsg<T> where T: struct, CapnProto.IPointer {
         public T data;
-        public Stream allocator;
-        public ByteBufferNode allocator1;
+        public ByteBufferNode allocator;
 
         public void Dispose() {
             if (allocator != null) {
                 allocator.Dispose();
                 allocator = null;
-            }
-            if (allocator1 != null) {
-                allocator1.Dispose();
-                allocator1 = null;
             }
         }
     }
@@ -182,26 +177,16 @@ namespace NsTcpClient
 			return ret;
 		}
 
-        public static CapnProtoMsg<T> CreateCapnProtoMsg<T>(bool isUseStream = false) where T : struct, CapnProto.IPointer {
+        public static CapnProtoMsg<T> CreateCapnProtoMsg<T>() where T : struct, CapnProto.IPointer {
 
-            MemoryStream stream = null;
-            byte[] buffer = null;
-            ByteBufferNode byteNode = null;
-            if (isUseStream) {
-                stream = NetByteArrayPool.GetBuffer(NetByteArrayPool._cSmallBufferSize);
-                if (stream == null)
-                    return default(CapnProtoMsg<T>);
-                buffer = stream.GetBuffer();
-            } else {
-                byteNode = NetByteArrayPool.GetByteBufferNode(NetByteArrayPool._cSmallBufferSize);
-                buffer = byteNode.Buffer;
-            }
+            ByteBufferNode byteNode = NetByteArrayPool.GetByteBufferNode(NetByteArrayPool._cSmallBufferSize);
+            byte[] buffer = byteNode.Buffer;
+           
 
             CapnProtoMsg<T> ret = new CapnProtoMsg<T>();
             CapnProto.Message allocator = CapnProto.Message.Load(buffer, 0, buffer.Length);
             ret.data = allocator.Allocate<T>();
-            ret.allocator = stream;
-            ret.allocator1 = byteNode;
+            ret.allocator = byteNode;
 
             allocator.Dispose();
             return ret;
