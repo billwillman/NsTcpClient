@@ -4,8 +4,15 @@ using System.Collections.Generic;
 namespace Utils
 {
 
-	public class PoolNode<T> where T : PoolNode<T>, new() {
-		private LinkedListNode<PoolNode<T>> m_PoolNode = null;
+    public interface IPoolNode<T> {
+        LinkedListNode<IPoolNode<T>> PPoolNode {
+            get;
+        }
+    }
+
+
+    public class PoolNode<T>: IPoolNode<T> where T : IPoolNode<T>, new() {
+		private LinkedListNode<IPoolNode<T>> m_PoolNode = null;
 
 		protected virtual void OnFree()
 		{
@@ -28,27 +35,27 @@ namespace Utils
 			}
 		}
 
-		public LinkedListNode<PoolNode<T>> PPoolNode {
+		public LinkedListNode<IPoolNode<T>> PPoolNode {
 			get {
 				if (m_PoolNode == null)
-					m_PoolNode = new LinkedListNode<PoolNode<T>>(this);
+					m_PoolNode = new LinkedListNode<IPoolNode<T>>(this);
 				return m_PoolNode;
 			}
 		}
 	}
 
-	public sealed class AbstractPool<T> where T: PoolNode<T>, new()
+	public sealed class AbstractPool<T> where T: IPoolNode<T>, new()
 	{
-		private static LinkedList<PoolNode<T>> m_NodePool = new LinkedList<PoolNode<T>>();
+		private static LinkedList<IPoolNode<T>> m_NodePool = new LinkedList<IPoolNode<T>>();
 
-		internal static bool IsInNodePool(LinkedListNode<PoolNode<T>> node) {
+		internal static bool IsInNodePool(LinkedListNode<IPoolNode<T>> node) {
 			// 这里不需要锁
 			//lock (m_NodePool) {
 				return (node != null) && (m_NodePool == node.List);
 			//}
 		}
 
-		internal static void _DestroyNode(PoolNode<T> node)
+		internal static void _DestroyNode(IPoolNode<T> node)
 		{
 			if (node != null) {
 				var n = node.PPoolNode;
@@ -65,11 +72,11 @@ namespace Utils
 			}
 		}
 
-		public static PoolNode<T> GetNode()
+		public static IPoolNode<T> GetNode()
 		{
-			PoolNode<T> ret = null;
+            IPoolNode<T> ret = null;
 			lock (m_NodePool) {
-				LinkedListNode<PoolNode<T>> n = m_NodePool.First;
+				LinkedListNode<IPoolNode<T>> n = m_NodePool.First;
 				if (n != null) {
 					m_NodePool.Remove (n);
 					ret = n.Value;
