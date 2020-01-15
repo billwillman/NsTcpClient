@@ -309,7 +309,7 @@ namespace NsTcpClient {
 
             if (pSend.pSendData == null)
                 return true;
-            if (pSend.pSendData.Length <= 0)
+            if (pSend.pSendData.DataSize <= 0)
                 return true;
 
             int uFreeSize = m_SendBuffer.Length - m_WaitSendSize;

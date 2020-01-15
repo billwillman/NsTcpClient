@@ -79,7 +79,7 @@ namespace NsTcpClient
 		{
 			if ((header.dataSize <= 0) || (data == null))
 				return false;
-			return (data.Length > 0);
+			return (data.DataSize > 0);
 		}
 
 		public string dataToString()
