@@ -16,10 +16,18 @@ namespace NsTcpClient
         public ByteBufferNode allocator;
         public Message msg;
 
-        public long MessageSize {
+        public long MessageSizeLong {
             get {
                 if (msg != null)
-                    return msg.WordCount;
+                    return (msg.WordCount << 3);
+                return 0;
+            }
+        }
+
+        public int MessageSize {
+            get {
+                if (msg != null)
+                    return (int)(msg.WordCount << 3);
                 return 0;
             }
         }
@@ -230,10 +238,10 @@ namespace NsTcpClient
             byte[] buffer = msg.GetBuffer();
             if (buffer == null || buffer.Length <= 0)
                 return false;
-            long dataSize = msg.MessageSize;
+            int dataSize = msg.MessageSize;
             if (dataSize <= 0)
                 return false;
-            stream.Write(buffer, 0, (int)dataSize);
+            stream.Write(buffer, 0, dataSize);
             return true;
         }
 #endif

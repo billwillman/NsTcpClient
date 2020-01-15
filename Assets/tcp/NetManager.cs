@@ -175,13 +175,13 @@ namespace NsTcpClient
 
 #if USE_CapnProto
         public void SendCapnProto(CapnProtoMsg msg, int packetHandle) {
-            long bufSize = (int)msg.MessageSize;
+            int bufSize = msg.MessageSize;
             if (bufSize <= 0)
                 return;
             byte[] buffer = msg.GetBuffer();
             if (buffer == null || buffer.Length < bufSize)
                 return;
-            Send(buffer, packetHandle, (int)bufSize);
+            Send(buffer, packetHandle, bufSize);
         }
 #endif
 
