@@ -53,11 +53,13 @@ public class Test : MonoBehaviour {
         var loginMsg = LoginMsg.Create(msg.Root);
         loginMsg.userName = ProtoMessageMgr.CreateText(msg, "zengyi");
         loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "HelloWorld");
-        loginMsg.IsValid();
-
+        if (!loginMsg.IsValid())
+            Debug.LogError("loginMsg is no vaild");
         //     LoginMsg newLoginMsg;
         //    ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg);
         NetManager.Instance.SendCapnProto(loginMsg, msg, 1);
+
+        
 
         msg.Dispose();
     }
