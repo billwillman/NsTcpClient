@@ -8,6 +8,8 @@ namespace Utils
         LinkedListNode<IPoolNode<T>> PPoolNode {
             get;
         }
+
+        void Dispose();
     }
 
 

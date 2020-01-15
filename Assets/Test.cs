@@ -62,6 +62,11 @@ public class Test : MonoBehaviour {
         msg.Dispose();
     }
 
+    void TestGamePacket() {
+        var packet = GamePacket.CreateFromPool();
+        packet.Dispose();
+    }
+
 	void Update()
 	{
 		TimerMgr.Instance.UnScaleTick(Time.unscaledDeltaTime);
@@ -77,7 +82,8 @@ public class Test : MonoBehaviour {
         }
 
         // TestProtoMessage();
-        TestCapnProto();
+         TestCapnProto();
+       // TestGamePacket();
     }
 
     void TestProtoMessage() {
