@@ -175,7 +175,8 @@ namespace NsTcpClient {
         }
 
         private void AddSendReq(byte[] pData, int bufSize) {
-            tReqSend pReq = new tReqSend(pData, bufSize);
+            // tReqSend pReq = new tReqSend(pData, bufSize);
+            tReqSend pReq = tReqSend.CreateFromPool(pData, bufSize);
             lock (m_Mutex) {
                 LinkedListNode<tReqHead> node = new LinkedListNode<tReqHead>(pReq);
                 m_QueueReq.AddLast(node);

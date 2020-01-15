@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Utils;
 
 namespace NsTcpClient
@@ -32,25 +33,52 @@ namespace NsTcpClient
 		}
 	}
 
-	public class tReqSend: tReqHead
+	public class tReqSend: tReqHead, IPoolNode<tReqSend>
 	{
 		public ByteBufferNode pSendData;
 		public tReqSend(byte[] pData, int bufSize)
 		{
 			uReqType = eReqType.eREQ_TYPE_SEND;
-			if ((pData != null) && (bufSize > 0)) {
-                pSendData = NetByteArrayPool.GetByteBufferNode(bufSize);
-				Buffer.BlockCopy(pData, 0, pSendData.GetBuffer(), 0, bufSize);
-			} else {
-				pSendData = null;
-			}
+            Init(pData, bufSize);
 		}
+
+        public tReqSend() {
+            uReqType = eReqType.eREQ_TYPE_SEND;
+            pSendData = null;
+        }
+        public void Init(byte[] pData, int bufSize) {
+            if ((pData != null) && (bufSize > 0)) {
+                if (pSendData != null)
+                    pSendData.Dispose();
+                pSendData = NetByteArrayPool.GetByteBufferNode(bufSize);
+                Buffer.BlockCopy(pData, 0, pSendData.GetBuffer(), 0, bufSize);
+            } else {
+                pSendData = null;
+            }
+        }
+
+        private LinkedListNode<IPoolNode<tReqSend>> m_PoolNode = null;
+        public LinkedListNode<IPoolNode<tReqSend>> PPoolNode {
+            get {
+                if (m_PoolNode == null)
+                    m_PoolNode = new LinkedListNode<IPoolNode<tReqSend>>(this);
+                return m_PoolNode;
+            }
+        }
+
+        public static tReqSend CreateFromPool(byte[] pData, int bufSize) {
+            tReqSend ret = (tReqSend)AbstractPool<tReqSend>.GetNode();
+            ret.Init(pData, bufSize);
+            return ret;
+        }
 
         public override void Dispose() {
             if (pSendData != null) {
                 pSendData.Dispose();
                 pSendData = null;
             }
+
+            AbstractPool<tReqSend>._DestroyNode(this);
         }
 
 		public int SendSize {
