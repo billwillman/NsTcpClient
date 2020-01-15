@@ -12,11 +12,37 @@ namespace NsTcpClient
 {
 
 #if USE_CapnProto
-    public struct CapnProtoMsg<T> where T: struct, CapnProto.IPointer {
-        public T data;
+    public struct CapnProtoMsg {
         public ByteBufferNode allocator;
+        public Message msg;
+
+        public Pointer Root {
+            get {
+                if (msg == null)
+                    return default(Pointer);
+                return msg.Root;
+            }
+        }
+
+        public byte[] GetBuffer() {
+            if (allocator != null)
+                return allocator.GetBuffer();
+            return null;
+        }
+
+        public byte[] Buffer {
+            get {
+                if (allocator != null)
+                    return allocator.Buffer;
+                return null;
+            }
+        }
 
         public void Dispose() {
+            if (msg != null) {
+                msg.Dispose();
+                msg = null;
+            }
             if (allocator != null) {
                 allocator.Dispose();
                 allocator = null;
@@ -163,8 +189,12 @@ namespace NsTcpClient
             }
         }
 
+        public static bool Parser<T>(CapnProtoMsg msg, out T data, int dataSize = -1) where T : struct, CapnProto.IPointer {
+            return Parser<T>(msg.GetBuffer(), out data, dataSize);
+        }
+
         // 使用池的版本
-		public static ByteBufferNode ToBufferNode<T>(T message, out int outSize) where T : struct, CapnProto.IPointer {
+        public static ByteBufferNode ToBufferNode<T>(T message, out int outSize) where T : struct, CapnProto.IPointer {
 			int byteLen = message.ByteLength();
 			if (byteLen <= 0) {
 				outSize = 0;
@@ -177,19 +207,26 @@ namespace NsTcpClient
 			return ret;
 		}
 
-        public static CapnProtoMsg<T> CreateCapnProtoMsg<T>() where T : struct, CapnProto.IPointer {
+        public static CapnProtoMsg CreateCapnProtoMsg() {
 
             ByteBufferNode byteNode = NetByteArrayPool.GetByteBufferNode(NetByteArrayPool._cSmallBufferSize);
             byte[] buffer = byteNode.Buffer;
            
 
-            CapnProtoMsg<T> ret = new CapnProtoMsg<T>();
+            CapnProtoMsg ret = new CapnProtoMsg();
             CapnProto.Message allocator = CapnProto.Message.Load(buffer, 0, buffer.Length);
-            ret.data = allocator.Allocate<T>();
             ret.allocator = byteNode;
-
-            allocator.Dispose();
+            ret.msg = allocator;
             return ret;
+        }
+
+        public static CapnProto.Text CreateText(CapnProto.Pointer owner, string value) {
+            CapnProto.Text ret = CapnProto.Text.Create(owner, value);
+            return ret;
+        }
+
+        public static CapnProto.Text CreateText(CapnProtoMsg msg, string value) {
+            return CreateText(msg.Root, value);
         }
 #endif
     }

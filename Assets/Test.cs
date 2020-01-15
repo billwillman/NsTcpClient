@@ -49,34 +49,17 @@ public class Test : MonoBehaviour {
     float lastSendTime = 0;
 
     void TestCapnProto() {
-        var node = NetByteArrayPool.GetByteBufferNode();
-        Message mm = Message.Load(node.GetBuffer(), 0, node.Length);
-        var req = mm.Root;
-        var loginMsg = LoginMsg.Create(req);
+        var msg = ProtoMessageMgr.CreateCapnProtoMsg();
+        var loginMsg = LoginMsg.Create(msg.Root);
+        loginMsg.userName = ProtoMessageMgr.CreateText(msg, "zengyi");
+        loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "password");
         loginMsg.IsValid();
-        node.Dispose();
-        mm.Dispose();
-        return;
 
-        UnityEngine.Profiling.Profiler.BeginSample("CapnProto Create");
-        var msg = ProtoMessageMgr.CreateCapnProtoMsg<LoginMsg>();
-        UnityEngine.Profiling.Profiler.EndSample();
-
-        int destSize = msg.data.ByteLength();
-        var destNode = NetByteArrayPool.GetByteBufferNode(destSize);
-        System.Array.Copy(msg.allocator.Buffer, destNode.Buffer, destSize);
-
-        UnityEngine.Profiling.Profiler.BeginSample("CapnProto Serial");
-        LoginMsg destMsg;
-        if (ProtoMessageMgr.Parser<LoginMsg>(destNode.Buffer, out destMsg, destNode.DataSize)) {
-        }
-        destNode.Dispose();
-        UnityEngine.Profiling.Profiler.EndSample();
+        LoginMsg newLoginMsg;
+        ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg);
 
 
-        UnityEngine.Profiling.Profiler.BeginSample("CapnProto Dispose");
         msg.Dispose();
-        UnityEngine.Profiling.Profiler.EndSample();
     }
 
 	void Update()
