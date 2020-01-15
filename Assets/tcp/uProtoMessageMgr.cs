@@ -16,6 +16,14 @@ namespace NsTcpClient
         public ByteBufferNode allocator;
         public Message msg;
 
+        public long MessageSize {
+            get {
+                if (msg != null)
+                    return msg.WordCount;
+                return 0;
+            }
+        }
+
         public Pointer Root {
             get {
                 if (msg == null)
@@ -177,6 +185,7 @@ namespace NsTcpClient
                 return false;
             }
             try {
+                 
                 //data = msg.Allocate<T>();
                 if (!msg.ReadNext())
                     throw new EndOfStreamException();
@@ -192,20 +201,6 @@ namespace NsTcpClient
         public static bool Parser<T>(CapnProtoMsg msg, out T data, int dataSize = -1) where T : struct, CapnProto.IPointer {
             return Parser<T>(msg.GetBuffer(), out data, dataSize);
         }
-
-        // 使用池的版本
-        public static ByteBufferNode ToBufferNode<T>(T message, out int outSize) where T : struct, CapnProto.IPointer {
-			int byteLen = message.ByteLength();
-			if (byteLen <= 0) {
-				outSize = 0;
-				return null;
-			}
-			ByteBufferNode ret = NetByteArrayPool.GetByteBufferNode (byteLen);
-			byte[] buffer = ret.Buffer;
-			message.CopyTo(buffer);
-			outSize = byteLen;
-			return ret;
-		}
 
         public static CapnProtoMsg CreateCapnProtoMsg() {
 
@@ -227,6 +222,19 @@ namespace NsTcpClient
 
         public static CapnProto.Text CreateText(CapnProtoMsg msg, string value) {
             return CreateText(msg.Root, value);
+        }
+
+        public static bool SaveToStream(Stream stream, CapnProtoMsg msg) {
+            if (stream == null)
+                return false;
+            byte[] buffer = msg.GetBuffer();
+            if (buffer == null || buffer.Length <= 0)
+                return false;
+            long dataSize = msg.MessageSize;
+            if (dataSize <= 0)
+                return false;
+            stream.Write(buffer, 0, (int)dataSize);
+            return true;
         }
 #endif
     }

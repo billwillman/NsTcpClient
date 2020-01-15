@@ -174,14 +174,14 @@ namespace NsTcpClient
 		}
 
 #if USE_CapnProto
-        public void SendCapnProto<T>(T data, CapnProtoMsg msg, int packetHandle) where T : struct, global::CapnProto.IPointer {
-            int bufSize = data.ByteLength();
+        public void SendCapnProto(CapnProtoMsg msg, int packetHandle) {
+            long bufSize = (int)msg.MessageSize;
             if (bufSize <= 0)
                 return;
             byte[] buffer = msg.GetBuffer();
             if (buffer == null || buffer.Length < bufSize)
                 return;
-            Send(buffer, packetHandle, bufSize);
+            Send(buffer, packetHandle, (int)bufSize);
         }
 #endif
 

@@ -3,6 +3,7 @@ using System.Collections;
 using NsTcpClient;
 using CapnProto;
 using CapnProto_Msg;
+using System.IO;
 
 public class Test : MonoBehaviour {
 
@@ -51,16 +52,28 @@ public class Test : MonoBehaviour {
     void TestCapnProto() {
         var msg = ProtoMessageMgr.CreateCapnProtoMsg();
         var loginMsg = LoginMsg.Create(msg.Root);
+
+        /// var userNameMsg = ProtoMessageMgr.CreateCapnProtoMsg();
         loginMsg.userName = ProtoMessageMgr.CreateText(msg, "zengyi");
-        loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "HelloWorld");
-        if (!loginMsg.IsValid())
-            Debug.LogError("loginMsg is no vaild");
+
+        // var passWordMsg = ProtoMessageMgr.CreateCapnProtoMsg();
+        loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "123");
+
+        Debug.LogError(loginMsg.userName.ToString());
+       // Debug.LogErrorFormat("msg size: {0:D}", userNameMsg.MessageSize);
+      
         //     LoginMsg newLoginMsg;
         //    ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg);
-        NetManager.Instance.SendCapnProto(loginMsg, msg, 1);
+        NetManager.Instance.SendCapnProto(msg, 1);
 
-        
-
+        FileStream stream = new FileStream("D:/test.proto", FileMode.Create, FileAccess.Write);
+        ProtoMessageMgr.SaveToStream(stream, msg);
+        stream.Close();
+        stream.Dispose();
+        // LoginMsg newMsg;
+        // ProtoMessageMgr.Parser<LoginMsg>(msg.GetBuffer(), out newMsg, loginMsg.ByteLength());
+      //'  userNameMsg.Dispose();
+       // passWordMsg.Dispose();
         msg.Dispose();
     }
 
