@@ -4,7 +4,7 @@ namespace CapnProto_Msg
     public static class C_cLoginMsg{
       public const int cLoginMsg = 1;
     }
-    [global::CapnProto.StructAttribute(global::CapnProto.ElementSize.InlineComposite, 0, 2)]
+    [global::CapnProto.StructAttribute(global::CapnProto.ElementSize.InlineComposite, 1, 2)]
     [global::CapnProto.IdAttribute(0x810cdb84e47b9605)]
     public partial struct LoginMsg : global::CapnProto.IPointer
     {
@@ -18,7 +18,7 @@ namespace CapnProto_Msg
         public override bool Equals(object obj) { return obj is global::CapnProto_Msg.LoginMsg && (this.ѧ_ == ((global::CapnProto_Msg.LoginMsg)obj).ѧ_); }
         global::CapnProto.Pointer global::CapnProto.IPointer.Pointer { get { return this.ѧ_; } }
         public global::CapnProto_Msg.LoginMsg Dereference() { return (global::CapnProto_Msg.LoginMsg)this.ѧ_.Dereference(); }
-        public static global::CapnProto_Msg.LoginMsg Create(global::CapnProto.Pointer parent) { return (global::CapnProto_Msg.LoginMsg)parent.Allocate(0, 2); }
+        public static global::CapnProto_Msg.LoginMsg Create(global::CapnProto.Pointer parent) { return (global::CapnProto_Msg.LoginMsg)parent.Allocate(1, 2); }
         [global::CapnProto.FieldAttribute(0, pointer: 0)]
         [global::System.ComponentModel.DefaultValueAttribute(@"zengyi")]
         public global::CapnProto.Text userName
@@ -43,6 +43,19 @@ namespace CapnProto_Msg
             set
             {
                 this.ѧ_.SetPointer(1, value);
+            }
+        }
+        [global::CapnProto.FieldAttribute(2, 0, 32)]
+        [global::System.ComponentModel.DefaultValueAttribute(0)]
+        public int userID
+        {
+            get
+            {
+                return (int)(this.ѧ_.GetInt32(0));
+            }
+            set
+            {
+                this.ѧ_.SetInt32(0, (int)(value));
             }
         }
     }

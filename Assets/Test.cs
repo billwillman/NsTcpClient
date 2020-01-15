@@ -58,20 +58,23 @@ public class Test : MonoBehaviour {
 
         // var passWordMsg = ProtoMessageMgr.CreateCapnProtoMsg();
         loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "123");
+        loginMsg.userID = 456;
 
-        Debug.LogError(loginMsg.userName.ToString());
+      //  Debug.LogError(loginMsg.userName.ToString());
        // Debug.LogErrorFormat("msg size: {0:D}", userNameMsg.MessageSize);
       
-        //     LoginMsg newLoginMsg;
-        //    ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg);
+             LoginMsg newLoginMsg;
+            ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg, msg.MessageSize);
         NetManager.Instance.SendCapnProto(msg, 1);
-
+        
         FileStream stream = new FileStream("D:/test.proto", FileMode.Create, FileAccess.Write);
         ProtoMessageMgr.SaveToStream(stream, msg);
         stream.Close();
         stream.Dispose();
-        // LoginMsg newMsg;
-        // ProtoMessageMgr.Parser<LoginMsg>(msg.GetBuffer(), out newMsg, loginMsg.ByteLength());
+        
+     //   LoginMsg newMsg;
+     //   ProtoMessageMgr.Parser<LoginMsg>(msg.GetBuffer(), out newMsg, msg.MessageSize);
+
       //'  userNameMsg.Dispose();
        // passWordMsg.Dispose();
         msg.Dispose();
