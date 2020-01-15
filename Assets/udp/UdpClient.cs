@@ -369,7 +369,7 @@ namespace NsUdpClient
             UdpReqSend pReq = new UdpReqSend(pData, bufSize, ip, port);
             lock (m_Mutex)
             {
-                LinkedListNode<tReqHead> node = new LinkedListNode<tReqHead>(pReq);
+                LinkedListNode<tReqHead> node = pReq.ListNode;
                 m_QueueReq.AddLast(node);
             }
         }

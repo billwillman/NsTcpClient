@@ -52,7 +52,7 @@ public class Test : MonoBehaviour {
         var msg = ProtoMessageMgr.CreateCapnProtoMsg();
         var loginMsg = LoginMsg.Create(msg.Root);
         loginMsg.userName = ProtoMessageMgr.CreateText(msg, "zengyi");
-        loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "password");
+        loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "HelloWorld");
         loginMsg.IsValid();
 
         //     LoginMsg newLoginMsg;

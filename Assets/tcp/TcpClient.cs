@@ -169,7 +169,7 @@ namespace NsTcpClient {
             tReqConnect pReq = new tReqConnect(pRemoteIp, uRemotePort, mTimeOut);
             lock (m_Mutex) {
                 m_State = eClientState.eClient_STATE_CONNECTING;
-                LinkedListNode<tReqHead> node = new LinkedListNode<tReqHead>(pReq);
+                LinkedListNode<tReqHead> node = pReq.ListNode;
                 m_QueueReq.AddLast(node);
             }
         }
@@ -178,7 +178,7 @@ namespace NsTcpClient {
             // tReqSend pReq = new tReqSend(pData, bufSize);
             tReqSend pReq = tReqSend.CreateFromPool(pData, bufSize);
             lock (m_Mutex) {
-                LinkedListNode<tReqHead> node = new LinkedListNode<tReqHead>(pReq);
+                LinkedListNode<tReqHead> node = pReq.ListNode;
                 m_QueueReq.AddLast(node);
             }
         }

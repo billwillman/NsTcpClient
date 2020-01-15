@@ -12,11 +12,20 @@ namespace NsTcpClient
 
 	public class tReqHead
 	{
+        private LinkedListNode<tReqHead> m_ListNode = null;
 		public eReqType uReqType;
         public virtual void Dispose() {
 
         }
-	}
+
+        public LinkedListNode<tReqHead> ListNode {
+            get {
+                if (m_ListNode == null)
+                    m_ListNode = new LinkedListNode<tReqHead>(this);
+                return m_ListNode;
+            }
+        }
+    }
 
 	internal class tReqConnect: tReqHead
 	{
