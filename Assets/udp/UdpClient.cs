@@ -127,6 +127,7 @@ namespace NsUdpClient
                     if (sndReq != null)
                     {
                         DoSend(sndReq);
+                        sndReq.Dispose();
                     }
                 }
             }
@@ -141,7 +142,7 @@ namespace NsUdpClient
                 return;
             try
             {
-                m_Udp.Send(req.pSendData, req.SendSize, req.ip, req.port);
+                m_Udp.Send(req.pSendData.GetBuffer(), req.SendSize, req.ip, req.port);
             }
             catch (Exception e)
             {

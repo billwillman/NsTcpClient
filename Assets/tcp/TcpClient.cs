@@ -312,10 +312,11 @@ namespace NsTcpClient {
                 return true;
 
             int uFreeSize = m_SendBuffer.Length - m_WaitSendSize;
-            int uSendSize = pSend.pSendData.Length;
+            int uSendSize = pSend.SendSize;
             if (uFreeSize > uSendSize) {
-                Buffer.BlockCopy(pSend.pSendData, 0, m_SendBuffer, m_WaitSendSize, uSendSize);
+                Buffer.BlockCopy(pSend.pSendData.GetBuffer(), 0, m_SendBuffer, m_WaitSendSize, uSendSize);
                 m_WaitSendSize += uSendSize;
+                pSend.Dispose();
                 return true;
             }
 

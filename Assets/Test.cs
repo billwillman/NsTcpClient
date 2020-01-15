@@ -55,9 +55,9 @@ public class Test : MonoBehaviour {
         loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "password");
         loginMsg.IsValid();
 
-        LoginMsg newLoginMsg;
-        ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg);
-
+        //     LoginMsg newLoginMsg;
+        //    ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg);
+        NetManager.Instance.SendCapnProto(loginMsg, msg, 1);
 
         msg.Dispose();
     }

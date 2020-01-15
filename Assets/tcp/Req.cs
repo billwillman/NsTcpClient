@@ -1,4 +1,5 @@
 using System;
+using Utils;
 
 namespace NsTcpClient
 {
@@ -30,23 +31,30 @@ namespace NsTcpClient
 
 	public class tReqSend: tReqHead
 	{
-		public byte[] pSendData;
+		public ByteBufferNode pSendData;
 		public tReqSend(byte[] pData, int bufSize)
 		{
 			uReqType = eReqType.eREQ_TYPE_SEND;
 			if ((pData != null) && (bufSize > 0)) {
-				pSendData = new byte[bufSize];
-				Buffer.BlockCopy(pData, 0, pSendData, 0, bufSize);
+                pSendData = NetByteArrayPool.GetByteBufferNode(bufSize);
+				Buffer.BlockCopy(pData, 0, pSendData.GetBuffer(), 0, bufSize);
 			} else {
 				pSendData = null;
 			}
 		}
 
+        public void Dispose() {
+            if (pSendData != null) {
+                pSendData.Dispose();
+                pSendData = null;
+            }
+        }
+
 		public int SendSize {
 			get {
 				if (pSendData != null)
 				{
-					return pSendData.Length;
+					return pSendData.DataSize;
 				} else {
 					return 0;
 				}
