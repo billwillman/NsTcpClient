@@ -12,6 +12,9 @@ namespace NsTcpClient
 	public class tReqHead
 	{
 		public eReqType uReqType;
+        public virtual void Dispose() {
+
+        }
 	}
 
 	internal class tReqConnect: tReqHead
@@ -43,7 +46,7 @@ namespace NsTcpClient
 			}
 		}
 
-        public void Dispose() {
+        public override void Dispose() {
             if (pSendData != null) {
                 pSendData.Dispose();
                 pSendData = null;
