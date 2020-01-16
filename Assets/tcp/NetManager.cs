@@ -179,7 +179,7 @@ namespace NsTcpClient
             var buffer = node.GetBuffer();
             System.IO.MemoryStream stream = new System.IO.MemoryStream(buffer);
             msg.WriteToStream(stream);
-            Send(buffer, packetHandle, (int)stream.Length);
+            Send(buffer, packetHandle, (int)stream.Position);
             stream.Dispose();
             node.Dispose();
         }

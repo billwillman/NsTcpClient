@@ -84,6 +84,7 @@ public class Test : MonoBehaviour {
         stream.Close();
         stream.Dispose();
 
+        NetManager.Instance.SendCapnProto(msg, 1);
         
         Pointer outMsg;
         ProtoMessageMgr.Parser(memStream.GetBuffer(), out outMsg, (int)memStream.Length);
