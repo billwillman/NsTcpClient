@@ -175,13 +175,13 @@ namespace NsTcpClient
 
 #if USE_CapnProto
         public void SendCapnProto(CapnProtoMsg msg, int packetHandle) {
-            int bufSize = msg.MessageSize;
-            if (bufSize <= 0)
-                return;
-            byte[] buffer = msg.GetBuffer();
-            if (buffer == null || buffer.Length < bufSize)
-                return;
-            Send(buffer, packetHandle, bufSize);
+            ByteBufferNode node = NetByteArrayPool.GetByteBufferNode();
+            var buffer = node.GetBuffer();
+            System.IO.MemoryStream stream = new System.IO.MemoryStream(buffer);
+            msg.WriteToStream(stream);
+            Send(buffer, packetHandle, (int)stream.Length);
+            stream.Dispose();
+            node.Dispose();
         }
 #endif
 

@@ -17,18 +17,15 @@ namespace NsTcpClient
         public ByteBufferNode allocator;
         public Message msg;
 
+        public void WriteToStream(Stream stream) {
+            if (msg != null)
+                msg.Write(stream);
+        }
+
         public long MessageSizeLong {
             get {
                 if (msg != null)
                     return (msg.WordCount << 3);
-                return 0;
-            }
-        }
-
-        public int MessageSize {
-            get {
-                if (msg != null)
-                    return (int)(msg.WordCount << 3);
                 return 0;
             }
         }
