@@ -2,6 +2,7 @@
 #define USE_CapnProto
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 #if USE_CapnProto
@@ -63,12 +64,6 @@ namespace NsTcpClient
                 allocator.Dispose();
                 allocator = null;
             }
-        }
-    }
-
-    public static class CapnProtoStreamHelper {
-        public static bool WriteCapnProtoMsg(this Stream stream, CapnProtoMsg msg) {
-            return ProtoMessageMgr.SaveToStream(stream, msg);
         }
     }
 #endif
@@ -238,16 +233,23 @@ namespace NsTcpClient
             return CreateText(msg.Root, value);
         }
 
-        public static bool SaveToStream(Stream stream, CapnProtoMsg msg) {
-            if (stream == null)
+        public static CapnProto.FixedSizeList<T> CreateList<T>(CapnProto.Pointer owner, IList<T> list) {
+            CapnProto.FixedSizeList<T> ret = CapnProto.FixedSizeList<T>.Create(owner, list);
+            return ret;
+        }
+
+        public static CapnProto.FixedSizeList<T> CreateList<T>(CapnProtoMsg msg, IList<T> list) {
+
+            return CreateList<T>(msg.Root, list);
+        }
+
+        public static bool SaveToStream<T>(Stream stream, T data, int messageSize) where T: struct, CapnProto.IPointer {
+            if (stream == null || messageSize <= 0)
                 return false;
-            byte[] buffer = msg.GetBuffer();
-            if (buffer == null || buffer.Length <= 0)
-                return false;
-            int dataSize = msg.MessageSize;
-            if (dataSize <= 0)
-                return false;
-            stream.Write(buffer, 0, dataSize);
+            var node = NetByteArrayPool.GetByteBufferNode(NetByteArrayPool._cSmallBufferSize);
+            data.CopyTo<T>(node.GetBuffer());
+            stream.Write(node.GetBuffer(), 0, messageSize);
+            node.Dispose();
             return true;
         }
 #endif

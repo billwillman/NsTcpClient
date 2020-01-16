@@ -1,15 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using NsTcpClient;
 using CapnProto;
 using CapnProto_Msg;
+using CapnpGen;
 using System.IO;
 
 public class Test : MonoBehaviour {
 
+    private List<Text> txtList = null;
+
     void Start() {
         ProtoMessageMgr.GetInstance().Register<C_S_Login_Req>(C_S_Login_Req.Parser);
         NetManager.Instance.AddPacketListener(100, OnTestProtoCallBack);
+
+        txtList = new List<Text>(10);
+        
     }
 
     void OnTestProtoCallBack(GamePacket packet) {
@@ -51,32 +58,43 @@ public class Test : MonoBehaviour {
 
     void TestCapnProto() {
         var msg = ProtoMessageMgr.CreateCapnProtoMsg();
-        var loginMsg = LoginMsg.Create(msg.Root);
+        var loginMsg = CapnProto_Msg.LoginMsg.Create(msg.Root);
 
-        /// var userNameMsg = ProtoMessageMgr.CreateCapnProtoMsg();
+      //   var userNameMsg = ProtoMessageMgr.CreateCapnProtoMsg();
         loginMsg.userName = ProtoMessageMgr.CreateText(msg, "zengyi");
+       // userNameMsg.Dispose();
 
-        // var passWordMsg = ProtoMessageMgr.CreateCapnProtoMsg();
+       //  var passWordMsg = ProtoMessageMgr.CreateCapnProtoMsg();
         loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "123");
+      //  passWordMsg.Dispose();
+
         loginMsg.userID = 456;
 
-      //  Debug.LogError(loginMsg.userName.ToString());
-       // Debug.LogErrorFormat("msg size: {0:D}", userNameMsg.MessageSize);
-      
-      //      LoginMsg newLoginMsg;
-       //     ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg, msg.MessageSize);
-       // NetManager.Instance.SendCapnProto(msg, 1);
-        
-        FileStream stream = new FileStream("D:/test.capnp", FileMode.Create, FileAccess.Write);
-        stream.WriteCapnProtoMsg(msg);
+       // CapnProtoMsg listMsg = ProtoMessageMgr.CreateCapnProtoMsg();
+        txtList.Clear();
+        for (int i = 0; i < txtList.Capacity; ++i) {
+            txtList.Add(ProtoMessageMgr.CreateText(msg, "abcdef"));
+        }
+        loginMsg.roleList = ProtoMessageMgr.CreateList<Text>(msg, txtList);
+        //  listMsg.Dispose();
+
+
+        //  Debug.LogError(loginMsg.userName.ToString());
+        // Debug.LogErrorFormat("msg size: {0:D}", userNameMsg.MessageSize);
+
+        //      LoginMsg newLoginMsg;
+        //     ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg, msg.MessageSize);
+        // NetManager.Instance.SendCapnProto(msg, 1);
+
+        //FileStream stream = new FileStream("D:/test.capnp", FileMode.Create, FileAccess.Write);
+        MemoryStream stream = new MemoryStream();
+        ProtoMessageMgr.SaveToStream(stream, loginMsg, msg.MessageSize);
         stream.Close();
         stream.Dispose();
         
      //   LoginMsg newMsg;
      //   ProtoMessageMgr.Parser<LoginMsg>(msg.GetBuffer(), out newMsg, msg.MessageSize);
 
-      //'  userNameMsg.Dispose();
-       // passWordMsg.Dispose();
         msg.Dispose();
     }
 
@@ -100,8 +118,21 @@ public class Test : MonoBehaviour {
         }
 
         // TestProtoMessage();
-         TestCapnProto();
+        // TestCapnProto();
+        TestCanProto_Core();
        // TestGamePacket();
+    }
+
+    void TestCanProto_Core() {
+
+        var msg = Capnp.SerializerState.CreateForRpc<CapnpGen.LoginMsg.WRITER>();
+        msg.UserName = "zengyi";
+        var list = Capnp.SerializerState.CreateForRpc <Capnp.ListOfTextSerializer>();
+       
+        list.Init(2);
+        list[0] = "abcdef";
+        list[1] = "abcdef";
+        msg.RoleList = list;
     }
 
     void TestProtoMessage() {
