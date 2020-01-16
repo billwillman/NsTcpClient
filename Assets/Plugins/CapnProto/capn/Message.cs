@@ -1,4 +1,6 @@
-﻿
+﻿#define UNSAFE
+
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -266,7 +268,6 @@ namespace CapnProto
         {
             return GetEnumerator();
         }
-
 
         public void Write(Stream destination)
         {

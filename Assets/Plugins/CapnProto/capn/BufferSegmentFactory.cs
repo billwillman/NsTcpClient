@@ -1,4 +1,5 @@
-﻿
+﻿#define UNSAFE
+
 using System;
 namespace CapnProto
 {

@@ -181,16 +181,16 @@ namespace NsTcpClient
 
 #if USE_CapnProto
 
-        public static bool Parser<T>(byte[] buffer, out T data, int bufSize = -1) where T: struct, CapnProto.IPointer {
+        public static bool Parser(byte[] buffer, out Pointer data, int bufSize = -1) {
             if (buffer == null || buffer.Length <= 0) {
-                data = default(T);
+                data = default(Pointer);
                 return false;
             }
             if (bufSize < 0 || bufSize > buffer.Length)
                 bufSize = buffer.Length;
             Message msg = Message.Load(buffer, 0, bufSize);
             if (msg == null) {
-                data = default(T);
+                data = default(Pointer);
                 return false;
             }
             try {
@@ -198,8 +198,7 @@ namespace NsTcpClient
                 //data = msg.Allocate<T>();
                 if (!msg.ReadNext())
                     throw new EndOfStreamException();
-                IPointer ptr = msg.Root;
-                data = (T)ptr;
+                data = msg.Root;
                 return true;
             } finally {
                 msg.Dispose();
@@ -207,8 +206,8 @@ namespace NsTcpClient
             }
         }
 
-        public static bool Parser<T>(CapnProtoMsg msg, out T data, int dataSize = -1) where T : struct, CapnProto.IPointer {
-            return Parser<T>(msg.GetBuffer(), out data, dataSize);
+        public static bool Parser(CapnProtoMsg msg, out Pointer data, int dataSize = -1) {
+            return Parser(msg.GetBuffer(), out data, dataSize);
         }
 
         public static CapnProtoMsg CreateCapnProtoMsg() {

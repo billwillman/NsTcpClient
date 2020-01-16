@@ -76,6 +76,19 @@ public class Test : MonoBehaviour {
             txtList.Add(ProtoMessageMgr.CreateText(msg, "abcdef"));
         }
         loginMsg.roleList = ProtoMessageMgr.CreateList<Text>(msg, txtList);
+
+        FileStream stream = new FileStream("D:/test.bin", FileMode.Create);
+        MemoryStream memStream = new MemoryStream();
+        msg.msg.Write(stream);
+        msg.msg.Write(memStream);
+        stream.Close();
+        stream.Dispose();
+
+        
+        Pointer outMsg;
+        ProtoMessageMgr.Parser(memStream.GetBuffer(), out outMsg, (int)memStream.Length);
+      //  CapnProto.Schema.CodeGeneratorRequest req = (CapnProto.Schema.CodeGeneratorRequest)outMsg;
+        memStream.Dispose();
         //  listMsg.Dispose();
 
 
@@ -86,14 +99,8 @@ public class Test : MonoBehaviour {
         //     ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg, msg.MessageSize);
         // NetManager.Instance.SendCapnProto(msg, 1);
 
-        //FileStream stream = new FileStream("D:/test.capnp", FileMode.Create, FileAccess.Write);
-        MemoryStream stream = new MemoryStream();
-        ProtoMessageMgr.SaveToStream(stream, loginMsg, msg.MessageSize);
-        stream.Close();
-        stream.Dispose();
-        
-     //   LoginMsg newMsg;
-     //   ProtoMessageMgr.Parser<LoginMsg>(msg.GetBuffer(), out newMsg, msg.MessageSize);
+        //   LoginMsg newMsg;
+        //   ProtoMessageMgr.Parser<LoginMsg>(msg.GetBuffer(), out newMsg, msg.MessageSize);
 
         msg.Dispose();
     }
@@ -118,8 +125,8 @@ public class Test : MonoBehaviour {
         }
 
         // TestProtoMessage();
-        // TestCapnProto();
-        TestCanProto_Core();
+        TestCapnProto();
+       // TestCanProto_Core();
        // TestGamePacket();
     }
 
@@ -127,12 +134,16 @@ public class Test : MonoBehaviour {
 
         var msg = Capnp.SerializerState.CreateForRpc<CapnpGen.LoginMsg.WRITER>();
         msg.UserName = "zengyi";
-        var list = Capnp.SerializerState.CreateForRpc <Capnp.ListOfTextSerializer>();
-       
+        // var list = Capnp.SerializerState.CreateForRpc <Capnp.ListOfTextSerializer>();
+
+        //  list.Init(2);
+        //  list[0] = "abcdef";
+        ///  list[1] = "abcdef";
+        // msg.RoleList = list;
+        var list = msg.RoleList;
         list.Init(2);
         list[0] = "abcdef";
         list[1] = "abcdef";
-        msg.RoleList = list;
     }
 
     void TestProtoMessage() {

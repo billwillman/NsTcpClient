@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define UNSAFE
+
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 

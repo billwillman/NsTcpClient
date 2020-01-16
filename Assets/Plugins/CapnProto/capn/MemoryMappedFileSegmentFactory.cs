@@ -1,5 +1,7 @@
-﻿#if UNSAFE
+﻿#define UNSAFE
 
+#if UNSAFE
+/*
 using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
@@ -157,5 +159,5 @@ namespace CapnProto
             return false;
         }
     }
-}
+}*/
 #endif

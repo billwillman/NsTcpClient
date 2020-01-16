@@ -1,4 +1,4 @@
-﻿
+﻿#define UNSAFE
 using System;
 using System.IO;
 namespace CapnProto

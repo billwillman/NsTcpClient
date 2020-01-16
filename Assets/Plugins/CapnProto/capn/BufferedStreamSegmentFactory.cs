@@ -1,4 +1,6 @@
-﻿#if UNSAFE
+﻿#define UNSAFE
+
+#if UNSAFE
 #define UNMANAGED
 #endif
 

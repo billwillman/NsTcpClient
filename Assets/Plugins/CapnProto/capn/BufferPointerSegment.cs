@@ -1,4 +1,7 @@
-﻿using System;
+﻿#define UNSAFE
+#define UNSAFE
+
+using System;
 using System.Runtime.InteropServices;
 #if UNSAFE
 namespace CapnProto
