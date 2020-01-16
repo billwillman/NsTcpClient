@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netcoreapp2.1</TargetFrameworks>
+    <RootNamespace>Capnp</RootNamespace>
+    <LangVersion>7.2</LangVersion>
+    <AssemblyName>Capnp.Net.Runtime</AssemblyName>
+    <PackageId>Capnp.Net.Runtime</PackageId>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
+    <Authors>Christian Köllner and contributors</Authors>
+    <Description>A Cap'n Proto implementation for .NET Standard &amp; Core</Description>
+    <Product>capnproto-dotnetcore</Product>
+    <Copyright>Christian Köllner and contributors</Copyright>
+    <PackageLicenseFile></PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/c80k/capnproto-dotnetcore</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/c80k/capnproto-dotnetcore</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>capnp "Cap'n Proto" RPC serialization cerealization</PackageTags>
+    <Version>1.3-local$([System.DateTime]::UtcNow.ToString(yyMMddHHmm))</Version>
+    <Configurations>Debug;Release</Configurations>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+  </ItemGroup>
+
+</Project>
