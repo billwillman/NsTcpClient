@@ -65,6 +65,12 @@ namespace NsTcpClient
             }
         }
     }
+
+    public static class CapnProtoStreamHelper {
+        public static bool WriteCapnProtoMsg(this Stream stream, CapnProtoMsg msg) {
+            return ProtoMessageMgr.SaveToStream(stream, msg);
+        }
+    }
 #endif
 
     public class ProtoMessageMgr: Singleton<ProtoMessageMgr>

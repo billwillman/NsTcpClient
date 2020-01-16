@@ -63,12 +63,12 @@ public class Test : MonoBehaviour {
       //  Debug.LogError(loginMsg.userName.ToString());
        // Debug.LogErrorFormat("msg size: {0:D}", userNameMsg.MessageSize);
       
-             LoginMsg newLoginMsg;
-            ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg, msg.MessageSize);
-        NetManager.Instance.SendCapnProto(msg, 1);
+      //      LoginMsg newLoginMsg;
+       //     ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg, msg.MessageSize);
+       // NetManager.Instance.SendCapnProto(msg, 1);
         
-        FileStream stream = new FileStream("D:/test.proto", FileMode.Create, FileAccess.Write);
-        ProtoMessageMgr.SaveToStream(stream, msg);
+        FileStream stream = new FileStream("D:/test.capnp", FileMode.Create, FileAccess.Write);
+        stream.WriteCapnProtoMsg(msg);
         stream.Close();
         stream.Dispose();
         
