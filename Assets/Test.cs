@@ -74,7 +74,8 @@ public class Test : MonoBehaviour {
         }
 
         loginMsg.roleList = roleList;
-
+     //   Debug.LogError(loginMsg.ToString());
+        /*
         FileStream stream = new FileStream("D:/test.bin", FileMode.Create);
         MemoryStream memStream = new MemoryStream();
         msg.msg.Write(stream);
@@ -86,21 +87,7 @@ public class Test : MonoBehaviour {
         
         Pointer outMsg;
         ProtoMessageMgr.Parser(memStream.GetBuffer(), out outMsg, (int)memStream.Length);
-        //  CapnProto.Schema.CodeGeneratorRequest req = (CapnProto.Schema.CodeGeneratorRequest)outMsg;
-        CapnProto_Msg.LoginMsg newMsg = (CapnProto_Msg.LoginMsg)outMsg;
-        memStream.Dispose();
-        //  listMsg.Dispose();
-
-
-        //  Debug.LogError(loginMsg.userName.ToString());
-        // Debug.LogErrorFormat("msg size: {0:D}", userNameMsg.MessageSize);
-
-        //      LoginMsg newLoginMsg;
-        //     ProtoMessageMgr.Parser<LoginMsg>(msg, out newLoginMsg, msg.MessageSize);
-        // NetManager.Instance.SendCapnProto(msg, 1);
-
-        //   LoginMsg newMsg;
-        //   ProtoMessageMgr.Parser<LoginMsg>(msg.GetBuffer(), out newMsg, msg.MessageSize);
+        */
 
         msg.Dispose();
     }
