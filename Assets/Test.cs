@@ -56,17 +56,10 @@ public class Test : MonoBehaviour {
         var msg = ProtoMessageMgr.CreateCapnProtoMsg();
         var loginMsg = CapnProto_Msg.LoginMsg.Create(msg.Root);
 
-      //   var userNameMsg = ProtoMessageMgr.CreateCapnProtoMsg();
         loginMsg.userName = ProtoMessageMgr.CreateText(msg, "zengyi");
-       // userNameMsg.Dispose();
-
-       //  var passWordMsg = ProtoMessageMgr.CreateCapnProtoMsg();
         loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "123");
-      //  passWordMsg.Dispose();
-
         loginMsg.userID = 456;
 
-        // CapnProtoMsg listMsg = ProtoMessageMgr.CreateCapnProtoMsg();
         int count = 10;
         var roleList = ProtoMessageMgr.CreateList<Text>(msg, 10);
         for (int i = 0; i < count; ++i) {
