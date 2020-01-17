@@ -22,14 +22,6 @@ namespace NsTcpClient
                 msg.Write(stream);
         }
 
-        public long MessageSizeLong {
-            get {
-                if (msg != null)
-                    return (msg.WordCount << 3);
-                return 0;
-            }
-        }
-
         public Pointer Root {
             get {
                 if (msg == null)
@@ -229,6 +221,7 @@ namespace NsTcpClient
             return CreateText(msg.Root, value);
         }
 
+        /*
         public static CapnProto.FixedSizeList<T> CreateList<T>(CapnProto.Pointer owner, IList<T> list) {
             CapnProto.FixedSizeList<T> ret = CapnProto.FixedSizeList<T>.Create(owner, list);
             return ret;
@@ -237,6 +230,27 @@ namespace NsTcpClient
         public static CapnProto.FixedSizeList<T> CreateList<T>(CapnProtoMsg msg, IList<T> list) {
 
             return CreateList<T>(msg.Root, list);
+        }
+        */
+
+        public static CapnProto.FixedSizeList<T> CreateList<T>(CapnProto.Pointer owner, CapnProto.FixedSizeList<T> list) {
+            CapnProto.FixedSizeList<T> ret = CapnProto.FixedSizeList<T>.Create(owner, list);
+            return ret;
+        }
+
+        public static CapnProto.FixedSizeList<T> CreateList<T>(CapnProtoMsg msg, CapnProto.FixedSizeList<T> list) {
+
+            return CreateList<T>(msg.Root, list);
+        }
+
+        public static CapnProto.FixedSizeList<T> CreateList<T>(CapnProto.Pointer owner, int count) {
+            CapnProto.FixedSizeList<T> ret = CapnProto.FixedSizeList<T>.Create(owner, count);
+            return ret;
+        }
+
+        public static CapnProto.FixedSizeList<T> CreateList<T>(CapnProtoMsg msg, int count) {
+
+            return CreateList<T>(msg.Root, count);
         }
 
         public static bool SaveToStream<T>(Stream stream, T data, int messageSize) where T: struct, CapnProto.IPointer {

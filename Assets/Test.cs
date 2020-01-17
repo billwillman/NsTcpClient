@@ -9,13 +9,9 @@ using System.IO;
 
 public class Test : MonoBehaviour {
 
-    private List<Text> txtList = null;
-
     void Start() {
         ProtoMessageMgr.GetInstance().Register<C_S_Login_Req>(C_S_Login_Req.Parser);
         NetManager.Instance.AddPacketListener(100, OnTestProtoCallBack);
-
-        txtList = new List<Text>(10);
         
     }
 
@@ -70,12 +66,14 @@ public class Test : MonoBehaviour {
 
         loginMsg.userID = 456;
 
-       // CapnProtoMsg listMsg = ProtoMessageMgr.CreateCapnProtoMsg();
-        txtList.Clear();
-        for (int i = 0; i < txtList.Capacity; ++i) {
-            txtList.Add(ProtoMessageMgr.CreateText(msg, "abcdef"));
+        // CapnProtoMsg listMsg = ProtoMessageMgr.CreateCapnProtoMsg();
+        int count = 10;
+        var roleList = ProtoMessageMgr.CreateList<Text>(msg, 10);
+        for (int i = 0; i < count; ++i) {
+            roleList[i] = ProtoMessageMgr.CreateText(msg, "abcdef");
         }
-        loginMsg.roleList = ProtoMessageMgr.CreateList<Text>(msg, txtList);
+
+        loginMsg.roleList = roleList;
 
         FileStream stream = new FileStream("D:/test.bin", FileMode.Create);
         MemoryStream memStream = new MemoryStream();
@@ -88,7 +86,8 @@ public class Test : MonoBehaviour {
         
         Pointer outMsg;
         ProtoMessageMgr.Parser(memStream.GetBuffer(), out outMsg, (int)memStream.Length);
-      //  CapnProto.Schema.CodeGeneratorRequest req = (CapnProto.Schema.CodeGeneratorRequest)outMsg;
+        //  CapnProto.Schema.CodeGeneratorRequest req = (CapnProto.Schema.CodeGeneratorRequest)outMsg;
+        CapnProto_Msg.LoginMsg newMsg = (CapnProto_Msg.LoginMsg)outMsg;
         memStream.Dispose();
         //  listMsg.Dispose();
 
