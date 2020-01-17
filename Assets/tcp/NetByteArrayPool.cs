@@ -63,7 +63,7 @@ namespace NsTcpClient {
     public static class NetByteArrayPool {
         private static RecyclableMemoryStreamManager m_Mgr = null;
         private static string _cRcyclableTag = "NetByteArrayPool";
-        public static readonly int _cSmallBufferSize = 1 * 1024;
+        public static readonly int _cSmallBufferSize = 4 * 1024;
         private static int _cLargeBufSize = 64 * 1024;
         public static void InitMgr() {
             if (m_Mgr != null)
