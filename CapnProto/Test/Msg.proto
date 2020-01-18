@@ -5,6 +5,4 @@ const cLoginMsg : Int32 = 1;
 struct LoginMsg {
   userName @0 : Text = "zengyi";
   passWord @1 : Text = "111";
-  userID @2 : Int32 = 0;
-  roleList @3 : List(Text);
 }
