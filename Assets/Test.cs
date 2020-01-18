@@ -58,15 +58,6 @@ public class Test : MonoBehaviour {
 
         loginMsg.userName = ProtoMessageMgr.CreateText(msg, "zengyi");
         loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "123");
-        loginMsg.userID = 456;
-
-        int count = 10;
-        var roleList = ProtoMessageMgr.CreateList<Text>(msg, 10);
-        for (int i = 0; i < count; ++i) {
-            roleList[i] = ProtoMessageMgr.CreateText(msg, "abcdef");
-        }
-
-        loginMsg.roleList = roleList;
      //   Debug.LogError(loginMsg.ToString());
         /*
         FileStream stream = new FileStream("D:/test.bin", FileMode.Create);
