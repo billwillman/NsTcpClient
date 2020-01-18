@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 #if USE_CapnProto
 using CapnProto;
 #endif
@@ -63,6 +64,7 @@ namespace NsTcpClient
                         }
                     }
                     // Console.WriteLine("Written: " + destination);
+                    Debug.Log("Written: " + fileName);
                 }
             }
         }
