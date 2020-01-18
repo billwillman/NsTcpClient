@@ -1,0 +1,20 @@
+#!/usr/bin/env luajit
+
+--package.path="lua/?.lua;;"
+
+local schema_capnp = require("schema_capnp")
+local cjson = require("cjson")
+local compile = require("capnp.compile")
+local util = require("capnp.util")
+
+local schema_json_file  = "llua.schema.json"
+
+local content = io.stdin:read("*a")
+local schema = assert(schema_capnp.CodeGeneratorRequest.parse(content))
+
+schema.__compiler = "lua-capnp(decoded by lua)"
+util.write_file(schema_json_file, cjson.encode(schema))
+local res = compile.compile(schema)
+
+local outfile = util.get_output_name(schema) .. ".llua"
+util.write_file(outfile, res)

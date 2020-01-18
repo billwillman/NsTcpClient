@@ -1,0 +1,144 @@
+#!/bin/bash
+
+VERSION=0.1.3-1
+
+usage() {
+    cat <<EOF
+Usage: capnpc-lua [<option>...]
+
+This is a Cap'n Proto compiler plugin which compiles the schema into lua
+files. This is meant to be run using the Cap'n Proto compiler, e.g.:
+    capnp compile -olua foo.capnp
+
+Options:
+    --verbose
+        Write schema file: test.schema.lua and lua.schema.json; useful for debugging.
+    --version
+        Print version information and exit.
+    --help
+        Display this help text and exit.
+EOF
+exit
+}
+
+version() {
+    echo "Cap'n Proto Lua plug-in version $VERSION"
+    exit
+}
+
+realpath() {
+    perl -MCwd -e 'print Cwd::abs_path shift' $1;
+}
+
+
+VERBOSE=${VERBOSE:="false"}
+FILE=$(realpath $0)
+DIR=$(dirname $FILE)
+export LUA_PATH="$DIR/../?.lua;$LUA_PATH;;"
+
+
+while : ; do
+    case $1 in
+        --version)
+            version ;;
+        --help)
+            usage ;;
+        --verbose)
+            #[ -n "${VERBOSE}" ] && usage
+            VERBOSE="true"
+            shift ;;
+        *)
+            break ;;
+    esac
+done
+
+BASE=$(dirname $(realpath $0))
+#export LUA_PATH="$BASE/lua/?.lua;$BASE/proto/?.lua;$LUA_PATH;;"
+
+luajit - <(cat - | capnp decode $BASE/schema.capnp CodeGeneratorRequest) $@ <<EOT
+local compile = require ("capnp.compile")
+local util = require ("capnp.util")
+local cjson = require ("cjson")
+
+local format = string.format
+local insert = table.insert
+local concat = table.concat
+
+local debug = ${VERBOSE}
+
+local schema_lua_file   = "test.schema.lua"
+local schema_json_file  = "lua.schema.json"
+
+function usage()
+    print("lua compile.lua [schema.txt]")
+end
+
+
+local f = arg[1]
+if not f then
+    usage()
+    return
+end
+
+local naming
+local config = {
+    version = "${VERSION}",
+}
+local namings = {}
+for k, v in pairs(compile.naming_funcs) do
+    insert(namings, k)
+end
+
+-- TODO fix this
+--arg[2] = "--naming=camel"
+
+for i=2, #arg do
+    if string.sub(arg[i], 1, 9) == "--naming=" then
+        naming = string.sub(arg[i], 10)
+        local naming_func = compile.naming_funcs[naming]
+        if not naming_func then
+            error(format("unknown naming: %s. Available values are %s", naming,
+                    concat(namings, " ")))
+        end
+        config.default_naming_func = naming_func
+        --config.default_enum_naming_func = naming_func
+    end
+end
+
+local lua_schema = util.parse_capnp_decode_txt(f)
+
+if debug then
+    print("write schema_lua_file")
+    util.write_file(schema_lua_file, lua_schema)
+end
+
+local schema = assert(assert(loadstring(lua_schema))())
+
+schema.__compiler = "lua-capnp(decoded by capnp tool)"
+
+if debug then
+    print("write schema_json_file")
+    util.write_file(schema_json_file, cjson.encode(schema))
+end
+
+local outfile = util.get_output_name(schema) .. ".lua"
+--print(outfile)
+--print("set config:")
+compile.init(config)
+compile.set_debug(debug)
+local res = compile.compile(schema)
+
+util.write_file(outfile, res)
+--local file = assert(io.open(outfile, "w"))
+--file:write(res)
+--file:close()
+
+--[[
+local outfile = "data_generator.lua"
+local res = compile.compile_data_generator(schema)
+
+local file = assert(io.open(outfile, "w"))
+file:write(res)
+file:close()
+]]
+EOT
