@@ -30,6 +30,43 @@ namespace NsTcpClient
             }
         }
 
+        public void TestInfoToFile(string fileName) {
+            int messageIndex = 0;
+            using (MemoryStream stream = new MemoryStream()) {
+                this.WriteToStream(stream);
+                using (var outFile = File.CreateText(fileName)) {
+                    using (var reader = Message.Load(stream.GetBuffer(), 0, (int)stream.Length)) {
+                        while (reader.ReadNext()) {
+                            if (messageIndex != 0) {
+                                outFile.WriteLine();
+                                outFile.WriteLine("<< next message >>");
+                                outFile.WriteLine();
+                            }
+                            outFile.WriteLine("message {0}, segments: {1}", messageIndex, reader.SegmentCount);
+                            long offset = 0;
+                            for (int segmentIndex = 0; segmentIndex < reader.SegmentCount; segmentIndex++) {
+                                var segment = reader[segmentIndex];
+                                outFile.WriteLine();
+                                outFile.WriteLine("message: {0}; segment: {1}, offset: {2}, length: {3}", messageIndex, segmentIndex, offset, segment.Length);
+                                outFile.WriteLine();
+                                for (int word = 0; word < segment.Length; word++) {
+                                    ulong value = segment[word];
+                                    outFile.WriteLine("{10:00}/{9:00}/{0:000000}:\t{1:X2} {2:X2} {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2}",
+                                        word,
+                                        (byte)value, (byte)(value >> 8), (byte)(value >> 16), (byte)(value >> 24),
+                                        (byte)(value >> 32), (byte)(value >> 40), (byte)(value >> 48), (byte)(value >> 56),
+                                        segmentIndex, messageIndex);
+                                }
+                                offset += segment.Length;
+                            }
+                            messageIndex++;
+                        }
+                    }
+                    // Console.WriteLine("Written: " + destination);
+                }
+            }
+        }
+
         public byte[] GetBuffer() {
             if (allocator != null)
                 return allocator.GetBuffer();

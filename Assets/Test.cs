@@ -52,13 +52,17 @@ public class Test : MonoBehaviour {
 
     float lastSendTime = 0;
 
+    bool isOnce = false;
+
     void TestCapnProto() {
+        if (isOnce) return;
+        isOnce = true;
         var msg = ProtoMessageMgr.CreateCapnProtoMsg();
         var loginMsg = CapnProto_Msg.LoginMsg.Create(msg.Root);
 
         loginMsg.userName = ProtoMessageMgr.CreateText(msg, "zengyi");
         loginMsg.passWord = ProtoMessageMgr.CreateText(msg, "123");
-     //   Debug.LogError(loginMsg.ToString());
+        //   Debug.LogError(loginMsg.ToString());
         /*
         FileStream stream = new FileStream("D:/test.bin", FileMode.Create);
         MemoryStream memStream = new MemoryStream();
@@ -72,6 +76,8 @@ public class Test : MonoBehaviour {
         Pointer outMsg;
         ProtoMessageMgr.Parser(memStream.GetBuffer(), out outMsg, (int)memStream.Length);
         */
+
+        msg.TestInfoToFile("d:/test.txt");
 
         msg.Dispose();
     }
