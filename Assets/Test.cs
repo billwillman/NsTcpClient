@@ -137,7 +137,8 @@ public class Test : MonoBehaviour {
         UnityEngine.Profiling.Profiler.EndSample();
 
         UnityEngine.Profiling.Profiler.BeginSample("BufToProto");
-        var rep = ProtoMessageMgr.Instance.Parser<C_S_Login_Req>(stream.GetBuffer(), stream.DataSize);
+        // var rep = ProtoMessageMgr.Instance.Parser<C_S_Login_Req>(stream.GetBuffer(), stream.DataSize);
+        var rep = C_S_Login_Req.Parser.ParseFrom(stream.GetBuffer(), 0, stream.DataSize);
         UnityEngine.Profiling.Profiler.EndSample();
 
         stream.Dispose();
