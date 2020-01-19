@@ -23,6 +23,16 @@ namespace NsTcpClient
                 msg.Write(stream);
         }
 
+        public void SaveToFile(string fileName) {
+            FileStream stream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+            try {
+                WriteToStream(stream);
+            } finally {
+                stream.Close();
+                stream.Dispose();
+            }
+        }
+
         public Pointer Root {
             get {
                 if (msg == null)
@@ -31,6 +41,7 @@ namespace NsTcpClient
             }
         }
 
+        /*
         public void TestInfoToFile(string fileName) {
             int messageIndex = 0;
             using (MemoryStream stream = new MemoryStream()) {
@@ -68,6 +79,7 @@ namespace NsTcpClient
                 }
             }
         }
+        */
 
         public byte[] GetBuffer() {
             if (allocator != null)

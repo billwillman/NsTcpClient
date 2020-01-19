@@ -61,17 +61,18 @@ public class Test : MonoBehaviour {
         var loginMsg = CapnProto_Msg.LoginMsg.Create(msg.Root);
         loginMsg.userId = 200;
 
+        msg.SaveToFile("D:/test.bin");
+
         //   Debug.LogError(loginMsg.ToString());
         /*
         FileStream stream = new FileStream("D:/test.bin", FileMode.Create);
         */
-        MemoryStream memStream = new MemoryStream();
-        msg.msg.Write(memStream);
 
-        NetManager.Instance.SendCapnProto(msg, 1);
-        
 
-        msg.TestInfoToFile("d:/test.txt");
+        //  NetManager.Instance.SendCapnProto(msg, 1);
+
+
+        // msg.TestInfoToFile("d:/test.txt");
 
         msg.Dispose();
     }
