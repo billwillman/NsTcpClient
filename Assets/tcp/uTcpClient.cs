@@ -474,6 +474,9 @@ namespace NsTcpClient
 							packet.data = NetByteArrayPool.GetByteBufferNode(packet.header.dataSize);
                             var buf = packet.data.GetBuffer();
                             Buffer.BlockCopy(mRecvBuffer, i + headerSize, buf, 0, packet.header.dataSize);
+							/*
+							 * 优化：后面可以考虑把Proto的序列化生成放到子线程。。。
+							*/
                         }
 
                         // 优化掉
