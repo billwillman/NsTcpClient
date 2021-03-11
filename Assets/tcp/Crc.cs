@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace NsTcpClient {
 
@@ -434,11 +434,29 @@ namespace NsTcpClient {
             return (crc ^ 0xffffffffffffffff);
         }
 
-        public static ulong ComputeAsAsciiString(string text) {
+
+        /// <summary>
+        /// 允许中英文都有的
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public unsafe static ulong ComputeString(string text) {
             if (text == null)
-                text = string.Empty;
-            byte[] buffer = System.Text.Encoding.ASCII.GetBytes(text.ToLowerInvariant());
-            return Compute(buffer);
+                return 0;
+
+            ulong crc = 0xffffffffffffffff;
+            int len = System.Text.Encoding.UTF8.GetByteCount(text);
+            fixed (char* ptr = text)
+            {
+                byte* pByte = (byte*)ptr;
+                for (int i = 0; i < len; ++i)
+                {
+                    byte b = *(pByte++);
+                    uint tableIndex = (((uint)(crc >> 56)) ^ b) & 0xff;
+                    crc = s_CRC64Table[tableIndex] ^ (crc << 8);
+                }
+            }
+            return (crc ^ 0xffffffffffffffff);
         }
 
 
