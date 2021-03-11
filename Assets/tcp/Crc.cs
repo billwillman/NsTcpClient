@@ -445,7 +445,8 @@ namespace NsTcpClient {
                 return 0;
 
             ulong crc = 0xffffffffffffffff;
-            int len = System.Text.Encoding.UTF8.GetByteCount(text);
+            //int len = System.Text.Encoding.UTF8.GetByteCount(text);
+            int len = text.Length * sizeof(char);
             fixed (char* ptr = text)
             {
                 byte* pByte = (byte*)ptr;
